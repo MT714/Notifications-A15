@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.embedded2025.notificationsa15.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/expandableNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.ExpandableNotificationFragment"
+        android:label="fragment_expandable_notification"
+        tools:layout="@layout/fragment_expandable_notification" />
+    <fragment
+        android:id="@+id/simpleNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.SimpleNotificationFragment"
+        android:label="fragment_simple_notification"
+        tools:layout="@layout/fragment_simple_notification" />
+</navigation>
