@@ -10,4 +10,12 @@
         android:layout_height="match_parent"
         android:text="@string/simple_notification_text" />
 
+    <Button
+        android:id="@+id/btnSimpleNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/simple_notification_text"
+        android:layout_marginTop="32dp"
+        />
+
 </FrameLayout>
