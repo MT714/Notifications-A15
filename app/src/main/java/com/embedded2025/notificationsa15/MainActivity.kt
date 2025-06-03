@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setupNavigation()
+        setupNotifications()
+    }
+
+    private fun setupNavigation() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -41,9 +46,17 @@ class MainActivity : AppCompatActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         val navView = findViewById<NavigationView>(R.id.nav_view)
         NavigationUI.setupWithNavController(navView, navController)
+    }
 
-        askNotificationPermission()
-        createNotificationChannel()
+    private fun setupNotifications() {
+        NotificationsHelper.createNotificationChannels(this)
+
+        // Permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_DENIED) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -53,16 +66,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("PERMISSION", "Permesso notifiche concesso")
         } else {
             Log.d("PERMISSION", "Permesso notifiche negato")
-        }
-    }
-
-    private fun askNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
         }
     }
 
@@ -77,25 +80,11 @@ class MainActivity : AppCompatActivity() {
                 || super.onOptionsItemSelected(item)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
-    {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         //verifico che l'utente abbia dato il permesso per le notifiche
         val p = grantResults[0] == PermissionChecker.PERMISSION_GRANTED
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.i(TAG, "Notification runtime permission granted: $p")
-    }
-
-    private fun createNotificationChannel(){
-        val name = "Notification"
-        val descriptionText = "Canale per notifiche semplici"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel("default_channel", name, importance).apply {
-            description = descriptionText
-        }
-
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
 
     companion object{

@@ -1,13 +1,8 @@
 <resources>
-    <string name="app_name">Notification lab</string>
+    <string name="app_name">Notifications Lab</string>
 
     <string name="home_title">Home</string>
     <string name="home_text">Home fragment</string>
 
-    <string name="simple_notification_title">Simple notification</string>
-    <string name="simple_notification_text">Simple notification fragment</string>
-
-    <string name="expandable_notification_title">Expandable notification</string>
-    <string name="expandable_notification_text">Expandable notification fragment</string>
     <string name="nav_header_description">Logo</string>
 </resources>

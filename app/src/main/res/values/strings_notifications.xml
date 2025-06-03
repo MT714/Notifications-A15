@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channels -->
+    <string name="channel_demo_name">Canale demo</string>
+    <string name="channel_demo_description">Canale dedicato alle notifiche demo</string>
+
+    <!-- Notifications -->
+    <string name="notif_simple_demo_title">Notifica semplice</string>
+    <string name="notif_simple_demo_text">Questa è una notifica semplice</string>
+
+    <string name="notif_expandable_demo_title">Notifica estendibile</string>
+    <string name="notif_expandable_demo_text">Questa è una notifica estendibile</string>
+</resources>
