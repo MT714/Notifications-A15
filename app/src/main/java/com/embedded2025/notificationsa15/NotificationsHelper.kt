@@ -14,22 +14,17 @@ object NotificationsHelper{
     const val DEMO_CHANNEL_ID = "channel_demo"
     const val DEMO_SIMPLE_NOTIFICATION_ID = 1
 
+    fun requestPostPermission(ctx: Context): Boolean {
+        // TODO: da implementare
+        return false
+    }
 
     fun safeNotify(ctx: Context, builder: NotificationCompat.Builder, id: Int) {
         with(NotificationManagerCompat.from(ctx)) {
             if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_DENIED) {
-                Log.i("NotificationsHelper", "No permission granted")
-
-
-                // TODO: Consider calling
-                // ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                //                                        grantResults: IntArray)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
+                Log.i("NotificationsHelper", "No permission granted, requesting now.")
+                if (!requestPostPermission(ctx)) return
             }
             notify(id, builder.build())
         }

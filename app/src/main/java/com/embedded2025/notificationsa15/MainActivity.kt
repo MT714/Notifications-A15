@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         NotificationsHelper.createNotificationChannels(this)
 
         // Permission
+        // TODO: usare NotificationsHelper.requestPostPermission(this)
+        // una volta implementato il metodo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_DENIED) {
