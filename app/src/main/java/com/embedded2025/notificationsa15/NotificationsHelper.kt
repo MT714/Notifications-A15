@@ -21,7 +21,6 @@ object NotificationsHelper{
     const val DEMO_SIMPLE_NOTIFICATION_ID = 1
     const val DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID = 2
     const val DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID = 3
-    const val DEMO_ACTIONS_NOTIFICATION_ID = 4
 
     private var appContext: Context? = null
     private var internalNotificationManager: NotificationManagerCompat? = null
@@ -122,20 +121,22 @@ object NotificationsHelper{
     //Simple notification
     fun showSimpleNotificationDemo() {
         val ctx = getContext()
-        val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
+        val notificationId = getNextNotificationId()
+        val notif = NotificationCompat.Builder(ctx, CHANNEL_ID_DEFAULT)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_simple_demo_title))
             .setContentText(ctx.getString(R.string.notif_simple_demo_text))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(ctx, notif, DEMO_SIMPLE_NOTIFICATION_ID)
+        safeNotify(ctx, notif, notificationId)
     }
 
     //Expand notification with text
     fun showExpandableTextNotificationDemo() {
         val ctx = getContext()
-        val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
+        val notificationId = getNextNotificationId()
+        val notif = NotificationCompat.Builder(ctx, CHANNEL_ID_DEFAULT)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))
             .setContentText(ctx.getString(R.string.notif_expandable_demo_text))
@@ -144,13 +145,14 @@ object NotificationsHelper{
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(ctx, notif, DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID)
+        safeNotify(ctx, notif, notificationId)
     }
 
     //Expand notification with picture
     fun showExpandablePictureNotificationDemo() {
         val ctx = getContext()
-        val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
+        val notificationId = getNextNotificationId()
+        val notif = NotificationCompat.Builder(ctx, CHANNEL_ID_DEFAULT)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))
             .setContentText(ctx.getString(R.string.notif_expandable_demo_text))
@@ -159,7 +161,7 @@ object NotificationsHelper{
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(ctx, notif, DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID)
+        safeNotify(ctx, notif, notificationId)
     }
 
     //Actions notification
