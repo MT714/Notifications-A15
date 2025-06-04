@@ -15,6 +15,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
 
+
+
 object NotificationsHelper{
     const val DEMO_CHANNEL_ID = "channel_demo"
     const val DEMO_SIMPLE_NOTIFICATION_ID = 1
@@ -50,6 +52,7 @@ object NotificationsHelper{
 
     fun requestPostPermission(ctx: Context): Boolean {
         // TODO: da implementare
+
         return false
     }
 
