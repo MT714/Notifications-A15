@@ -177,7 +177,7 @@ object NotificationsHelper{
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notification_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notification_action_later), laterPendingIntent)
-        safeNotify(ctx, builder, notificationId )
+        safeNotify(ctx, builder, notificationId)
     }
 
 }

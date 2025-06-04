@@ -9,12 +9,16 @@ import android.widget.Button
 
 
 
-class ActionsNotificationFragment : Fragment(){
+class ActionsNotificationFragment : BaseNotificationFragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_actions_notification, container, false).apply {
             findViewById<Button>(R.id.btnShowNotification).setOnClickListener {
-                NotificationsHelper.showNotificationWithActions()
+                checkAndRequestNotificationPermission()
             }
         }
+
+    override fun onNotificationPermissionGranted() {
+        NotificationsHelper.showSimpleNotificationDemo(requireContext())
+    }
 }
