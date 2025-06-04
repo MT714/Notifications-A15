@@ -28,9 +28,9 @@ class ExpandableNotificationFragment : BaseNotificationFragment() {
     override fun onNotificationPermissionGranted() {
         when (pendingNotification) {
             NotificationType.EXPANDABLE_TEXT ->
-                NotificationsHelper.showExpandableTextNotificationDemo(requireContext())
+                NotificationsHelper.showExpandableTextNotificationDemo()
             NotificationType.EXPANDABLE_PICTURE ->
-                NotificationsHelper.showExpandablePictureNotificationDemo(requireContext())
+                NotificationsHelper.showExpandablePictureNotificationDemo()
             else -> Unit
         }
     }

@@ -1,7 +1,6 @@
 package com.embedded2025.notificationsa15
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,6 @@ class ActionsNotificationFragment : BaseNotificationFragment(){
         }
 
     override fun onNotificationPermissionGranted() {
-        NotificationsHelper.showSimpleNotificationDemo(requireContext())
+        NotificationsHelper.showNotificationWithActions()
     }
 }

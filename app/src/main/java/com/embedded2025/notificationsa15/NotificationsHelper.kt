@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
-import android.os.Build
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -121,7 +120,8 @@ object NotificationsHelper{
     }
 
     //Simple notification
-    fun showSimpleNotificationDemo(ctx: Context) {
+    fun showSimpleNotificationDemo() {
+        val ctx = getContext()
         val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_simple_demo_title))
@@ -133,7 +133,8 @@ object NotificationsHelper{
     }
 
     //Expand notification with text
-    fun showExpandableTextNotificationDemo(ctx: Context) {
+    fun showExpandableTextNotificationDemo() {
+        val ctx = getContext()
         val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))
@@ -147,7 +148,8 @@ object NotificationsHelper{
     }
 
     //Expand notification with picture
-    fun showExpandablePictureNotificationDemo(ctx: Context) {
+    fun showExpandablePictureNotificationDemo() {
+        val ctx = getContext()
         val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))

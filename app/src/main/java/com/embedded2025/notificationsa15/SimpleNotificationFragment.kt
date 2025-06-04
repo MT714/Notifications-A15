@@ -17,6 +17,6 @@ class SimpleNotificationFragment : BaseNotificationFragment() {
         }
 
     override fun onNotificationPermissionGranted() {
-        NotificationsHelper.showSimpleNotificationDemo(requireContext())
+        NotificationsHelper.showSimpleNotificationDemo()
     }
 }
