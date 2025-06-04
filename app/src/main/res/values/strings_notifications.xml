@@ -22,4 +22,7 @@
         pretium. Morbi congue, arcu ac sagittis molestie, purus odio imperdiet lorem, a interdum
         ipsum magna at nulla.
     </string>
+
+    <string name="notif_action_demo_title">Notifica con azioni</string>
+    <string name="notif_action_demo_text">Questa è una notifica con azioni</string>
 </resources>
