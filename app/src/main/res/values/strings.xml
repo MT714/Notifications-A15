@@ -8,6 +8,12 @@
 
     <string name="demo_button">DEMO</string>
 
+    <!-- Canali di Notifica (nomi e descrizioni) -->
+    <string name="channel_name_default">Notifiche Generali</string>
+    <string name="channel_description_default">Canale per notifiche standard</string>
+    <string name="channel_name_high_priority">Notifiche Urgenti</string>
+    <string name="channel_description_high_priority">Canale per notifiche ad alta priorità (Heads-Up)</string>
+
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
     <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
@@ -17,4 +23,10 @@
     <string name="expandable_notif_descr">Questa è una notifica estendibile. Premi un bottone per una demo</string>
     <string name="expandable_notif_text_descr">La notifica espandibile con testo mostra del testo</string>
     <string name="expandable_notif_picture_descr">La notifica espandibile con immagine mostra una immagine</string>
+
+    <!-- Actions notification -->
+    <string name="actions_notification_title">Actions notification</string>
+    <string name="actions_notif_descr">Questa è una notifica con azioni. Premi un bottone per una demo</string>
+    <string name="notification_action_archive">Archivia</string>
+    <string name="notification_action_later">Più tardi</string>
 </resources>

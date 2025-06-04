@@ -10,4 +10,7 @@
     <item
         android:id="@id/expandableNotificationFragment"
         android:title="@string/expandable_notification_title"/>
+    <item
+        android:id="@id/actionsNotificationFragment"
+        android:title="@string/actions_notification_title"/>
 </menu>
