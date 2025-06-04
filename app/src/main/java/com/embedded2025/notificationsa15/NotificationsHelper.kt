@@ -6,13 +6,17 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.toBitmap
 
 object NotificationsHelper{
     const val DEMO_CHANNEL_ID = "channel_demo"
     const val DEMO_SIMPLE_NOTIFICATION_ID = 1
+    const val DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID = 2
+    const val DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID = 3
 
     fun requestPostPermission(ctx: Context): Boolean {
         // TODO: da implementare
@@ -51,6 +55,32 @@ object NotificationsHelper{
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
         safeNotify(ctx, notif, DEMO_SIMPLE_NOTIFICATION_ID)
+    }
+
+    fun showExpandableTextNotificationDemo(ctx: Context) {
+        val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))
+            .setContentText(ctx.getString(R.string.notif_expandable_demo_text))
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(ctx.getString(R.string.notif_expandable_demo_bigtext)))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+
+        safeNotify(ctx, notif, DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID)
+    }
+
+    fun showExpandablePictureNotificationDemo(ctx: Context) {
+        val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(ctx.getString(R.string.notif_expandable_demo_title))
+            .setContentText(ctx.getString(R.string.notif_expandable_demo_text))
+            .setStyle(NotificationCompat.BigPictureStyle()
+                .bigPicture(getDrawable(ctx, R.drawable.project_logo)?.toBitmap()))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+
+        safeNotify(ctx, notif, DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID)
     }
 
 }

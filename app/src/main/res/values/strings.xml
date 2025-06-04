@@ -1,16 +1,20 @@
 <resources>
     <string name="app_name">Notifications Lab</string>
 
-    <string name="home_title">Home</string>
-    <string name="home_text">Home fragment</string>
-
     <string name="nav_header_description">Logo</string>
 
-    <!-- Simple notifications -->
-    <string name="simple_notification_title">Simple notification</string>   // TODO: Change title
-    <string name="simple_notification_text">Simple notification</string>    // TODO: Change text
+    <string name="home_title">Home</string>
+    <string name="home_text">Testo schermata home</string>
 
-    <!-- Expandable notifications -->
-    <string name="expandable_notification_title">Expandable notification</string>   // TODO: Change title
-    <string name="expandable_notification_text">Expandable notification</string>    // TODO: Change text
+    <string name="demo_button">DEMO</string>
+
+    <!-- Simple notification -->
+    <string name="simple_notification_title">Simple notification</string>
+    <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
+
+    <!-- Expandable notification -->
+    <string name="expandable_notification_title">Expandable notification</string>
+    <string name="expandable_notif_descr">Questa è una notifica estendibile. Premi un bottone per una demo</string>
+    <string name="expandable_notif_text_descr">La notifica espandibile con testo mostra del testo</string>
+    <string name="expandable_notif_picture_descr">La notifica espandibile con immagine mostra una immagine</string>
 </resources>

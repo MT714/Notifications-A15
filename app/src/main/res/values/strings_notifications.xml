@@ -10,4 +10,16 @@
 
     <string name="notif_expandable_demo_title">Notifica estendibile</string>
     <string name="notif_expandable_demo_text">Questa è una notifica estendibile</string>
+    <string name="notif_expandable_demo_bigtext">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lacus dui, vehicula a
+        scelerisque at, sollicitudin quis lorem. Curabitur ac enim cursus, cursus erat at,
+        vulputate lacus. Fusce fringilla ex et orci iaculis, sit amet congue tellus interdum.
+        Etiam vel massa ante. Sed ut dapibus augue. Fusce ullamcorper leo suscipit massa vestibulum,
+        at lacinia turpis dictum. Mauris risus ex, convallis vitae elementum at, consequat eu
+        tortor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+        himenaeos. Duis id ante eget lectus laoreet elementum eu id odio. Donec sit amet magna
+        mattis, sagittis metus a, faucibus eros. Phasellus mattis nunc sit amet urna ultricies
+        pretium. Morbi congue, arcu ac sagittis molestie, purus odio imperdiet lorem, a interdum
+        ipsum magna at nulla.
+    </string>
 </resources>
