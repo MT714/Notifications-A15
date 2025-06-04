@@ -8,16 +8,16 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.embedded2025.notificationsa15.HomeFragment"
-        android:label="fragment_home"
+        android:label="@string/home_title"
         tools:layout="@layout/fragment_home" />
-    <fragment
-        android:id="@+id/expandableNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.ExpandableNotificationFragment"
-        android:label="fragment_expandable_notification"
-        tools:layout="@layout/fragment_expandable_notification" />
     <fragment
         android:id="@+id/simpleNotificationFragment"
         android:name="com.embedded2025.notificationsa15.SimpleNotificationFragment"
-        android:label="fragment_simple_notification"
+        android:label="@string/simple_notification_title"
         tools:layout="@layout/fragment_simple_notification" />
+    <fragment
+        android:id="@+id/expandableNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.ExpandableNotificationFragment"
+        android:label="@string/expandable_notification_title"
+        tools:layout="@layout/fragment_expandable_notification" />
 </navigation>
