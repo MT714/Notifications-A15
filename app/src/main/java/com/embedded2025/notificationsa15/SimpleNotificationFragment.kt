@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 
 
+
 class SimpleNotificationFragment : Fragment() {
 
     override fun onCreateView(
@@ -19,10 +20,10 @@ class SimpleNotificationFragment : Fragment() {
         val button = view.findViewById<Button>(R.id.btnSimpleNotification)
         button.setOnClickListener {
             NotificationsHelper.showSimpleNotificationDemo(requireContext())
-            //showSimpleNotification(requireContext())
         }
 
         return view
     }
+
 
 }

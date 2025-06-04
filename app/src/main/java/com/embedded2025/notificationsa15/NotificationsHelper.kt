@@ -11,16 +11,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 object NotificationsHelper{
-    const val DEMO_CHANNEL_ID = "channel_demo"
-    const val DEMO_SIMPLE_NOTIFICATION_ID = 1
+    private const val DEMO_CHANNEL_ID = "channel_demo"
+    private const val DEMO_SIMPLE_NOTIFICATION_ID = 1
 
-
-    fun safeNotify(ctx: Context, builder: NotificationCompat.Builder, id: Int) {
+    private fun safeNotify(ctx: Context, builder: NotificationCompat.Builder, id: Int) {
         with(NotificationManagerCompat.from(ctx)) {
             if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_DENIED) {
                 Log.i("NotificationsHelper", "No permission granted")
-
 
                 // TODO: Consider calling
                 // ActivityCompat#requestPermissions
