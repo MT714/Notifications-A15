@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment
 
 abstract class BaseNotificationFragment : Fragment() {
 
-    private val notificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            onNotificationPermissionGranted()
-        } else {
-            Log.i("NotificationsHelper", "Permesso notifiche negato.")
-        }
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            isGranted ->
+            if (isGranted) {
+                onNotificationPermissionGranted()
+            } else {
+                Log.i("NotificationsHelper", "Permesso notifiche negato.")
+            }
     }
 
     fun checkAndRequestNotificationPermission(){

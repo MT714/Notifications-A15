@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Channels -->
-    <string name="channel_demo_name">Canale demo</string>
+    <string name="channel_demo_name">Notifiche demo</string>
     <string name="channel_demo_description">Canale dedicato alle notifiche demo</string>
+    <string name="channel_default_name">Notifiche Generali</string>
+    <string name="channel_default_description">Canale per notifiche standard</string>
+    <string name="channel_high_priority_name">Notifiche Urgenti</string>
+    <string name="channel_high_priority_description">Canale per notifiche ad alta priorità (Heads-Up)</string>
 
     <!-- Notifications -->
     <string name="notif_simple_demo_title">Notifica semplice</string>

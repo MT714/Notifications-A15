@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        NotificationsHelper.initialize(applicationContext)
+
         setupNavigation()
         setupNotifications()
     }
@@ -50,16 +50,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNotifications() {
-        NotificationsHelper.createNotificationChannels(this)
+        NotificationsHelper.initialize(this)
 
-        // Permission
-        // TODO: usare NotificationsHelper.requestPostPermission(this)
-        // una volta implementato il metodo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                == PackageManager.PERMISSION_DENIED) {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
+                != PackageManager.PERMISSION_GRANTED
+        ) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
