@@ -7,10 +7,10 @@
     <string name="nav_header_description">Logo</string>
 
     <!-- Simple notifications -->
-    <string name="simple_notification_title">Simple notification</string>
-    <string name="simple_notification_text">Simple notification</string>
+    <string name="simple_notification_title">Simple notification</string>   // TODO: Change title
+    <string name="simple_notification_text">Simple notification</string>    // TODO: Change text
 
     <!-- Expandable notifications -->
-    <string name="expandable_notification_title">Expandable notification</string>
-    <string name="expandable_notification_text">Expandable notification</string>
+    <string name="expandable_notification_title">Expandable notification</string>   // TODO: Change title
+    <string name="expandable_notification_text">Expandable notification</string>    // TODO: Change text
 </resources>
