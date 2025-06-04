@@ -20,4 +20,9 @@
         android:name="com.embedded2025.notificationsa15.ExpandableNotificationFragment"
         android:label="@string/expandable_notification_title"
         tools:layout="@layout/fragment_expandable_notification" />
+    <fragment
+        android:id="@+id/actionsNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.ActionsNotificationFragment"
+        android:label="@string/actions_notification_title"
+        tools:layout="@layout/fragment_actions_notification" />
 </navigation>
