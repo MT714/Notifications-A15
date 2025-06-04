@@ -5,18 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 
 
-
-class SimpleNotificationFragment : BaseNotificationFragment() {
+class SimpleNotificationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_simple_notification, container, false).apply {
             findViewById<Button>(R.id.btnSimple).setOnClickListener {
-                checkAndRequestNotificationPermission()
+                NotificationsHelper.showSimpleNotificationDemo()
             }
         }
-
-    override fun onNotificationPermissionGranted() {
-        NotificationsHelper.showSimpleNotificationDemo()
-    }
 }

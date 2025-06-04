@@ -5,33 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 
-class ExpandableNotificationFragment : BaseNotificationFragment() {
-    private var pendingNotification: NotificationType? = null
-
-    enum class NotificationType {
-        EXPANDABLE_TEXT, EXPANDABLE_PICTURE
-    }
+class ExpandableNotificationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_expandable_notification, container, false).apply {
             findViewById<Button>(R.id.btnExpandableText).setOnClickListener {
-                pendingNotification = NotificationType.EXPANDABLE_TEXT
-                checkAndRequestNotificationPermission()
+                NotificationsHelper.showExpandableTextNotificationDemo()
             }
             findViewById<Button>(R.id.btnExpandablePicture).setOnClickListener {
-                pendingNotification = NotificationType.EXPANDABLE_PICTURE
-                checkAndRequestNotificationPermission()
+                NotificationsHelper.showExpandablePictureNotificationDemo()
             }
         }
-
-    override fun onNotificationPermissionGranted() {
-        when (pendingNotification) {
-            NotificationType.EXPANDABLE_TEXT ->
-                NotificationsHelper.showExpandableTextNotificationDemo()
-            NotificationType.EXPANDABLE_PICTURE ->
-                NotificationsHelper.showExpandablePictureNotificationDemo()
-            else -> Unit
-        }
-    }
 }

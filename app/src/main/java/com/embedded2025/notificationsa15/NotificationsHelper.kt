@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
@@ -46,14 +47,14 @@ object NotificationsHelper {
         val channels = listOf<NotificationChannel>(
             NotificationChannel(DEMO_CHANNEL_ID,
                 getAppContext().getString(R.string.channel_demo_name),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = getAppContext().getString(R.string.channel_demo_description)
                 setShowBadge(true)
             },
             NotificationChannel(DEFAULT_CHANNEL_ID,
                 getAppContext().getString(R.string.channel_default_name),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = getAppContext().getString(R.string.channel_default_description)
                 setShowBadge(true)
@@ -64,12 +65,29 @@ object NotificationsHelper {
     }
 
     // Pubblica la notifica se l'applicazione ne ha il permesso
-    fun safeNotify(id: Int, builder: NotificationCompat.Builder) {
+    fun safeNotify(id: Int, builder: NotificationCompat.Builder, channelId: String) {
         with(getNotificationManager()) {
-            if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.POST_NOTIFICATIONS)
+            val ctx = getAppContext()
+            if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED
             ) {
-                Log.i("NotificationsHelper", "No permission granted, requesting now.")
+                Log.i("NotificationsHelper", "Permission not granted, opening settings.")
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                ctx.startActivity(intent)
+                return
+            } else if (getNotificationManager().getNotificationChannel(channelId).importance
+                    == NotificationManager.IMPORTANCE_NONE
+            ) {
+                Log.i("NotificationsHelper", "Notification channel is not visible, opening settings.")
+                val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+                    putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                ctx.startActivity(intent)
                 return
             }
             notify(id, builder.build())
@@ -86,10 +104,10 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_SIMPLE_NOTIFICATION_ID, notif)
+        safeNotify(DEMO_SIMPLE_NOTIFICATION_ID, notif, DEMO_CHANNEL_ID)
     }
 
-    // Mostra una notifica espandibile con test
+    // Mostra una notifica espandibile con testo
     fun showExpandableTextNotificationDemo() {
         val ctx = getAppContext()
         val notif = NotificationCompat.Builder(ctx, DEMO_CHANNEL_ID)
@@ -101,7 +119,7 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif)
+        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif, DEMO_CHANNEL_ID)
     }
 
     // Mostra una notifica espandibile con immagine
@@ -116,11 +134,11 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif)
+        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif, DEMO_CHANNEL_ID)
     }
 
     // Mostra una notifica con azioni
-    fun showNotificationWithActions() {
+    fun showActionNotificationDemo() {
         val ctx = getAppContext()
         val archivePendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, "ACTION_ARCHIVE", 1)
         val laterPendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, "ACTION_LATER", 2)
@@ -136,7 +154,7 @@ object NotificationsHelper {
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notification_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notification_action_later), laterPendingIntent)
 
-        safeNotify(DEMO_ACTIONS_NOTIFICATION_ID, builder)
+        safeNotify(DEMO_ACTIONS_NOTIFICATION_ID, builder, DEMO_CHANNEL_ID)
     }
 
 
