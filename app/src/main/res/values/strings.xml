@@ -32,4 +32,9 @@
     <string name="progress_notif_descr">Questa è una notifica di progresso. Premi un bottone per una demo</string>
 
 
+    <!-- Live Update notification -->
+    <string name="liveUpdate_notification_title">Live Update Notification</string>
+    <string name="liveUpdate_notification_description">Questa è una notifica di aggiornamento in tempo reale. Premendo il bottone, verrà mostrata la demo di una notifica relativa allo stato di un ordine.</string>
+    <string name="demo_update_notification_button">Aggiorna notifica demo</string>
+
 </resources>

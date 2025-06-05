@@ -31,6 +31,11 @@
         android:label="@string/reply_notification_title"
         tools:layout="@layout/fragment_reply_notification" />
     <fragment
+        android:id="@+id/liveUpdateNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.LiveUpdateNotificationFragment"
+        android:label="Live Update Notification"
+        tools:layout="@layout/fragment_live_update_notification" />
+    <fragment
         android:id="@+id/progressNotificationFragment"
         android:name="com.embedded2025.notificationsa15.ProgressNotificationFragment"
         android:label="@string/progress_notification_title"
