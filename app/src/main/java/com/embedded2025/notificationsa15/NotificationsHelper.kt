@@ -45,7 +45,9 @@ object NotificationsHelper {
     private fun getNotificationManager(): NotificationManager =
         getAppContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    // Assegna il contesto dell'applicazione e crea i canali di notifica
+    /**
+     * Inizializza l'oggetto NotificationsHelper.
+     */
     fun initialize(context: Context) {
         appContext = context.applicationContext
 
@@ -70,30 +72,59 @@ object NotificationsHelper {
         getNotificationManager().createNotificationChannels(channels)
     }
 
-    // Pubblica la notifica se l'applicazione ne ha il permesso
-    fun safeNotify(id: Int, builder: NotificationCompat.Builder, channelId: String) {
+    /**
+     * Pubblica una notifica.
+     *
+     * @param id l'ID della notifica
+     * @param builder il builder della notifica
+     */
+    fun safeNotify(id: Int, builder: NotificationCompat.Builder) {
+        with(getNotificationManager()) {
+            if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.i("NotificationsHelper", "Permission not granted.")
+
+                return
+            }
+            notify(id, builder.build())
+        }
+    }
+
+    /**
+     * Pubblica una notifica demo.
+     * Differisce da [safeNotify] in quanto se le notifiche non sono abilitate oppure il canale demo
+     * non è visibile, allora l'utente viene reindirizzato alle relative impostazioni di sistema.
+     *
+     * @param id l'ID della notifica
+     * @param builder il builder della notifica
+     *
+     * @see safeNotify
+     */
+    private fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder) {
         with(getNotificationManager()) {
             val ctx = getAppContext()
             if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED
             ) {
                 Log.i("NotificationsHelper", "Permission not granted, opening settings.")
-                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                     putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                ctx.startActivity(intent)
+                })
+
                 return
-            } else if (getNotificationManager().getNotificationChannel(channelId).importance
+            } else if (getNotificationManager().getNotificationChannel(DEMO_CHANNEL_ID).importance
                     == NotificationManager.IMPORTANCE_NONE
             ) {
                 Log.i("NotificationsHelper", "Notification channel is not visible, opening settings.")
-                val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+
+                ctx.startActivity(Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
                     putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-                    putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                    putExtra(Settings.EXTRA_CHANNEL_ID, DEMO_CHANNEL_ID)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                ctx.startActivity(intent)
+                })
+
                 return
             }
             notify(id, builder.build())
@@ -110,7 +141,7 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_SIMPLE_NOTIFICATION_ID, notif, DEMO_CHANNEL_ID)
+        safeNotifyDemo(DEMO_SIMPLE_NOTIFICATION_ID, notif)
     }
 
     // Mostra una notifica espandibile con testo
@@ -125,7 +156,7 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif, DEMO_CHANNEL_ID)
+        safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif)
     }
 
     // Mostra una notifica espandibile con immagine
@@ -140,7 +171,7 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        safeNotify(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif, DEMO_CHANNEL_ID)
+        safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif)
     }
 
     // Mostra una notifica con azioni
@@ -160,7 +191,7 @@ object NotificationsHelper {
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterPendingIntent)
 
-        safeNotify(DEMO_ACTIONS_NOTIFICATION_ID, builder, DEMO_CHANNEL_ID)
+        safeNotifyDemo(DEMO_ACTIONS_NOTIFICATION_ID, builder)
     }
 
     //Mostra una notifica di risposta
@@ -196,8 +227,7 @@ object NotificationsHelper {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(action)
 
-        safeNotify(DEMO_REPLY_NOTIFICATION_ID, builder, channelForReply)
-
+        safeNotifyDemo(DEMO_REPLY_NOTIFICATION_ID, builder)
     }
 
     private fun createPendingIntent(notificationId: Int, action: String? = null): PendingIntent {
