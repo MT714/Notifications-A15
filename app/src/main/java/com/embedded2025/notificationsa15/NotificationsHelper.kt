@@ -477,7 +477,6 @@ object NotificationsHelper {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setOngoing(isPlaying)
-            // Azioni
             .addAction(R.drawable.ic_previous, ctx.getString(R.string.notif_media_player_demo_previous), previousIntent)
             .addAction(playPauseIcon, playPauseTitle, playPauseIntent)
             .addAction(R.drawable.ic_next, ctx.getString(R.string.notif_media_player_demo_next), nextIntent)
