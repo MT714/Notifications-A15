@@ -8,12 +8,12 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 
 
-class ActionsNotificationFragment : Fragment(){
+class ReplyNotificationFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_actions_notification, container, false).apply {
-            findViewById<Button>(R.id.btnActionNotification).setOnClickListener {
-                NotificationsHelper.showActionNotificationDemo()
+        inflater.inflate(R.layout.fragment_reply_notification, container, false).apply {
+            findViewById<Button>(R.id.btnReplyNotification).setOnClickListener {
+                NotificationsHelper.showReplyNotificationDemo()
             }
         }
 }

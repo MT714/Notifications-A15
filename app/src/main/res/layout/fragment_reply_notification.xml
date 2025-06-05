@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".ActionsNotificationFragment">
+    tools:context=".ReplyNotificationFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,20 +14,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/actions_notification_title"
+            android:text="@string/reply_notification_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/actions_notif_descr"
+            android:text="@string/reply_notif_descr"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:lineSpacingMultiplier="1.2"
             android:layout_marginBottom="16dp"/>
 
         <Button
-            android:id="@+id/btnActionNotification"
+            android:id="@+id/btnReplyNotification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/demo_button" />

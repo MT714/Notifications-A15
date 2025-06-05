@@ -11,11 +11,14 @@ import android.content.pm.PackageManager
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import android.os.Build
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.app.RemoteInput
 
 
 
@@ -29,6 +32,8 @@ object NotificationsHelper {
     const val DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID = 1
     const val DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID = 2
     const val DEMO_ACTIONS_NOTIFICATION_ID = 3
+    const val DEMO_REPLY_NOTIFICATION_ID = 4
+
 
     private var notificationIdCounter = 1000
     fun getUniqueId(): Int = notificationIdCounter++
@@ -151,25 +156,62 @@ object NotificationsHelper {
                 .bigText(ctx.getString(R.string.notif_action_demo_text)))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .addAction(R.drawable.ic_archive, ctx.getString(R.string.notification_action_archive), archivePendingIntent)
-            .addAction(R.drawable.ic_later, ctx.getString(R.string.notification_action_later), laterPendingIntent)
+            .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archivePendingIntent)
+            .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterPendingIntent)
 
         safeNotify(DEMO_ACTIONS_NOTIFICATION_ID, builder, DEMO_CHANNEL_ID)
     }
 
+    //Mostra una notifica di risposta
+    const val KEY_TEXT_REPLY = "key_text_reply"
+    const val ACTION_REPLY = "com.embedded2025.notificationsa15.ACTION_REPLY" //Nome completo per prevenire conflitti con altre azioni
+    fun showReplyNotificationDemo() {
+        val ctx = getAppContext()
+        val channelForReply = DEMO_CHANNEL_ID
+        val replyLabel = ctx.getString(R.string.notif_reply_demo_label)
+        val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY).run {
+            setLabel(replyLabel)
+            build()
+        }
+        val replyIntent = Intent(ctx, NotificationActionReceiver::class.java).apply {
+            action = ACTION_REPLY
+            putExtra("notification_id", DEMO_REPLY_NOTIFICATION_ID)
+        }
+        val replyPendingIntent = PendingIntent.getBroadcast(
+            ctx,
+            DEMO_REPLY_NOTIFICATION_ID + 3,
+            replyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+        val action = NotificationCompat.Action.Builder(
+            R.drawable.ic_reply_icon,
+            ctx.getString(R.string.notif_reply_demo_action),
+            replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+        val builder = NotificationCompat.Builder(ctx, channelForReply)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(ctx.getString(R.string.notif_reply_demo_title))
+            .setContentText(ctx.getString(R.string.notif_reply_demo_text))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .addAction(action)
+
+        safeNotify(DEMO_REPLY_NOTIFICATION_ID, builder, channelForReply)
+
+    }
 
     private fun createPendingIntent(notificationId: Int, action: String? = null): PendingIntent {
         val context = getAppContext()
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            this.action = action
+            this.action = action // L'action sull'intent per l'Activity può essere utile se MainActivity deve comportarsi diversamente
             putExtra("notification_id", notificationId)
         }
+        val pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         return PendingIntent.getActivity(
             context,
             notificationId,
             intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            pendingIntentFlags
         )
     }
 
@@ -179,17 +221,23 @@ object NotificationsHelper {
             this.action = action
             putExtra("notification_id", notificationId)
         }
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
         return PendingIntent.getBroadcast(
             context,
             notificationId + requestCodeOffset,
             intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            flags
         )
     }
 }
 
 // Classe per gestire le azioni delle notifiche
 class NotificationActionReceiver : BroadcastReceiver() {
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onReceive(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra("notification_id", 0)
         val action = intent.action
@@ -202,6 +250,24 @@ class NotificationActionReceiver : BroadcastReceiver() {
             "ACTION_LATER" -> {
                 NotificationManagerCompat.from(context).cancel(notificationId)
                 Toast.makeText(context, "Azione: Più tardi (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+            }
+            NotificationsHelper.ACTION_REPLY -> {
+                val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(NotificationsHelper.KEY_TEXT_REPLY)
+                if (replyText != null) {
+                    Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
+                    // Qui puoi:
+                    // 1. Salvare la risposta
+                    // 2. Inviarla a un server
+                    // 3. Aggiornare la notifica originale
+                    val notificationManager = NotificationManagerCompat.from(context)
+                    val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.DEMO_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification_actions)
+                        .setContentText("Risposta inviata: \"$replyText\"")
+                        .build()
+                    notificationManager.notify(notificationId, repliedNotification)
+                } else {
+                    Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

@@ -25,4 +25,9 @@
         android:name="com.embedded2025.notificationsa15.ActionsNotificationFragment"
         android:label="@string/actions_notification_title"
         tools:layout="@layout/fragment_actions_notification" />
+    <fragment
+        android:id="@+id/replyNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.ReplyNotificationFragment"
+        android:label="@string/reply_notification_title"
+        tools:layout="@layout/fragment_reply_notification" />
 </navigation>

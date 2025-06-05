@@ -29,4 +29,11 @@
 
     <string name="notif_action_demo_title">Notifica con azioni</string>
     <string name="notif_action_demo_text">Questa è una notifica con azioni</string>
+    <string name="notif_action_archive">Archivia</string>
+    <string name="notif_action_later">Più tardi</string>
+
+    <string name="notif_reply_demo_title">Notifica di risposta</string>
+    <string name="notif_reply_demo_text">Questa è una notifica di risposta</string>
+    <string name="notif_reply_demo_label">Scrivi una risposta</string>
+    <string name="notif_reply_demo_action">Scrivi</string>
 </resources>

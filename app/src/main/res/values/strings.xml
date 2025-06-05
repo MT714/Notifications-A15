@@ -21,6 +21,10 @@
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
     <string name="actions_notif_descr">Questa è una notifica con azioni. Premi un bottone per una demo</string>
-    <string name="notification_action_archive">Archivia</string>
-    <string name="notification_action_later">Più tardi</string>
+
+
+    <!-- Reply notification -->
+    <string name="reply_notification_title">Reply notification</string>
+    <string name="reply_notif_descr">Questa è una notifica di risposta. Premi un bottone per una demo</string>
+
 </resources>

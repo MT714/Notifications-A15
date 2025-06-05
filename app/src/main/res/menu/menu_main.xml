@@ -13,4 +13,7 @@
     <item
         android:id="@id/actionsNotificationFragment"
         android:title="@string/actions_notification_title"/>
+    <item
+        android:id="@id/replyNotificationFragment"
+        android:title="@string/reply_notification_title"/>
 </menu>
