@@ -33,6 +33,7 @@ object NotificationsHelper {
     const val DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID = 2
     const val DEMO_ACTIONS_NOTIFICATION_ID = 3
     const val DEMO_REPLY_NOTIFICATION_ID = 4
+    const val DEMO_PROGRESS_NOTIFICATION_ID = 5
 
 
     private var notificationIdCounter = 1000
@@ -255,10 +256,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(NotificationsHelper.KEY_TEXT_REPLY)
                 if (replyText != null) {
                     Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                    // Qui puoi:
-                    // 1. Salvare la risposta
-                    // 2. Inviarla a un server
-                    // 3. Aggiornare la notifica originale
                     val notificationManager = NotificationManagerCompat.from(context)
                     val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.DEMO_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification_actions)
