@@ -8,10 +8,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import android.os.Build
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
@@ -34,6 +37,7 @@ object NotificationsHelper {
     // ID canali
     const val DEMO_CHANNEL_ID = "channel_demo"
     const val DEFAULT_CHANNEL_ID = "channel_default"
+    const val MEDIA_PLAYER_CHANNEL_ID = "channel_media_player"
 
     // ID notifiche
     const val DEMO_SIMPLE_NOTIFICATION_ID = 0
@@ -42,6 +46,7 @@ object NotificationsHelper {
     const val DEMO_ACTIONS_NOTIFICATION_ID = 3
     const val DEMO_REPLY_NOTIFICATION_ID = 4
     const val DEMO_PROGRESS_NOTIFICATION_ID = 5
+    const val DEMO_MEDIA_PLAYER_NOTIFICATION_ID = 6
 
 
     private var notificationIdCounter = 1000
@@ -74,6 +79,14 @@ object NotificationsHelper {
             ).apply {
                 description = getAppContext().getString(R.string.channel_default_description)
                 setShowBadge(true)
+            },
+            NotificationChannel(MEDIA_PLAYER_CHANNEL_ID,
+                getAppContext().getString(R.string.channel_media_player_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = getAppContext().getString(R.string.channel_media_player_description)
+                setShowBadge(false)
+                setSound(null, null)
             }
         )
 
@@ -183,10 +196,12 @@ object NotificationsHelper {
     }
 
     // Mostra una notifica con azioni
+    const val ACTION_ARCHIVE = "com.embedded2025.notificationsa15.ACTION_ARCHIVE"
+    const val ACTION_LATER = "com.embedded2025.notificationsa15.ACTION_LATER"
     fun showActionNotificationDemo() {
         val ctx = getAppContext()
-        val archivePendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, "ACTION_ARCHIVE", 1)
-        val laterPendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, "ACTION_LATER", 2)
+        val archivePendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, ACTION_ARCHIVE, 1)
+        val laterPendingIntent = createBroadcastPendingIntent(DEMO_ACTIONS_NOTIFICATION_ID, ACTION_LATER,2)
         val builder = NotificationCompat.Builder(ctx, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_action_demo_title))
@@ -355,6 +370,66 @@ object NotificationsHelper {
         }
     }
 
+    // Mostra una notifica di riproduzione multimediale
+    const val ACTION_MEDIA_PLAY_PAUSE = "com.embedded2025.notificationsa15.ACTION_MEDIA_PLAY_PAUSE"
+    const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
+    const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
+    const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
+    fun showMediaPlayerNotification(
+        songTitle: String,
+        artistName: String,
+        albumArt: Bitmap?,
+        isPlaying: Boolean,
+        mediaSessionToken: android.support.v4.media.session.MediaSessionCompat.Token? = null
+    ) {
+        val ctx = getAppContext()
+        val notificationId = DEMO_MEDIA_PLAYER_NOTIFICATION_ID
+        val playPauseIntent = createBroadcastPendingIntent(
+            notificationId,
+            ACTION_MEDIA_PLAY_PAUSE,
+            requestCodeOffset = 10
+        )
+        val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+        val playPauseTitle = if (isPlaying) ctx.getString(R.string.notif_media_player_demo_pause) else ctx.getString(R.string.notif_media_player_demo_play)
+        val nextIntent = createBroadcastPendingIntent(
+            notificationId,
+            ACTION_MEDIA_NEXT,
+            requestCodeOffset = 11
+        )
+        val previousIntent = createBroadcastPendingIntent(
+            notificationId,
+            ACTION_MEDIA_PREVIOUS,
+            requestCodeOffset = 12
+        )
+        val stopIntent = createBroadcastPendingIntent(
+            notificationId,
+            ACTION_MEDIA_STOP,
+            requestCodeOffset = 13
+        )
+        val builder = NotificationCompat.Builder(ctx, MEDIA_PLAYER_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_music_note)
+            .setContentTitle(songTitle)
+            .setContentText(artistName)
+            .setLargeIcon(albumArt)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOnlyAlertOnce(true)
+            .setOngoing(isPlaying)
+            // Azioni
+            .addAction(R.drawable.ic_previous, ctx.getString(R.string.notif_media_player_demo_previous), previousIntent)
+            .addAction(playPauseIcon, playPauseTitle, playPauseIntent)
+            .addAction(R.drawable.ic_next, ctx.getString(R.string.notif_media_player_demo_next), nextIntent)
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSessionToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+                    .setShowCancelButton(true)
+                    .setCancelButtonIntent(stopIntent)
+            )
+
+        safeNotifyDemo(notificationId, builder)
+    }
+
+
     private fun createPendingIntent(notificationId: Int, action: String? = null): PendingIntent {
         val context = getAppContext()
         val intent = Intent(context, MainActivity::class.java).apply {
@@ -399,11 +474,11 @@ class NotificationActionReceiver : BroadcastReceiver() {
         val action = intent.action
 
         when (action) {
-            "ACTION_ARCHIVE" -> {
+            NotificationsHelper.ACTION_ARCHIVE -> {
                 NotificationManagerCompat.from(context).cancel(notificationId)
                 Toast.makeText(context, "Azione: Archiviato (ID: $notificationId)", Toast.LENGTH_SHORT).show()
             }
-            "ACTION_LATER" -> {
+            NotificationsHelper.ACTION_LATER -> {
                 NotificationManagerCompat.from(context).cancel(notificationId)
                 Toast.makeText(context, "Azione: Più tardi (ID: $notificationId)", Toast.LENGTH_SHORT).show()
             }
@@ -421,6 +496,126 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
                 }
             }
+            NotificationsHelper.ACTION_MEDIA_PLAY_PAUSE -> {
+                Toast.makeText(context, "Azione: Play/Pausa (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+                Log.i("MediaPlayerAction", "Play/Pause Toggled")
+                FakeMediaPlayer.togglePlayPause()
+                NotificationsHelper.showMediaPlayerNotification(
+                    songTitle = FakeMediaPlayer.currentSong,
+                    artistName = FakeMediaPlayer.currentArtist,
+                    albumArt = FakeMediaPlayer.getAlbumArt(context),
+                    isPlaying = FakeMediaPlayer.isPlaying
+                )
+
+            }
+            NotificationsHelper.ACTION_MEDIA_NEXT -> {
+                Toast.makeText(context, "Azione: Successivo (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+                Log.i("MediaPlayerAction", "Next Track")
+                FakeMediaPlayer.nextTrack()
+                NotificationsHelper.showMediaPlayerNotification(
+                    songTitle = FakeMediaPlayer.currentSong,
+                    artistName = FakeMediaPlayer.currentArtist,
+                    albumArt = FakeMediaPlayer.getAlbumArt(context),
+                    isPlaying = FakeMediaPlayer.isPlaying
+                )
+            }
+            NotificationsHelper.ACTION_MEDIA_PREVIOUS -> {
+                Toast.makeText(context, "Azione: Precedente (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+                Log.i("MediaPlayerAction", "Previous Track")
+                FakeMediaPlayer.previousTrack()
+                NotificationsHelper.showMediaPlayerNotification(
+                    songTitle = FakeMediaPlayer.currentSong,
+                    artistName = FakeMediaPlayer.currentArtist,
+                    albumArt = FakeMediaPlayer.getAlbumArt(context),
+                    isPlaying = FakeMediaPlayer.isPlaying
+                )
+            }
+            else -> {
+                Log.w("NotificationAction", "Azione sconosciuta: $action")
+            }
         }
+    }
+}
+
+/**
+ * Oggetto Singleton fittizio per simulare un Media Player.
+ */
+object FakeMediaPlayer {
+    var isPlaying = false
+        private set
+    var currentSong = "Nessuna canzone"
+        private set
+    var currentArtist = "Sconosciuto"
+        private set
+
+    private val playlist = listOf(
+        Triple("Bohemian Rhapsody", "Queen", R.drawable.album_art_1),
+        Triple("Stairway to Heaven", "Led Zeppelin", R.drawable.album_art_2),
+        Triple("Hotel California", "Eagles", R.drawable.album_art_3)
+    )
+    private var currentTrackIndex = -1
+
+    fun togglePlayPause() {
+        if (playlist.isEmpty()) return
+        if (currentTrackIndex == -1) {
+            currentTrackIndex = 0
+            updateTrackInfo()
+        }
+        isPlaying = !isPlaying
+        Log.d("FakeMediaPlayer", "isPlaying: $isPlaying")
+    }
+
+    fun play() {
+        if (playlist.isEmpty()) return
+        if (currentTrackIndex == -1) {
+            currentTrackIndex = 0
+        }
+        updateTrackInfo()
+        isPlaying = true
+        Log.d("FakeMediaPlayer", "Playing: $currentSong")
+    }
+
+    fun pause() {
+        isPlaying = false
+        Log.d("FakeMediaPlayer", "Paused: $currentSong")
+    }
+
+    fun nextTrack() {
+        if (playlist.isEmpty()) return
+        currentTrackIndex = (currentTrackIndex + 1) % playlist.size
+        updateTrackInfo()
+        isPlaying = true
+        Log.d("FakeMediaPlayer", "Next Track: $currentSong")
+    }
+
+    fun previousTrack() {
+        if (playlist.isEmpty()) return
+        currentTrackIndex = if (currentTrackIndex - 1 < 0) playlist.size - 1 else currentTrackIndex - 1
+        updateTrackInfo()
+        isPlaying = true
+        Log.d("FakeMediaPlayer", "Previous Track: $currentSong")
+    }
+
+    private fun updateTrackInfo() {
+        if (currentTrackIndex in playlist.indices) {
+            val track = playlist[currentTrackIndex]
+            currentSong = track.first
+            currentArtist = track.second
+        }
+    }
+
+    fun getAlbumArt(context: Context): Bitmap? {
+        if (currentTrackIndex in playlist.indices) {
+            val drawableId = playlist[currentTrackIndex].third
+            return try {
+                BitmapFactory.decodeResource(context.resources, drawableId)
+            } catch (e: Exception) {
+                Log.e("FakeMediaPlayer", "Error loading album art for drawable ID: $drawableId", e)
+                try { BitmapFactory.decodeResource(context.resources, R.drawable.ic_default_album_art) }
+                catch (e2: Exception) { null }
+            }
+        }
+        return try { BitmapFactory.decodeResource(context.resources, R.drawable.ic_default_album_art) }
+        catch (e: Exception) { null }
     }
 }

@@ -31,5 +31,8 @@
     <string name="progress_notification_title">Progress notification</string>
     <string name="progress_notif_descr">Questa è una notifica di progresso. Premi un bottone per una demo</string>
 
+    <!-- Media player notification -->
+    <string name="media_player_notif_title">Media player notification</string>
+    <string name="media_player_notif_descr">Questa è una notifica di riproduzione multimediale. Premi un bottone per una demo</string>
 
 </resources>
