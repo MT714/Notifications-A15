@@ -27,4 +27,9 @@
     <string name="reply_notification_title">Reply notification</string>
     <string name="reply_notif_descr">Questa è una notifica di risposta. Premi un bottone per una demo</string>
 
+    <!-- Progress notification -->
+    <string name="progress_notification_title">Progress notification</string>
+    <string name="progress_notif_descr">Questa è una notifica di progresso. Premi un bottone per una demo</string>
+
+
 </resources>

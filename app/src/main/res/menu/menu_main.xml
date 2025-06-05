@@ -16,4 +16,8 @@
     <item
         android:id="@id/replyNotificationFragment"
         android:title="@string/reply_notification_title"/>
+    <item
+        android:id="@id/progressNotificationFragment"
+        android:title="@string/progress_notification_title"/>
+
 </menu>
