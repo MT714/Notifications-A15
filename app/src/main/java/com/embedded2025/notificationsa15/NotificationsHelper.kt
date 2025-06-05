@@ -361,7 +361,6 @@ object NotificationsHelper {
 
     fun showLiveUpdateNotificationDemo(step : Int){
         val ctx = getAppContext()
-        var title: String ?= "A"
 
         val stepBundle = Bundle().apply {
             putInt("order_step", step)
