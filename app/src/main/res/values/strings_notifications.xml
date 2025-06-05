@@ -39,6 +39,13 @@
     <string name="notif_reply_demo_label">Scrivi una risposta</string>
     <string name="notif_reply_demo_action">Scrivi</string>
 
+    <string name="notif_live_update_demo_title">Notifica di aggiornamento in tempo reale</string>
+    <string name="notif_live_update_demo_text">Segui lo stato del tuo ordine:</string>
+    <string name="notif_live_update_demo_text_updated">La notifica è stata aggiornata in tempo reale</string>
+    <string name="notif_live_update_demo_order_placed">L\'ordine è in preparazione</string>
+    <string name="notif_live_update_demo_order_sent">L\'ordine è stato spedito</string>
+    <string name="notif_live_update_demo_order_complete">L\'ordine è stato consegnato</string>
+
     <string name="notif_progress_demo_title">Operazione in corso</string>
     <string name="notif_progress_demo_text">Questa notifica mostra una barra di progresso</string>
     <string name="notif_progress_demo_indet">Attendere prego…</string>

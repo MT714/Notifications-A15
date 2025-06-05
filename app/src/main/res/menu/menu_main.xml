@@ -22,4 +22,7 @@
     <item
         android:id="@id/mediaPlayerNotificationFragment"
         android:title="@string/media_player_notif_title"/>
+    <item
+        android:id="@id/liveUpdateNotificationFragment"
+        android:title="@string/liveUpdate_notification_title"/>
 </menu>
