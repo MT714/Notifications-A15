@@ -36,4 +36,11 @@
     <string name="notif_reply_demo_text">Questa è una notifica di risposta</string>
     <string name="notif_reply_demo_label">Scrivi una risposta</string>
     <string name="notif_reply_demo_action">Scrivi</string>
+
+    <string name="notif_progress_demo_title">Operazione in corso</string>
+    <string name="notif_progress_demo_text">Questa notifica mostra una barra di progresso</string>
+    <string name="notif_progress_demo_indet">Attendere prego…</string>
+    <string name="notif_progress_demo_det">Avanzamento: %1$d%%</string>
+    <string name="notif_progress_demo_complete">Operazione completata!</string>
+    <string name="notif_progress_demo_fail">Operazione fallita.</string>
 </resources>

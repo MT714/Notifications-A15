@@ -19,6 +19,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.app.RemoteInput
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 
@@ -33,6 +41,7 @@ object NotificationsHelper {
     const val DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID = 2
     const val DEMO_ACTIONS_NOTIFICATION_ID = 3
     const val DEMO_REPLY_NOTIFICATION_ID = 4
+    const val DEMO_PROGRESS_NOTIFICATION_ID = 5
 
 
     private var notificationIdCounter = 1000
@@ -199,11 +208,128 @@ object NotificationsHelper {
 
     }
 
+    //Mostra una notifica con barra di progresso
+    private val helperJob = SupervisorJob()
+    private val helperScope = CoroutineScope(Dispatchers.Default + helperJob)
+    fun showProgressNotificationDemo() {
+        val ctx = getAppContext()
+        val channelForProgress = DEMO_CHANNEL_ID
+        val notificationId = DEMO_PROGRESS_NOTIFICATION_ID
+        val initialBuilder = NotificationCompat.Builder(ctx, channelForProgress)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(ctx.getString(R.string.progress_notification_title))
+            .setContentText(
+                ctx.getString(
+                    R.string.notif_progress_demo_det,
+                    0
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setProgress(100, 0, false)
+
+        safeNotify(notificationId, initialBuilder, channelForProgress)
+
+        // Avvia la coroutine per simulare il progresso
+        helperScope.launch {
+            val maxProgress = 100
+            var currentProgress = 0
+            try {
+                while (currentProgress <= maxProgress && isActive) {
+                    val updateBuilder = NotificationCompat.Builder(ctx, channelForProgress)
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
+                        .setContentText(
+                            String.format(
+                                ctx.getString(R.string.notif_progress_demo_det),
+                                currentProgress
+                            )
+                        )
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setOngoing(true)
+                        .setOnlyAlertOnce(true)
+                        .setProgress(maxProgress, currentProgress, false)
+                    if (ActivityCompat.checkSelfPermission(
+                            ctx,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        getNotificationManager().notify(notificationId, updateBuilder.build())
+                    } else {
+                        Log.w(
+                            "ProgressNotification",
+                            "Permesso per le notifiche perso durante l'aggiornamento del progresso."
+                        )
+                        break
+                    }
+
+                    delay(500)
+                    currentProgress += 5
+                }
+                if (isActive) {
+                    val finalBuilder = NotificationCompat.Builder(ctx, channelForProgress)
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
+                        .setContentText(ctx.getString(R.string.notif_progress_demo_complete))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setOngoing(false)
+                        .setOnlyAlertOnce(false)
+                        .setProgress(0, 0, false)
+
+                    if (ActivityCompat.checkSelfPermission(
+                            ctx,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        getNotificationManager().notify(notificationId, finalBuilder.build())
+                    }
+                } else {
+                    Log.i("ProgressNotification", "Operazione di progresso cancellata.")
+                    val cancelledBuilder = NotificationCompat.Builder(ctx, channelForProgress)
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
+                        .setContentText("Operazione annullata.")
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setOngoing(false)
+                        .setProgress(0, 0, false)
+                    if (ActivityCompat.checkSelfPermission(
+                            ctx,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        getNotificationManager().notify(notificationId, cancelledBuilder.build())
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "ProgressNotification",
+                    "Errore o cancellazione durante l'operazione di progresso",
+                    e
+                )
+                val errorBuilder = NotificationCompat.Builder(ctx, channelForProgress)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle(ctx.getString(R.string.progress_notification_title))
+                    .setContentText(ctx.getString(R.string.notif_progress_demo_fail))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setOngoing(false)
+                    .setProgress(0, 0, false)
+                if (ActivityCompat.checkSelfPermission(
+                        ctx,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    getNotificationManager().notify(notificationId, errorBuilder.build())
+                }
+            }
+        }
+    }
+
     private fun createPendingIntent(notificationId: Int, action: String? = null): PendingIntent {
         val context = getAppContext()
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            this.action = action // L'action sull'intent per l'Activity può essere utile se MainActivity deve comportarsi diversamente
+            this.action = action
             putExtra("notification_id", notificationId)
         }
         val pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -255,10 +381,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(NotificationsHelper.KEY_TEXT_REPLY)
                 if (replyText != null) {
                     Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                    // Qui puoi:
-                    // 1. Salvare la risposta
-                    // 2. Inviarla a un server
-                    // 3. Aggiornare la notifica originale
                     val notificationManager = NotificationManagerCompat.from(context)
                     val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.DEMO_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification_actions)
