@@ -259,7 +259,7 @@ object NotificationsHelper {
             .setOnlyAlertOnce(true)
             .setProgress(100, 0, false)
 
-        safeNotify(notificationId, initialBuilder, channelForProgress)
+        safeNotify(notificationId, initialBuilder)
 
         // Avvia la coroutine per simulare il progresso
         helperScope.launch {
