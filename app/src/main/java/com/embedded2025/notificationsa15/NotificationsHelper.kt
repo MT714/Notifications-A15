@@ -89,18 +89,20 @@ object NotificationsHelper {
      *
      * @param id l'ID della notifica
      * @param builder il builder della notifica
+     *
+     * @return true se la notifica è stata pubblicata con successo, false altrimenti
      */
-    fun safeNotify(id: Int, builder: NotificationCompat.Builder) {
-        with(getNotificationManager()) {
-            if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.i("NotificationsHelper", "Permission not granted.")
+    fun safeNotify(id: Int, builder: NotificationCompat.Builder): Boolean {
+        if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i("NotificationsHelper", "Permission not granted.")
 
-                return
-            }
-            notify(id, builder.build())
+            return false
         }
+
+        getNotificationManager().notify(id, builder.build())
+        return true
     }
 
     /**
@@ -111,36 +113,40 @@ object NotificationsHelper {
      * @param id l'ID della notifica
      * @param builder il builder della notifica
      *
+     * @return true se la notifica è stata pubblicata con successo, false altrimenti
+     *
      * @see safeNotify
      */
-    private fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder) {
-        with(getNotificationManager()) {
-            val ctx = getAppContext()
-            if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.i("NotificationsHelper", "Permission not granted, opening settings.")
-                ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
+    private fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder): Boolean {
+        val ctx = getAppContext()
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i("NotificationsHelper", "Permission not granted, opening settings.")
+            ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            })
 
-                return
-            } else if (getNotificationManager().getNotificationChannel(DEMO_CHANNEL_ID).importance
-                    == NotificationManager.IMPORTANCE_NONE
-            ) {
-                Log.i("NotificationsHelper", "Notification channel is not visible, opening settings.")
-
-                ctx.startActivity(Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-                    putExtra(Settings.EXTRA_CHANNEL_ID, DEMO_CHANNEL_ID)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
-
-                return
-            }
-            notify(id, builder.build())
+            return false
         }
+
+        val manager = getNotificationManager()
+        if (manager.getNotificationChannel(DEMO_CHANNEL_ID).importance == NotificationManager.IMPORTANCE_NONE
+        ) {
+            Log.i("NotificationsHelper", "Notification channel is not visible, opening settings.")
+
+            ctx.startActivity(Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+                putExtra(Settings.EXTRA_CHANNEL_ID, DEMO_CHANNEL_ID)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            })
+
+            return false
+        }
+
+        manager.notify(id, builder.build())
+        return true
     }
 
     // Mostra una notifica semplice
@@ -152,6 +158,8 @@ object NotificationsHelper {
             .setContentText(ctx.getString(R.string.notif_simple_demo_text))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentIntent(createContentPendingIntent(R.id.simpleNotificationFragment))
+            .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_SIMPLE_NOTIFICATION_ID, notif)
     }
@@ -167,6 +175,8 @@ object NotificationsHelper {
                 .bigText(ctx.getString(R.string.notif_expandable_demo_bigtext)))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentIntent(createContentPendingIntent(R.id.expandableNotificationFragment))
+            .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif)
     }
@@ -182,6 +192,8 @@ object NotificationsHelper {
                 .bigPicture(getDrawable(ctx, R.drawable.project_logo)?.toBitmap()))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentIntent(createContentPendingIntent(R.id.expandableNotificationFragment))
+            .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif)
     }
@@ -195,13 +207,14 @@ object NotificationsHelper {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_action_demo_title))
             .setContentText(ctx.getString(R.string.notif_action_demo_text))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(ctx.getString(R.string.notif_action_demo_text)))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterPendingIntent)
+            .setContentIntent(createContentPendingIntent(R.id.actionsNotificationFragment))
+            .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_ACTIONS_NOTIFICATION_ID, builder)
     }
@@ -236,7 +249,10 @@ object NotificationsHelper {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(ctx.getString(R.string.notif_reply_demo_title))
             .setContentText(ctx.getString(R.string.notif_reply_demo_text))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentIntent(createContentPendingIntent(R.id.replyNotificationFragment))
+            .setAutoCancel(true)
             .addAction(action)
 
         safeNotifyDemo(DEMO_REPLY_NOTIFICATION_ID, builder)
@@ -258,13 +274,13 @@ object NotificationsHelper {
                     0
                 )
             )
-            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setProgress(100, 0, false)
+            .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
 
-        safeNotify(notificationId, initialBuilder)
-
+        if (!safeNotifyDemo(notificationId, initialBuilder)) return
+        // Qua la notifica è stata pubblicata con successo
         // Avvia la coroutine per simulare il progresso
         helperScope.launch {
             val maxProgress = 100
@@ -280,10 +296,10 @@ object NotificationsHelper {
                                 currentProgress
                             )
                         )
-                        .setPriority(NotificationCompat.PRIORITY_LOW)
                         .setOngoing(true)
                         .setOnlyAlertOnce(true)
                         .setProgress(maxProgress, currentProgress, false)
+                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
                     if (ActivityCompat.checkSelfPermission(
                             ctx,
                             Manifest.permission.POST_NOTIFICATIONS
@@ -306,11 +322,11 @@ object NotificationsHelper {
                         .setSmallIcon(R.drawable.ic_launcher_background)
                         .setContentTitle(ctx.getString(R.string.progress_notification_title))
                         .setContentText(ctx.getString(R.string.notif_progress_demo_complete))
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setOngoing(false)
                         .setOnlyAlertOnce(false)
                         .setProgress(0, 0, false)
-
+                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
+                        .setAutoCancel(true)
                     if (ActivityCompat.checkSelfPermission(
                             ctx,
                             Manifest.permission.POST_NOTIFICATIONS
@@ -324,9 +340,10 @@ object NotificationsHelper {
                         .setSmallIcon(R.drawable.ic_launcher_background)
                         .setContentTitle(ctx.getString(R.string.progress_notification_title))
                         .setContentText("Operazione annullata.")
-                        .setPriority(NotificationCompat.PRIORITY_LOW)
                         .setOngoing(false)
                         .setProgress(0, 0, false)
+                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
+                        .setAutoCancel(true)
                     if (ActivityCompat.checkSelfPermission(
                             ctx,
                             Manifest.permission.POST_NOTIFICATIONS
@@ -345,9 +362,10 @@ object NotificationsHelper {
                     .setSmallIcon(R.drawable.ic_launcher_background)
                     .setContentTitle(ctx.getString(R.string.progress_notification_title))
                     .setContentText(ctx.getString(R.string.notif_progress_demo_fail))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setOngoing(false)
                     .setProgress(0, 0, false)
+                    .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
+                    .setAutoCancel(true)
                 if (ActivityCompat.checkSelfPermission(
                         ctx,
                         Manifest.permission.POST_NOTIFICATIONS
@@ -371,6 +389,7 @@ object NotificationsHelper {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentText(ctx.getString(R.string.notif_live_update_demo_text))
             .setProgress(3, step + 1, false)
+            .setContentIntent(createContentPendingIntent(R.id.liveUpdateNotificationFragment))
 
         when (step) {
             OrderStatus.ORDER_PLACED -> {
@@ -414,6 +433,13 @@ object NotificationsHelper {
             pendingIntentFlags
         )
     }
+    private fun createContentPendingIntent(destination: Int): PendingIntent =
+        NavDeepLinkBuilder(getAppContext())
+            .setComponentName(ComponentName(getAppContext(), MainActivity::class.java))
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(destination)
+            .createPendingIntent()
+
 
     private fun createBroadcastPendingIntent(notificationId: Int, action: String, requestCodeOffset: Int = 0, currentStep : Bundle? = null): PendingIntent {
         val context = getAppContext()
