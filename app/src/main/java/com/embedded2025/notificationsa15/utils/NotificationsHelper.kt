@@ -16,6 +16,11 @@ object NotificationsHelper {
         const val DEMO = "channel_demo"
         const val DEFAULT = "channel_default"
         const val MEDIA_PLAYER = "channel_media_player"
+        const val WEATHER = "channel_weather"
+    }
+
+    private object NotificationID {
+        const val METEO = 1001
     }
 
     private var appContext: Context? = null
@@ -57,6 +62,13 @@ object NotificationsHelper {
             ).apply {
                 description = ctx.getString(R.string.channel_media_player_description)
                 setSound(null, null)
+            },
+            NotificationChannel(ChannelID.WEATHER,
+                ctx.getString(R.string.channel_weather_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = ctx.getString(R.string.channel_weather_description)
+                setShowBadge(true)
             }
         )
 
@@ -133,4 +145,24 @@ object NotificationsHelper {
      * @param notificationId l'ID della notifica da cancellare.
      */
     fun cancel(notificationId: Int) = notifManager.cancel(notificationId)
+
+
+    //TODO Lasciare qui o Demo?
+    /**
+     * Pubblica una notifica di aggiornamento meteo.
+     *
+     * @param titolo il titolo -> Aggiornamento meteo a "" .
+     * @param contenuto -> temperatura e meteo.
+     * */
+    fun showWeatherNotification(titolo: String, contenuto: String) {
+
+        val notif = createBasicNotificationBuilder(
+            ChannelID.WEATHER,
+            titolo,
+            contenuto,
+            R.id.homeFragment
+        )
+
+        safeNotify(NotificationID.METEO, notif)
+    }
 }
