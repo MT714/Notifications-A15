@@ -29,9 +29,20 @@
             android:name=".NotificationActionReceiver"
             android:exported="false" />
 
+        <receiver android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".NotificationService"
             android:exported="false"
-            android:foregroundServiceType="dataSync|mediaPlayback"/>
+            android:foregroundServiceType="dataSync|mediaPlayback">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

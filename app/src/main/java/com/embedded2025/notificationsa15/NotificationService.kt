@@ -52,7 +52,6 @@ class NotificationService : Service() {
         const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
         const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
         const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
-        const val ACTION_MEDIA_UPDATE_NOTIFICATION = "com.embedded2025.notificationsa15.ACTION_MEDIA_UPDATE_NOTIFICATION"
 
         // ID Canali
         const val PROGRESS_CHANNEL_ID = NotificationsHelper.DEMO_CHANNEL_ID
@@ -108,129 +107,67 @@ class NotificationService : Service() {
     private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
         override fun onPlay() {
             super.onPlay()
-            Log.d(TAG, "MediaSessionCallback: onPlay")
+            Log.d(TAG, "Callback: onPlay")
             FakeMediaPlayer.play()
             isMediaPlayerActive = true
-            updateMediaNotification()
-            startForegroundForMedia()
+            updateMediaPlaybackState()
         }
 
         override fun onPause() {
             super.onPause()
-            Log.d(TAG, "MediaSessionCallback: onPause")
+            Log.d(TAG, "Callback: onPause")
             FakeMediaPlayer.pause()
-            updateMediaNotification()
-            if (!isProgressTaskRunning) {
-                val notification = buildMediaNotification()
-                notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-            }
+            updateMediaPlaybackState()
         }
 
         override fun onSkipToNext() {
             super.onSkipToNext()
-            Log.d(TAG, "MediaSessionCallback: onSkipToNext")
+            Log.d(TAG, "Callback: onSkipToNext")
             FakeMediaPlayer.nextTrack()
-            updateMediaNotification()
-            startForegroundForMedia()
+            updateMediaPlaybackState()
         }
 
         override fun onSkipToPrevious() {
             super.onSkipToPrevious()
-            Log.d(TAG, "MediaSessionCallback: onSkipToPrevious")
+            Log.d(TAG, "Callback: onSkipToPrevious")
             FakeMediaPlayer.previousTrack()
-            updateMediaNotification()
-            startForegroundForMedia()
+            updateMediaPlaybackState()
         }
 
         override fun onStop() {
             super.onStop()
-            Log.d(TAG, "MediaSessionCallback: onStop")
+            Log.d(TAG, "Callback: onStop")
             FakeMediaPlayer.stop()
             isMediaPlayerActive = false
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            checkAndStopSelf()
+            updateMediaPlaybackState()
         }
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
+
+        if (intent?.action == Intent.ACTION_MEDIA_BUTTON) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, buildMediaNotification())
+            } else {
+                stopSelf(startId)
+                return START_NOT_STICKY
+            }
+        }
         MediaButtonReceiver.handleIntent(mediaSession, intent)
+
         when (intent?.action) {
-            ACTION_START_PROGRESS -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    Log.e(TAG, "Permesso POST_NOTIFICATIONS non concesso. Impossibile avviare il task di progresso.")
-                    checkAndStopSelf()
-                    return START_NOT_STICKY
-                }
-                isProgressTaskRunning = true
-                startForegroundWithProgress()
-            }
-            ACTION_CANCEL_PROGRESS -> {
-                Log.i(TAG, "Azione di cancellazione progresso ricevuta.")
-                handleProgressCancellation("Azione di cancellazione progresso dall'utente")
-            }
-            ACTION_MEDIA_PLAY -> {
-                val songTitle = intent.getStringExtra("SONG_TITLE") ?: FakeMediaPlayer.currentSong
-                //val artistName = intent.getStringExtra("ARTIST_NAME") ?: FakeMediaPlayer.currentArtist
-                if (!FakeMediaPlayer.isPlaying || FakeMediaPlayer.currentSong != songTitle) {
-                    if (FakeMediaPlayer.currentSong != songTitle && songTitle != "Nessuna canzone"){
-                        // Simula la selezione di una canzone specifica se necessario
-                    }
-                    FakeMediaPlayer.play()
-                    Log.d(TAG, "ACTION_MEDIA_PLAY ricevuto con canzone: $songTitle")
-                }
-                isMediaPlayerActive = true
-                startForegroundForMedia()
-            }
-            ACTION_MEDIA_PAUSE -> {
-                FakeMediaPlayer.pause()
-                isMediaPlayerActive = FakeMediaPlayer.isPlaying
-                updateMediaNotification()
-                Log.d(TAG, "ACTION_MEDIA_PAUSE ricevuto")
-            }
-            ACTION_MEDIA_NEXT -> {
-                FakeMediaPlayer.nextTrack()
-                isMediaPlayerActive = true
-                updateMediaNotification()
-                startForegroundForMedia()
-                Log.d(TAG, "ACTION_MEDIA_NEXT ricevuto")
-            }
-            ACTION_MEDIA_PREVIOUS -> {
-                FakeMediaPlayer.previousTrack()
-                isMediaPlayerActive = true
-                updateMediaNotification()
-                startForegroundForMedia()
-                Log.d(TAG, "ACTION_MEDIA_PREVIOUS ricevuto")
-            }
-            ACTION_MEDIA_STOP -> {
-                FakeMediaPlayer.stop()
-                isMediaPlayerActive = false
-                stopForeground(STOP_FOREGROUND_REMOVE)
-                checkAndStopSelf()
-                Log.d(TAG, "ACTION_MEDIA_STOP ricevuto")
-            }
-            ACTION_MEDIA_UPDATE_NOTIFICATION -> {
-                if (isMediaPlayerActive) {
-                    updateMediaNotification()
-                    if (!isForegroundServiceRunning()) {
-                        startForegroundForMedia()
-                    }
-                }
-            }
-            else -> {
-                Log.w(TAG, "Azione non riconosciuta o intent nullo: ${intent?.action}")
-                checkAndStopSelf()
-            }
+            ACTION_START_PROGRESS -> startForegroundWithProgress()
+            ACTION_CANCEL_PROGRESS -> handleProgressCancellation("Azione di cancellazione utente")
+            ACTION_MEDIA_PLAY -> mediaSession?.controller?.transportControls?.play()
+            ACTION_MEDIA_PAUSE -> mediaSession?.controller?.transportControls?.pause()
+            ACTION_MEDIA_NEXT -> mediaSession?.controller?.transportControls?.skipToNext()
+            ACTION_MEDIA_PREVIOUS -> mediaSession?.controller?.transportControls?.skipToPrevious()
+            ACTION_MEDIA_STOP -> mediaSession?.controller?.transportControls?.stop()
         }
         return START_NOT_STICKY
     }
-
-    private fun isForegroundServiceRunning(): Boolean {
-        return isProgressTaskRunning || (isMediaPlayerActive && FakeMediaPlayer.isPlaying)
-    }
-
 
     // Progession notification
     private fun startForegroundWithProgress() {
@@ -318,7 +255,7 @@ class NotificationService : Service() {
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
 
         return NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_background) // Sostituisci con icona appropriata
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -346,33 +283,9 @@ class NotificationService : Service() {
 
 
     // Media Player notification
-    private fun startForegroundForMedia() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.e(TAG, "Permesso POST_NOTIFICATIONS non concesso per media. Impossibile avviare foreground.")
-            isMediaPlayerActive = false;
-            checkAndStopSelf()
-            return
-        }
-        val notification = buildMediaNotification()
-        startForeground(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-        Log.d(TAG, "Servizio avviato in foreground per MEDIA.")
-    }
-
-
-    private fun updateMediaNotification() {
-        if (!isMediaPlayerActive && !FakeMediaPlayer.isPlaying) {
-            Log.d(TAG, "Media non attivo, non aggiorno la notifica media.")
-            return
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.w(TAG, "Permesso POST_NOTIFICATIONS perso, impossibile aggiornare notifica media.")
-            return
-        }
-        val notification = buildMediaNotification()
-        notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-        Log.d(TAG, "Notifica media aggiornata.")
+    private fun updateMediaPlaybackState() {
+        if (mediaSession == null) return
+        val isPlaying = FakeMediaPlayer.isPlaying
 
         val playbackStateBuilder = PlaybackStateCompat.Builder()
             .setActions(
@@ -384,56 +297,63 @@ class NotificationService : Service() {
                         PlaybackStateCompat.ACTION_STOP
             )
             .setState(
-                if (FakeMediaPlayer.isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
-                0,
-                1.0f
+                if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
+                0, 1.0f
             )
-        mediaSession?.setPlaybackState(playbackStateBuilder.build())
+        mediaSession!!.setPlaybackState(playbackStateBuilder.build())
 
         val metadataBuilder = MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, FakeMediaPlayer.currentSong)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, FakeMediaPlayer.currentArtist)
             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, FakeMediaPlayer.getAlbumArt(this))
-        mediaSession?.setMetadata(metadataBuilder.build())
+        mediaSession!!.setMetadata(metadataBuilder.build())
+
+        if (isMediaPlayerActive) {
+            val notification = buildMediaNotification()
+            if (isPlaying) {
+                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, notification)
+            } else {
+                stopForeground(STOP_FOREGROUND_DETACH)
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
+                }
+            }
+        } else {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            notificationManager.cancel(MEDIA_PLAYER_NOTIFICATION_ID)
+        }
     }
 
 
     private fun buildMediaNotification(): Notification {
-        val songTitle = FakeMediaPlayer.currentSong
-        val artistName = FakeMediaPlayer.currentArtist
-        val albumArt: Bitmap? = FakeMediaPlayer.getAlbumArt(this)
-        val isPlaying = FakeMediaPlayer.isPlaying
+        val controller = mediaSession!!.controller
+        val mediaMetadata = controller.metadata
+        val description = mediaMetadata?.description
+        val playbackState = controller.playbackState
+
+        val isPlaying = playbackState?.state == PlaybackStateCompat.STATE_PLAYING
         val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
         val playPauseTitle = if (isPlaying) getString(R.string.notif_media_player_demo_pause) else getString(R.string.notif_media_player_demo_play)
-        val contentIntent = Intent(this, MainActivity::class.java)
-        val pendingContentIntent = PendingIntent.getActivity(this, 0, contentIntent, getPendingIntentFlags())
-        val prevIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-        val playPauseIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE)
-        val nextIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
-        val stopIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)
-
 
         val builder = NotificationCompat.Builder(this, MEDIA_PLAYER_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_music_note)
-            .setContentTitle(songTitle)
-            .setContentText(artistName)
-            .setLargeIcon(albumArt)
-            .setContentIntent(pendingContentIntent)
-            .setDeleteIntent(stopIntent)
+            .setContentTitle(description?.title ?: "Nessun Titolo")
+            .setContentText(description?.subtitle ?: "Nessun Artista")
+            .setLargeIcon(description?.iconBitmap)
+            .setContentIntent(controller.sessionActivity)
+            .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setOngoing(isPlaying)
-            // Azioni
-            .addAction(R.drawable.ic_previous, getString(R.string.notif_media_player_demo_previous), prevIntent)
-            .addAction(playPauseIcon, playPauseTitle, playPauseIntent)
-            .addAction(R.drawable.ic_next, getString(R.string.notif_media_player_demo_next), nextIntent)
-            // Stile Media
+            .addAction(R.drawable.ic_previous, getString(R.string.notif_media_player_demo_previous), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS))
+            .addAction(playPauseIcon, playPauseTitle, MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE))
+            .addAction(R.drawable.ic_next, getString(R.string.notif_media_player_demo_next), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_NEXT))
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession?.sessionToken)
+                    .setMediaSession(mediaSession!!.sessionToken)
                     .setShowActionsInCompactView(0, 1, 2)
                     .setShowCancelButton(true)
-                    .setCancelButtonIntent(stopIntent)
+                    .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
             )
         return builder.build()
     }
