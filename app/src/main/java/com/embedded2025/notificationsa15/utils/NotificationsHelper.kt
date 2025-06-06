@@ -1,0 +1,132 @@
+package com.embedded2025.notificationsa15.utils
+
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import com.embedded2025.notificationsa15.R
+
+object NotificationsHelper {
+    object ChannelID {
+        const val DEMO = "channel_demo"
+        const val DEFAULT = "channel_default"
+        const val MEDIA_PLAYER = "channel_media_player"
+    }
+
+    private var appContext: Context? = null
+    val ctx: Context
+        get() = appContext!!
+
+    val notifManager: NotificationManager
+        get() = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private var notificationIdCounter = 1000
+
+    /**
+     * Inizializza l'oggetto NotificationsHelper.
+     *
+     * @param context il contesto dell'applicazione.
+     */
+    fun initialize(context: Context) {
+        appContext = context.applicationContext
+
+        // Create channels
+        val channels = listOf<NotificationChannel>(
+            NotificationChannel(ChannelID.DEMO,
+                ctx.getString(R.string.channel_demo_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = ctx.getString(R.string.channel_demo_description)
+                setShowBadge(true)
+            },
+            NotificationChannel(ChannelID.DEFAULT,
+                ctx.getString(R.string.channel_default_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = ctx.getString(R.string.channel_default_description)
+                setShowBadge(true)
+            },
+            NotificationChannel(ChannelID.MEDIA_PLAYER,
+                ctx.getString(R.string.channel_media_player_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = ctx.getString(R.string.channel_media_player_description)
+                setSound(null, null)
+            }
+        )
+
+        notifManager.createNotificationChannels(channels)
+    }
+
+    fun getUniqueId(): Int = notificationIdCounter++
+
+    /**
+     * Pubblica una notifica.
+     *
+     * @param id l'ID della notifica.
+     * @param builder il builder della notifica.
+     *
+     * @return true se la notifica è stata pubblicata con successo, false altrimenti.
+     */
+    fun safeNotify(id: Int, builder: NotificationCompat.Builder): Boolean {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i("NotificationsHelper", "Permission not granted.")
+
+            return false
+        }
+
+        notifManager.notify(id, builder.build())
+        return true
+    }
+
+    /**
+     * Crea un builder di notifica con le impostazioni di base usate da ogni notifica.
+     *
+     * @param channelId l'ID del canale della notifica.
+     * @param title il titolo della notifica.
+     * @param text il testo della notifica.
+     * @param destinationId l'ID della destinazione (fragment) della notifica.
+     *
+     * @return un builder di notifica con le impostazioni di base.
+     */
+    fun createBasicNotificationBuilder(channelId: String, title: String, text: String, destinationId: Int): NotificationCompat.Builder =
+        NotificationCompat.Builder(ctx, channelId)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setContentIntent(PendingIntentHelper.createWithDestination(destinationId))
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+
+    /**
+     * Imposta il testo della notifica quando espansa.
+     *
+     * @param text il testo della notifica.
+     *
+     * @return il builder della notifica con il testo della notifica espansa.
+     */
+    fun NotificationCompat.Builder.setBigText(text: String): NotificationCompat.Builder =
+        setStyle(NotificationCompat.BigTextStyle()
+            .bigText(text))
+
+    /**
+     * Imposta l'immagine della notifica quando espansa.
+     *
+     * @param bitmap l'immagine della notifica.
+     *
+     * @return il builder della notifica con l'immagine della notifica espansa.
+     */
+    fun NotificationCompat.Builder.setBigPicture(bitmap: Bitmap?): NotificationCompat.Builder =
+            setStyle(NotificationCompat.BigPictureStyle()
+                .bigPicture(bitmap))
+
+    fun cancel(notificationId: Int) =
+        notifManager.cancel(notificationId)
+}

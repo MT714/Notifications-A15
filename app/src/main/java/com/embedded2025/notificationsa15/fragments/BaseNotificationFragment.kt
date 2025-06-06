@@ -1,4 +1,4 @@
-package com.embedded2025.notificationsa15
+package com.embedded2025.notificationsa15.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
