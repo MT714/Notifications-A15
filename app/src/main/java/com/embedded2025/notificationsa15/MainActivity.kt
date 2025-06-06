@@ -18,9 +18,16 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.embedded2025.notificationsa15.meteoUtils.MeteoWorker
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigation()
         setupNotifications()
+        setupWeatherWorker()
     }
 
     private fun setupNavigation() {
@@ -83,6 +91,26 @@ class MainActivity : AppCompatActivity() {
         val p = grantResults[0] == PermissionChecker.PERMISSION_GRANTED
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.i(TAG, "Notification runtime permission granted: $p")
+    }
+
+    /**
+     * Setup del worker che recupera i dati del meteo e manda la notifica ogni 15 minuti.
+     */
+    private fun setupWeatherWorker() {
+        Log.i("MeteoWorker", "MeteoWorker setup")
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val weatherRequest = PeriodicWorkRequestBuilder<MeteoWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "weather_worker",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            weatherRequest
+        )
     }
 
     companion object{

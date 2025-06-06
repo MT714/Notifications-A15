@@ -9,6 +9,8 @@
     <string name="channel_high_priority_description">Canale per notifiche ad alta priorità (Heads-Up)</string>
     <string name="channel_media_player_name">Media player</string>
     <string name="channel_media_player_description">Canale per notifiche di riproduzione multimediale</string>
+    <string name="channel_weather_name">Meteo</string>
+    <string name="channel_weather_description">Canale per notifiche relative al meteo</string>
 
     <!-- Notifications -->
     <string name="notif_simple_demo_title">Notifica semplice</string>
