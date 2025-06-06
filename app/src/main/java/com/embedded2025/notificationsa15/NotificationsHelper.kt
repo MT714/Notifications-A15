@@ -330,7 +330,7 @@ object NotificationsHelper {
             return
         }
 
-        val serviceIntent = NotificationService.getMediaControlIntent(context, mediaAction, songTitle, artistName)
+        val serviceIntent = NotificationService.getMediaControlIntent(context, mediaAction)
         context.startForegroundService(serviceIntent)
         Log.d("NotificationsHelper", "Richiesta NotificationService per media action '$mediaAction' inviata.")
     }
@@ -422,7 +422,7 @@ object FakeMediaPlayer {
         Triple("Stairway to Heaven", "Led Zeppelin", R.drawable.album_art_2),
         Triple("Hotel California", "Eagles", R.drawable.album_art_3)
     )
-    private var currentTrackIndex = -1
+    var currentTrackIndex = -1
 
     fun play() {
         if (playlist.isEmpty()) return
