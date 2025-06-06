@@ -31,13 +31,19 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
+    private val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) Log.d("PERMISSION", "Permesso notifiche concesso")
+            else Log.d("PERMISSION", "Permesso notifiche negato")
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setupNavigation()
         setupNotifications()
-        setupWeatherWorker()
     }
 
     private fun setupNavigation() {
@@ -59,20 +65,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNotifications() {
+        NotificationsHelper.initialize(this)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED
         ) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Log.d("PERMISSION", "Permesso notifiche concesso")
-        } else {
-            Log.d("PERMISSION", "Permesso notifiche negato")
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -84,36 +82,5 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return item.onNavDestinationSelected(navController)
                 || super.onOptionsItemSelected(item)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        //verifico che l'utente abbia dato il permesso per le notifiche
-        val p = grantResults[0] == PermissionChecker.PERMISSION_GRANTED
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.i(TAG, "Notification runtime permission granted: $p")
-    }
-
-    /**
-     * Setup del worker che recupera i dati del meteo e manda la notifica ogni 15 minuti.
-     */
-    private fun setupWeatherWorker() {
-        Log.i("MeteoWorker", "MeteoWorker setup")
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val weatherRequest = PeriodicWorkRequestBuilder<MeteoWorker>(15, TimeUnit.MINUTES)
-            .setConstraints(constraints)
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "weather_worker",
-            ExistingPeriodicWorkPolicy.UPDATE,
-            weatherRequest
-        )
-    }
-
-    companion object{
-        private val TAG = MainActivity::class.simpleName
     }
 }

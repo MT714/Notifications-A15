@@ -31,5 +31,7 @@ class MeteoWorker(context: Context, params: WorkerParameters) : CoroutineWorker(
         }
     }
 
-
+    companion object {
+        const val WORKER_NAME = "meteo_worker"
+    }
 }

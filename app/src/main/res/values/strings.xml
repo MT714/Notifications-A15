@@ -13,6 +13,7 @@
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
     <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
+    <string name="weather_switch_text">Notifiche meteo</string>
 
     <!-- Expandable notification -->
     <string name="expandable_notification_title">Expandable notification</string>
