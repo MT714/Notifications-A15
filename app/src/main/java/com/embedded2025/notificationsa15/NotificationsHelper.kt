@@ -26,13 +26,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.app.RemoteInput
 import androidx.navigation.NavDeepLinkBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-
 
 object NotificationsHelper {
     // ID canali
@@ -274,25 +267,15 @@ object NotificationsHelper {
     //Mostra una notifica con barra di progresso
     fun showProgressNotificationDemo() {
         val ctx = getAppContext()
-        // Controlla il permesso POST_NOTIFICATIONS prima di avviare il servizio se target >= TIRAMISU
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso.")
             Toast.makeText(ctx, ctx.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
-            // Guida l'utente alle impostazioni se necessario
-            // ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            //     putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-            //     flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            // })
             return
         }
 
         val serviceIntent = NotificationService.getStartProgressIntent(ctx)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ctx.startForegroundService(serviceIntent)
-        } else {
-            ctx.startService(serviceIntent)
-        }
+        ctx.startForegroundService(serviceIntent)
         Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per progresso inviata.")
     }
 
@@ -339,8 +322,7 @@ object NotificationsHelper {
 
     // Mostra una notifica di riproduzione multimediale
     fun showMediaPlayerNotification(context: Context, mediaAction: String, songTitle: String? = null, artistName: String? = null) {
-        // Controlla il permesso POST_NOTIFICATIONS se l'azione potrebbe avviare un foreground service
-        if (mediaAction == NotificationService.ACTION_MEDIA_PLAY && // Solo per azioni che avviano il foreground
+        if (mediaAction == NotificationService.ACTION_MEDIA_PLAY &&
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il media player service.")
@@ -349,11 +331,7 @@ object NotificationsHelper {
         }
 
         val serviceIntent = NotificationService.getMediaControlIntent(context, mediaAction, songTitle, artistName)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent)
-        } else {
-            context.startService(serviceIntent)
-        }
+        context.startForegroundService(serviceIntent)
         Log.d("NotificationsHelper", "Richiesta NotificationService per media action '$mediaAction' inviata.")
     }
 
@@ -446,16 +424,6 @@ object FakeMediaPlayer {
     )
     private var currentTrackIndex = -1
 
-    fun togglePlayPause() {
-        if (playlist.isEmpty()) return
-        if (currentTrackIndex == -1) {
-            currentTrackIndex = 0
-            updateTrackInfo()
-        }
-        isPlaying = !isPlaying
-        Log.d("FakeMediaPlayer", "isPlaying: $isPlaying")
-    }
-
     fun play() {
         if (playlist.isEmpty()) return
         if (currentTrackIndex == -1) {
@@ -485,6 +453,13 @@ object FakeMediaPlayer {
         updateTrackInfo()
         isPlaying = true
         Log.d("FakeMediaPlayer", "Previous Track: $currentSong")
+    }
+
+    fun stop() {
+        isPlaying = false
+        currentTrackIndex = -1
+        updateTrackInfo()
+        Log.d("FakeMediaPlayer", "Player stopped and state reset.")
     }
 
     private fun updateTrackInfo() {

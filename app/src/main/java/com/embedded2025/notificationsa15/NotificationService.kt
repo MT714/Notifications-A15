@@ -1,4 +1,4 @@
-package com.embedded2025.notificationsa15 // Assicurati che sia il tuo package corretto
+package com.embedded2025.notificationsa15
 
 import android.Manifest
 import android.app.Notification
@@ -11,9 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -21,7 +19,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.media.session.MediaButtonReceiver // Importante per i pulsanti media
+import androidx.media.session.MediaButtonReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,12 +31,11 @@ import kotlinx.coroutines.launch
 class NotificationService : Service() {
 
     private val serviceJob = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob) // IO per operazioni di rete/disco/lunghe
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
     private lateinit var notificationManager: NotificationManager
     private var mediaSession: MediaSessionCompat? = null
 
-    // Tracciamento dello stato per decidere quando fermare il servizio
     private var isProgressTaskRunning = false
     private var isMediaPlayerActive = false
 
@@ -55,24 +52,21 @@ class NotificationService : Service() {
         const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
         const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
         const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
-        const val ACTION_MEDIA_UPDATE_NOTIFICATION = "com.embedded2025.notificationsa15.ACTION_MEDIA_UPDATE_NOTIFICATION" // Azione per aggiornare la notifica media
+        const val ACTION_MEDIA_UPDATE_NOTIFICATION = "com.embedded2025.notificationsa15.ACTION_MEDIA_UPDATE_NOTIFICATION"
 
-        // ID Canali (devono corrispondere a quelli in NotificationsHelper se usi entrambi)
-        const val PROGRESS_CHANNEL_ID = NotificationsHelper.DEMO_CHANNEL_ID // Riutilizza se appropriato
+        // ID Canali
+        const val PROGRESS_CHANNEL_ID = NotificationsHelper.DEMO_CHANNEL_ID
         const val MEDIA_PLAYER_CHANNEL_ID = NotificationsHelper.MEDIA_PLAYER_CHANNEL_ID
 
-        // ID Notifiche (devono essere univoci all'interno del servizio)
-        const val PROGRESS_NOTIFICATION_ID = NotificationsHelper.DEMO_PROGRESS_NOTIFICATION_ID // Riutilizza se appropriato
+        // ID Notifiche
+        const val PROGRESS_NOTIFICATION_ID = NotificationsHelper.DEMO_PROGRESS_NOTIFICATION_ID
         const val MEDIA_PLAYER_NOTIFICATION_ID = NotificationsHelper.DEMO_MEDIA_PLAYER_NOTIFICATION_ID
 
-        // Funzioni helper per creare Intent per questo servizio
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply {
                 action = ACTION_START_PROGRESS
             }
         }
-        // Aggiungi altre funzioni helper per gli intent media se necessario
-        // Esempio:
         fun getMediaControlIntent(context: Context, mediaAction: String, songTitle: String? = null, artistName: String? = null): Intent {
             return Intent(context, NotificationService::class.java).apply {
                 action = mediaAction
@@ -85,20 +79,14 @@ class NotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannels() // Assicurati che i canali siano creati
+        createNotificationChannels()
         initializeMediaSession()
         Log.d(TAG, "Servizio creato.")
     }
 
     private fun initializeMediaSession() {
-        // Il nome del component per MediaButtonReceiver
         val mediaButtonReceiver = ComponentName(applicationContext, MediaButtonReceiver::class.java)
         mediaSession = MediaSessionCompat(applicationContext, TAG, mediaButtonReceiver, null).apply {
-            // Imposta i flag per indicare che questo media session gestisce i controlli di trasporto
-            // e può ricevere comandi dai media button.
-            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-
-            // Imposta uno stato di playback iniziale (es. Paused)
             val initialState = PlaybackStateCompat.Builder()
                 .setActions(
                     PlaybackStateCompat.ACTION_PLAY or
@@ -111,11 +99,7 @@ class NotificationService : Service() {
                 .setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f)
                 .build()
             setPlaybackState(initialState)
-
-            // Imposta il callback per gestire gli eventi del media session
             setCallback(mediaSessionCallback)
-
-            // Rendi la sessione attiva per ricevere gli eventi dei media button
             isActive = true
         }
         Log.d(TAG, "MediaSession inizializzata.")
@@ -128,7 +112,7 @@ class NotificationService : Service() {
             FakeMediaPlayer.play()
             isMediaPlayerActive = true
             updateMediaNotification()
-            startForegroundForMedia() // Assicurati che il servizio sia in foreground
+            startForegroundForMedia()
         }
 
         override fun onPause() {
@@ -136,14 +120,9 @@ class NotificationService : Service() {
             Log.d(TAG, "MediaSessionCallback: onPause")
             FakeMediaPlayer.pause()
             updateMediaNotification()
-            // Non fermare il foreground se la pausa è temporanea, ma aggiorna l'ongoing della notifica
-            if (!isProgressTaskRunning) { // Se solo il media player era attivo
+            if (!isProgressTaskRunning) {
                 val notification = buildMediaNotification()
                 notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-                // Potresti voler chiamare stopForeground(false) per mantenere la notifica ma non più foreground
-                // Oppure, se la pausa significa che l'utente non sta più ascoltando attivamente,
-                // potresti chiamare stopForeground(STOP_FOREGROUND_DETACH) e potenzialmente stopSelf() dopo un timeout.
-                // Per ora, manteniamo la notifica attiva ma non ongoing
             }
         }
 
@@ -166,22 +145,17 @@ class NotificationService : Service() {
         override fun onStop() {
             super.onStop()
             Log.d(TAG, "MediaSessionCallback: onStop")
-            FakeMediaPlayer.pause() // O una vera funzione stop se disponibile
+            FakeMediaPlayer.stop()
             isMediaPlayerActive = false
-            stopForeground(STOP_FOREGROUND_REMOVE) // Rimuovi notifica
+            stopForeground(STOP_FOREGROUND_REMOVE)
             checkAndStopSelf()
         }
-
-        // Potresti voler gestire onPlayFromMediaId, onPlayFromSearch, onPlayFromUri etc.
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
-
-        // Gestione degli intent dei MediaButton
         MediaButtonReceiver.handleIntent(mediaSession, intent)
-
         when (intent?.action) {
             ACTION_START_PROGRESS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -199,46 +173,48 @@ class NotificationService : Service() {
             }
             ACTION_MEDIA_PLAY -> {
                 val songTitle = intent.getStringExtra("SONG_TITLE") ?: FakeMediaPlayer.currentSong
-                val artistName = intent.getStringExtra("ARTIST_NAME") ?: FakeMediaPlayer.currentArtist
-                // Se non sta già suonando o l'info è diversa, aggiorna e suona
+                //val artistName = intent.getStringExtra("ARTIST_NAME") ?: FakeMediaPlayer.currentArtist
                 if (!FakeMediaPlayer.isPlaying || FakeMediaPlayer.currentSong != songTitle) {
                     if (FakeMediaPlayer.currentSong != songTitle && songTitle != "Nessuna canzone"){
                         // Simula la selezione di una canzone specifica se necessario
-                        // Per ora FakeMediaPlayer gestisce la sua playlist interna
                     }
-                    FakeMediaPlayer.play() // Assicura che parta
+                    FakeMediaPlayer.play()
+                    Log.d(TAG, "ACTION_MEDIA_PLAY ricevuto con canzone: $songTitle")
                 }
                 isMediaPlayerActive = true
-                startForegroundForMedia() // Inizia o aggiorna la notifica media in foreground
+                startForegroundForMedia()
             }
             ACTION_MEDIA_PAUSE -> {
                 FakeMediaPlayer.pause()
-                isMediaPlayerActive = FakeMediaPlayer.isPlaying // Potrebbe essere già in pausa
-                updateMediaNotification() // Aggiorna lo stato nella notifica
-                // Non fermare il servizio qui, la notifica di pausa rimane
+                isMediaPlayerActive = FakeMediaPlayer.isPlaying
+                updateMediaNotification()
+                Log.d(TAG, "ACTION_MEDIA_PAUSE ricevuto")
             }
             ACTION_MEDIA_NEXT -> {
                 FakeMediaPlayer.nextTrack()
                 isMediaPlayerActive = true
                 updateMediaNotification()
                 startForegroundForMedia()
+                Log.d(TAG, "ACTION_MEDIA_NEXT ricevuto")
             }
             ACTION_MEDIA_PREVIOUS -> {
                 FakeMediaPlayer.previousTrack()
                 isMediaPlayerActive = true
                 updateMediaNotification()
                 startForegroundForMedia()
+                Log.d(TAG, "ACTION_MEDIA_PREVIOUS ricevuto")
             }
             ACTION_MEDIA_STOP -> {
-                FakeMediaPlayer.pause() // o una vera funzione stop
+                FakeMediaPlayer.stop()
                 isMediaPlayerActive = false
-                stopForeground(STOP_FOREGROUND_REMOVE) // Rimuove la notifica media
-                checkAndStopSelf() // Ferma il servizio se non ci sono altri task
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                checkAndStopSelf()
+                Log.d(TAG, "ACTION_MEDIA_STOP ricevuto")
             }
-            ACTION_MEDIA_UPDATE_NOTIFICATION -> { // Azione esplicita per aggiornare la notifica media
+            ACTION_MEDIA_UPDATE_NOTIFICATION -> {
                 if (isMediaPlayerActive) {
                     updateMediaNotification()
-                    if (!isForegroundServiceRunning()) { // Se per qualche motivo non è foreground
+                    if (!isForegroundServiceRunning()) {
                         startForegroundForMedia()
                     }
                 }
@@ -252,13 +228,11 @@ class NotificationService : Service() {
     }
 
     private fun isForegroundServiceRunning(): Boolean {
-        // Questo è un modo approssimativo. Android non offre un API diretto per verificarlo.
-        // Si basa sul fatto che se un task che richiede foreground è attivo, allora dovrebbe esserlo.
         return isProgressTaskRunning || (isMediaPlayerActive && FakeMediaPlayer.isPlaying)
     }
 
 
-    // --- Logica Notifica Progresso ---
+    // Progession notification
     private fun startForegroundWithProgress() {
         val initialNotification = buildProgressNotification(0, 100, false, "Avvio operazione...")
         startForeground(PROGRESS_NOTIFICATION_ID, initialNotification)
@@ -295,9 +269,8 @@ class NotificationService : Service() {
                         buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
                     )
                     isProgressTaskRunning = false
-                    // Se il media player non è attivo, possiamo rimuovere il foreground per il progresso
                     if (!isMediaPlayerActive) {
-                        stopForeground(STOP_FOREGROUND_DETACH) // Lascia la notifica finale di progresso
+                        stopForeground(STOP_FOREGROUND_DETACH)
                     }
                     checkAndStopSelf()
                 }
@@ -324,7 +297,7 @@ class NotificationService : Service() {
 
     private fun handleProgressCancellation(reason: String) {
         Log.i(TAG, "Gestione cancellazione progresso: $reason")
-        serviceScope.cancel(reason) // Cancella le coroutine di questo scope (selettivamente se necessario)
+        serviceScope.cancel(reason)
         isProgressTaskRunning = false
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
@@ -340,7 +313,7 @@ class NotificationService : Service() {
     }
 
     private fun buildProgressNotification(progress: Int, max: Int, indeterminate: Boolean, contentText: String): Notification {
-        val pendingContentIntent = createContentPendingIntent(R.id.progressNotificationFragment) // Da NotificationsHelper
+        val pendingContentIntent = createContentPendingIntent(R.id.progressNotificationFragment)
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
 
@@ -372,12 +345,12 @@ class NotificationService : Service() {
     }
 
 
-    // --- Logica Notifica Media Player ---
+    // Media Player notification
     private fun startForegroundForMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "Permesso POST_NOTIFICATIONS non concesso per media. Impossibile avviare foreground.")
-            isMediaPlayerActive = false; // Non può operare senza notifica
+            isMediaPlayerActive = false;
             checkAndStopSelf()
             return
         }
@@ -388,10 +361,8 @@ class NotificationService : Service() {
 
 
     private fun updateMediaNotification() {
-        if (!isMediaPlayerActive && !FakeMediaPlayer.isPlaying) { // Se è stato fermato o non è mai partito
+        if (!isMediaPlayerActive && !FakeMediaPlayer.isPlaying) {
             Log.d(TAG, "Media non attivo, non aggiorno la notifica media.")
-            // Potresti voler cancellare la notifica qui se non è più rilevante
-            // notificationManager.cancel(MEDIA_PLAYER_NOTIFICATION_ID)
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -403,7 +374,6 @@ class NotificationService : Service() {
         notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
         Log.d(TAG, "Notifica media aggiornata.")
 
-        // Aggiorna lo stato della MediaSession
         val playbackStateBuilder = PlaybackStateCompat.Builder()
             .setActions(
                 PlaybackStateCompat.ACTION_PLAY_PAUSE or
@@ -415,18 +385,15 @@ class NotificationService : Service() {
             )
             .setState(
                 if (FakeMediaPlayer.isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
-                0, // position, non simulato qui
-                1.0f // playback speed
+                0,
+                1.0f
             )
         mediaSession?.setPlaybackState(playbackStateBuilder.build())
 
-        // Aggiorna i metadati della MediaSession
         val metadataBuilder = MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, FakeMediaPlayer.currentSong)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, FakeMediaPlayer.currentArtist)
-        // Aggiungi album art se disponibile e FakeMediaPlayer lo fornisce come Bitmap
-        // .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, FakeMediaPlayer.getAlbumArt(this))
-        // Se hai durata: .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, FakeMediaPlayer.getDuration())
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, FakeMediaPlayer.getAlbumArt(this))
         mediaSession?.setMetadata(metadataBuilder.build())
     }
 
@@ -434,17 +401,12 @@ class NotificationService : Service() {
     private fun buildMediaNotification(): Notification {
         val songTitle = FakeMediaPlayer.currentSong
         val artistName = FakeMediaPlayer.currentArtist
-        val albumArt: Bitmap? = FakeMediaPlayer.getAlbumArt(this) // Assumendo che questa funzione esista in FakeMediaPlayer
+        val albumArt: Bitmap? = FakeMediaPlayer.getAlbumArt(this)
         val isPlaying = FakeMediaPlayer.isPlaying
-
         val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
         val playPauseTitle = if (isPlaying) getString(R.string.notif_media_player_demo_pause) else getString(R.string.notif_media_player_demo_play)
-
-        // Intent per l'activity principale quando si clicca sulla notifica
-        val contentIntent = Intent(this, MainActivity::class.java) // Sostituisci MainActivity
+        val contentIntent = Intent(this, MainActivity::class.java)
         val pendingContentIntent = PendingIntent.getActivity(this, 0, contentIntent, getPendingIntentFlags())
-
-        // Azioni per i controlli media
         val prevIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
         val playPauseIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE)
         val nextIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
@@ -452,15 +414,15 @@ class NotificationService : Service() {
 
 
         val builder = NotificationCompat.Builder(this, MEDIA_PLAYER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_music_note) // Icona per la notifica media
+            .setSmallIcon(R.drawable.ic_music_note)
             .setContentTitle(songTitle)
             .setContentText(artistName)
             .setLargeIcon(albumArt)
-            .setContentIntent(pendingContentIntent) // Cosa succede al click sulla notifica
-            .setDeleteIntent(stopIntent) // Cosa succede quando la notifica viene scartata (swipe via)
+            .setContentIntent(pendingContentIntent)
+            .setDeleteIntent(stopIntent)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
-            .setOngoing(isPlaying) // La notifica è ongoing (non scartabile) se sta suonando
+            .setOngoing(isPlaying)
             // Azioni
             .addAction(R.drawable.ic_previous, getString(R.string.notif_media_player_demo_previous), prevIntent)
             .addAction(playPauseIcon, playPauseTitle, playPauseIntent)
@@ -468,21 +430,18 @@ class NotificationService : Service() {
             // Stile Media
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession?.sessionToken) // COLLEGA LA MEDIA SESSION
-                    .setShowActionsInCompactView(0, 1, 2) // Indici delle azioni da mostrare in vista compatta
-                    .setShowCancelButton(true) // Mostra il pulsante 'stop' (X) quando espansa
-                    .setCancelButtonIntent(stopIntent) // Intent per il pulsante 'stop'
+                    .setMediaSession(mediaSession?.sessionToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+                    .setShowCancelButton(true)
+                    .setCancelButtonIntent(stopIntent)
             )
         return builder.build()
     }
 
-    // --- Gestione Generale Servizio ---
+
     private fun checkAndStopSelf() {
         if (!isProgressTaskRunning && !isMediaPlayerActive) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
-            // serviceJob.cancel() // Cancella tutte le coroutine rimanenti prima di fermare
-            // mediaSession?.release() // Rilascia la media session
-            // mediaSession = null
             stopSelf()
         } else {
             Log.d(TAG, "Task attivi: Progresso=$isProgressTaskRunning, Media=$isMediaPlayerActive. Non fermo il servizio.")
@@ -490,42 +449,39 @@ class NotificationService : Service() {
     }
 
     private fun createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channels = mutableListOf<NotificationChannel>()
+        val channels = mutableListOf<NotificationChannel>()
 
-            // Canale Progresso (potrebbe già esistere se NotificationsHelper.initialize è chiamato prima)
-            if (notificationManager.getNotificationChannel(PROGRESS_CHANNEL_ID) == null) {
-                channels.add(
-                    NotificationChannel(
-                        PROGRESS_CHANNEL_ID,
-                        getString(R.string.channel_demo_name), // Usa le tue stringhe
-                        NotificationManager.IMPORTANCE_LOW // Progresso di solito è LOW per non essere invasivo
-                    ).apply {
-                        description = getString(R.string.channel_demo_description)
-                        setShowBadge(true) // O false per progresso
-                    }
-                )
-            }
+        if (notificationManager.getNotificationChannel(PROGRESS_CHANNEL_ID) == null) {
+            channels.add(
+                NotificationChannel(
+                    PROGRESS_CHANNEL_ID,
+                    getString(R.string.channel_demo_name),
+                    NotificationManager.IMPORTANCE_LOW
+                ).apply {
+                    description = getString(R.string.channel_demo_description)
+                    setShowBadge(true)
+                }
+            )
+        }
 
-            // Canale Media Player
-            if (notificationManager.getNotificationChannel(MEDIA_PLAYER_CHANNEL_ID) == null) {
-                channels.add(
-                    NotificationChannel(
-                        MEDIA_PLAYER_CHANNEL_ID,
-                        getString(R.string.channel_media_player_name),
-                        NotificationManager.IMPORTANCE_LOW // Anche media di solito LOW, non suona ad ogni cambio traccia
-                    ).apply {
-                        description = getString(R.string.channel_media_player_description)
-                        setShowBadge(false) // Media player di solito non ha badge
-                        setSound(null, null) // Nessun suono per aggiornamenti
-                        enableVibration(false)
-                    }
-                )
-            }
-            if (channels.isNotEmpty()) {
-                notificationManager.createNotificationChannels(channels)
-                Log.d(TAG, "Canali di notifica creati/aggiornati dal servizio.")
-            }
+        // Canale Media Player
+        if (notificationManager.getNotificationChannel(MEDIA_PLAYER_CHANNEL_ID) == null) {
+            channels.add(
+                NotificationChannel(
+                    MEDIA_PLAYER_CHANNEL_ID,
+                    getString(R.string.channel_media_player_name),
+                    NotificationManager.IMPORTANCE_LOW
+                ).apply {
+                    description = getString(R.string.channel_media_player_description)
+                    setShowBadge(false)
+                    setSound(null, null)
+                    enableVibration(false)
+                }
+            )
+        }
+        if (channels.isNotEmpty()) {
+            notificationManager.createNotificationChannels(channels)
+            Log.d(TAG, "Canali di notifica creati/aggiornati dal servizio.")
         }
     }
 
@@ -541,13 +497,11 @@ class NotificationService : Service() {
         return flags
     }
 
-    // Wrapper per la creazione del PendingIntent per il contenuto (da NotificationsHelper)
     private fun createContentPendingIntent(destination: Int): PendingIntent =
         NotificationsHelper.createContentPendingIntent(this, destination)
 
-
     override fun onBind(intent: Intent?): IBinder? {
-        return null // Non forniamo binding per ora
+        return null
     }
 
     override fun onDestroy() {
