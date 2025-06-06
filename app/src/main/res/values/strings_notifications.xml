@@ -52,6 +52,7 @@
     <string name="notif_progress_demo_det">Avanzamento: %1$d%%</string>
     <string name="notif_progress_demo_complete">Operazione completata!</string>
     <string name="notif_progress_demo_fail">Operazione fallita.</string>
+    <string name="notif_progress_demo_cancelled">Cancellato</string>
 
     <string name="notif_media_player_demo_play">Play</string>
     <string name="notif_media_player_demo_pause">Pause</string>

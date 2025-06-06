@@ -8,6 +8,8 @@
 
     <string name="demo_button">DEMO</string>
 
+    <string name="notif_permission_required_service">Permission required</string>
+
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
     <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
@@ -30,6 +32,7 @@
     <!-- Progress notification -->
     <string name="progress_notification_title">Progress notification</string>
     <string name="progress_notif_descr">Questa è una notifica di progresso. Premi un bottone per una demo</string>
+    <string name="action_cancel">Cancella</string>
 
     <!-- Media player notification -->
     <string name="media_player_notif_title">Media player notification</string>

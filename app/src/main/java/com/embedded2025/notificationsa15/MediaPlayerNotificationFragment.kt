@@ -11,13 +11,15 @@ class MediaPlayerNotificationFragment : Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_media_player_notification, container, false)
         val playButton: Button = view.findViewById(R.id.btnMediaPlayerNotification)
+
         playButton.setOnClickListener {
-            FakeMediaPlayer.play()
+            val currentSong = FakeMediaPlayer.currentSong
+            val currentArtist = FakeMediaPlayer.currentArtist
             NotificationsHelper.showMediaPlayerNotification(
-                songTitle = FakeMediaPlayer.currentSong,
-                artistName = FakeMediaPlayer.currentArtist,
-                albumArt = FakeMediaPlayer.getAlbumArt(requireContext()),
-                isPlaying = FakeMediaPlayer.isPlaying
+                context = requireContext(),
+                mediaAction = NotificationService.ACTION_MEDIA_PLAY,
+                songTitle = if (currentSong == "Nessuna canzone") null else currentSong,
+                artistName = if (currentArtist == "Sconosciuto") null else currentArtist
             )
         }
         return view

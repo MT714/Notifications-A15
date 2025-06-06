@@ -15,11 +15,9 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import android.os.Build
-import android.support.v4.media.session.PlaybackStateCompat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
@@ -171,7 +169,7 @@ object NotificationsHelper {
             .setContentText(ctx.getString(R.string.notif_simple_demo_text))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setContentIntent(createContentPendingIntent(R.id.simpleNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx, R.id.simpleNotificationFragment))
             .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_SIMPLE_NOTIFICATION_ID, notif)
@@ -188,7 +186,7 @@ object NotificationsHelper {
                 .bigText(ctx.getString(R.string.notif_expandable_demo_bigtext)))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setContentIntent(createContentPendingIntent(R.id.expandableNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx, R.id.expandableNotificationFragment))
             .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_TEXT_ID, notif)
@@ -205,7 +203,7 @@ object NotificationsHelper {
                 .bigPicture(getDrawable(ctx, R.drawable.project_logo)?.toBitmap()))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setContentIntent(createContentPendingIntent(R.id.expandableNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx, R.id.expandableNotificationFragment))
             .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_EXPANDABLE_NOTIFICATION_PICTURE_ID, notif)
@@ -228,7 +226,7 @@ object NotificationsHelper {
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterPendingIntent)
-            .setContentIntent(createContentPendingIntent(R.id.actionsNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx, R.id.actionsNotificationFragment))
             .setAutoCancel(true)
 
         safeNotifyDemo(DEMO_ACTIONS_NOTIFICATION_ID, builder)
@@ -266,7 +264,7 @@ object NotificationsHelper {
             .setContentText(ctx.getString(R.string.notif_reply_demo_text))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setContentIntent(createContentPendingIntent(R.id.replyNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx, R.id.replyNotificationFragment))
             .setAutoCancel(true)
             .addAction(action)
 
@@ -274,122 +272,28 @@ object NotificationsHelper {
     }
 
     //Mostra una notifica con barra di progresso
-    private val helperJob = SupervisorJob()
-    private val helperScope = CoroutineScope(Dispatchers.Default + helperJob)
     fun showProgressNotificationDemo() {
         val ctx = getAppContext()
-        val channelForProgress = DEMO_CHANNEL_ID
-        val notificationId = DEMO_PROGRESS_NOTIFICATION_ID
-        val initialBuilder = NotificationCompat.Builder(ctx, channelForProgress)
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle(ctx.getString(R.string.progress_notification_title))
-            .setContentText(
-                ctx.getString(
-                    R.string.notif_progress_demo_det,
-                    0
-                )
-            )
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setProgress(100, 0, false)
-            .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
-
-        if (!safeNotifyDemo(notificationId, initialBuilder)) return
-        // Qua la notifica è stata pubblicata con successo
-        // Avvia la coroutine per simulare il progresso
-        helperScope.launch {
-            val maxProgress = 100
-            var currentProgress = 0
-            try {
-                while (currentProgress <= maxProgress && isActive) {
-                    val updateBuilder = NotificationCompat.Builder(ctx, channelForProgress)
-                        .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
-                        .setContentText(
-                            String.format(
-                                ctx.getString(R.string.notif_progress_demo_det),
-                                currentProgress
-                            )
-                        )
-                        .setOngoing(true)
-                        .setOnlyAlertOnce(true)
-                        .setProgress(maxProgress, currentProgress, false)
-                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
-                    if (ActivityCompat.checkSelfPermission(
-                            ctx,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        getNotificationManager().notify(notificationId, updateBuilder.build())
-                    } else {
-                        Log.w(
-                            "ProgressNotification",
-                            "Permesso per le notifiche perso durante l'aggiornamento del progresso."
-                        )
-                        break
-                    }
-
-                    delay(500)
-                    currentProgress += 5
-                }
-                if (isActive) {
-                    val finalBuilder = NotificationCompat.Builder(ctx, channelForProgress)
-                        .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
-                        .setContentText(ctx.getString(R.string.notif_progress_demo_complete))
-                        .setOngoing(false)
-                        .setOnlyAlertOnce(false)
-                        .setProgress(0, 0, false)
-                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
-                        .setAutoCancel(true)
-                    if (ActivityCompat.checkSelfPermission(
-                            ctx,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        getNotificationManager().notify(notificationId, finalBuilder.build())
-                    }
-                } else {
-                    Log.i("ProgressNotification", "Operazione di progresso cancellata.")
-                    val cancelledBuilder = NotificationCompat.Builder(ctx, channelForProgress)
-                        .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle(ctx.getString(R.string.progress_notification_title))
-                        .setContentText("Operazione annullata.")
-                        .setOngoing(false)
-                        .setProgress(0, 0, false)
-                        .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
-                        .setAutoCancel(true)
-                    if (ActivityCompat.checkSelfPermission(
-                            ctx,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        getNotificationManager().notify(notificationId, cancelledBuilder.build())
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(
-                    "ProgressNotification",
-                    "Errore o cancellazione durante l'operazione di progresso",
-                    e
-                )
-                val errorBuilder = NotificationCompat.Builder(ctx, channelForProgress)
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setContentTitle(ctx.getString(R.string.progress_notification_title))
-                    .setContentText(ctx.getString(R.string.notif_progress_demo_fail))
-                    .setOngoing(false)
-                    .setProgress(0, 0, false)
-                    .setContentIntent(createContentPendingIntent(R.id.progressNotificationFragment))
-                    .setAutoCancel(true)
-                if (ActivityCompat.checkSelfPermission(
-                        ctx,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    getNotificationManager().notify(notificationId, errorBuilder.build())
-                }
-            }
+        // Controlla il permesso POST_NOTIFICATIONS prima di avviare il servizio se target >= TIRAMISU
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso.")
+            Toast.makeText(ctx, ctx.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            // Guida l'utente alle impostazioni se necessario
+            // ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            //     putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+            //     flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            // })
+            return
         }
+
+        val serviceIntent = NotificationService.getStartProgressIntent(ctx)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ctx.startForegroundService(serviceIntent)
+        } else {
+            ctx.startService(serviceIntent)
+        }
+        Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per progresso inviata.")
     }
 
     fun showLiveUpdateNotificationDemo(step : Int){
@@ -404,7 +308,7 @@ object NotificationsHelper {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentText(ctx.getString(R.string.notif_live_update_demo_text))
             .setProgress(3, step + 1, false)
-            .setContentIntent(createContentPendingIntent(R.id.liveUpdateNotificationFragment))
+            .setContentIntent(createContentPendingIntent(ctx,R.id.liveUpdateNotificationFragment))
 
         when (step) {
             OrderStatus.ORDER_PLACED -> {
@@ -434,80 +338,26 @@ object NotificationsHelper {
     }
 
     // Mostra una notifica di riproduzione multimediale
-    const val ACTION_MEDIA_PLAY_PAUSE = "com.embedded2025.notificationsa15.ACTION_MEDIA_PLAY_PAUSE"
-    const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
-    const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
-    const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
-    fun showMediaPlayerNotification(
-        songTitle: String,
-        artistName: String,
-        albumArt: Bitmap?,
-        isPlaying: Boolean,
-        mediaSessionToken: android.support.v4.media.session.MediaSessionCompat.Token? = null
-    ) {
-        val ctx = getAppContext()
-        val notificationId = DEMO_MEDIA_PLAYER_NOTIFICATION_ID
-        val playPauseIntent = createBroadcastPendingIntent(
-            notificationId,
-            ACTION_MEDIA_PLAY_PAUSE,
-            requestCodeOffset = 10
-        )
-        val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-        val playPauseTitle = if (isPlaying) ctx.getString(R.string.notif_media_player_demo_pause) else ctx.getString(R.string.notif_media_player_demo_play)
-        val nextIntent = createBroadcastPendingIntent(
-            notificationId,
-            ACTION_MEDIA_NEXT,
-            requestCodeOffset = 11
-        )
-        val previousIntent = createBroadcastPendingIntent(
-            notificationId,
-            ACTION_MEDIA_PREVIOUS,
-            requestCodeOffset = 12
-        )
-        val stopIntent = createBroadcastPendingIntent(
-            notificationId,
-            ACTION_MEDIA_STOP,
-            requestCodeOffset = 13
-        )
-        val builder = NotificationCompat.Builder(ctx, MEDIA_PLAYER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_music_note)
-            .setContentTitle(songTitle)
-            .setContentText(artistName)
-            .setLargeIcon(albumArt)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOnlyAlertOnce(true)
-            .setOngoing(isPlaying)
-            .addAction(R.drawable.ic_previous, ctx.getString(R.string.notif_media_player_demo_previous), previousIntent)
-            .addAction(playPauseIcon, playPauseTitle, playPauseIntent)
-            .addAction(R.drawable.ic_next, ctx.getString(R.string.notif_media_player_demo_next), nextIntent)
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSessionToken)
-                    .setShowActionsInCompactView(0, 1, 2)
-                    .setShowCancelButton(true)
-                    .setCancelButtonIntent(stopIntent)
-            )
-
-        safeNotifyDemo(notificationId, builder)
-    }
-
-
-    private fun createPendingIntent(notificationId: Int, action: String? = null): PendingIntent {
-        val context = getAppContext()
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            this.action = action
-            putExtra("notification_id", notificationId)
+    fun showMediaPlayerNotification(context: Context, mediaAction: String, songTitle: String? = null, artistName: String? = null) {
+        // Controlla il permesso POST_NOTIFICATIONS se l'azione potrebbe avviare un foreground service
+        if (mediaAction == NotificationService.ACTION_MEDIA_PLAY && // Solo per azioni che avviano il foreground
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il media player service.")
+            Toast.makeText(context, context.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            return
         }
-        val pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        return PendingIntent.getActivity(
-            context,
-            notificationId,
-            intent,
-            pendingIntentFlags
-        )
+
+        val serviceIntent = NotificationService.getMediaControlIntent(context, mediaAction, songTitle, artistName)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent)
+        } else {
+            context.startService(serviceIntent)
+        }
+        Log.d("NotificationsHelper", "Richiesta NotificationService per media action '$mediaAction' inviata.")
     }
-    private fun createContentPendingIntent(destination: Int): PendingIntent =
+
+     fun createContentPendingIntent(context: Context, destination: Int): PendingIntent =
         NavDeepLinkBuilder(getAppContext())
             .setComponentName(ComponentName(getAppContext(), MainActivity::class.java))
             .setGraph(R.navigation.nav_graph)
@@ -570,40 +420,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 } else {
                     Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
                 }
-            }
-            NotificationsHelper.ACTION_MEDIA_PLAY_PAUSE -> {
-                Toast.makeText(context, "Azione: Play/Pausa (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-                Log.i("MediaPlayerAction", "Play/Pause Toggled")
-                FakeMediaPlayer.togglePlayPause()
-                NotificationsHelper.showMediaPlayerNotification(
-                    songTitle = FakeMediaPlayer.currentSong,
-                    artistName = FakeMediaPlayer.currentArtist,
-                    albumArt = FakeMediaPlayer.getAlbumArt(context),
-                    isPlaying = FakeMediaPlayer.isPlaying
-                )
-
-            }
-            NotificationsHelper.ACTION_MEDIA_NEXT -> {
-                Toast.makeText(context, "Azione: Successivo (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-                Log.i("MediaPlayerAction", "Next Track")
-                FakeMediaPlayer.nextTrack()
-                NotificationsHelper.showMediaPlayerNotification(
-                    songTitle = FakeMediaPlayer.currentSong,
-                    artistName = FakeMediaPlayer.currentArtist,
-                    albumArt = FakeMediaPlayer.getAlbumArt(context),
-                    isPlaying = FakeMediaPlayer.isPlaying
-                )
-            }
-            NotificationsHelper.ACTION_MEDIA_PREVIOUS -> {
-                Toast.makeText(context, "Azione: Precedente (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-                Log.i("MediaPlayerAction", "Previous Track")
-                FakeMediaPlayer.previousTrack()
-                NotificationsHelper.showMediaPlayerNotification(
-                    songTitle = FakeMediaPlayer.currentSong,
-                    artistName = FakeMediaPlayer.currentArtist,
-                    albumArt = FakeMediaPlayer.getAlbumArt(context),
-                    isPlaying = FakeMediaPlayer.isPlaying
-                )
             }
             else -> {
                 Log.w("NotificationAction", "Azione sconosciuta: $action")
