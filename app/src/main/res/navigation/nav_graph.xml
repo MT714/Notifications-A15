@@ -7,42 +7,42 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.embedded2025.notificationsa15.HomeFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.HomeFragment"
         android:label="@string/home_title"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/simpleNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.SimpleNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.SimpleNotificationFragment"
         android:label="@string/simple_notification_title"
         tools:layout="@layout/fragment_simple_notification" />
     <fragment
         android:id="@+id/expandableNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.ExpandableNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ExpandableNotificationFragment"
         android:label="@string/expandable_notification_title"
         tools:layout="@layout/fragment_expandable_notification" />
     <fragment
         android:id="@+id/actionsNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.ActionsNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ActionsNotificationFragment"
         android:label="@string/actions_notification_title"
         tools:layout="@layout/fragment_actions_notification" />
     <fragment
         android:id="@+id/replyNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.ReplyNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ReplyNotificationFragment"
         android:label="@string/reply_notification_title"
         tools:layout="@layout/fragment_reply_notification" />
     <fragment
         android:id="@+id/liveUpdateNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.LiveUpdateNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.LiveUpdateNotificationFragment"
         android:label="Live Update Notification"
         tools:layout="@layout/fragment_live_update_notification" />
     <fragment
         android:id="@+id/progressNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.ProgressNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ProgressNotificationFragment"
         android:label="@string/progress_notification_title"
         tools:layout="@layout/fragment_progress_notification" />
     <fragment
         android:id="@+id/mediaPlayerNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.MediaPlayerNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.MediaPlayerNotificationFragment"
         android:layout="@layout/fragment_media_player_notification"/>
 
 </navigation>

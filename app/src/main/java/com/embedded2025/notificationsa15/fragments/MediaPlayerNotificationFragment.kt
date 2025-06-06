@@ -6,6 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.embedded2025.notificationsa15.R
+import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.FakeMediaPlayer
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
 
 class MediaPlayerNotificationFragment : Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

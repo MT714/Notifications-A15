@@ -1,9 +1,6 @@
 package com.embedded2025.notificationsa15
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +18,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
 
