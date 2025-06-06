@@ -1,6 +1,7 @@
 package com.embedded2025.notificationsa15
 
 import android.app.Application
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
 
 class notificationa15 : Application() {
     override fun onCreate() {

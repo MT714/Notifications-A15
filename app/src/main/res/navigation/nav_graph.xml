@@ -43,6 +43,7 @@
     <fragment
         android:id="@+id/mediaPlayerNotificationFragment"
         android:name="com.embedded2025.notificationsa15.fragments.MediaPlayerNotificationFragment"
+        android:label="@string/media_player_notif_title"
         android:layout="@layout/fragment_media_player_notification"/>
 
 </navigation>

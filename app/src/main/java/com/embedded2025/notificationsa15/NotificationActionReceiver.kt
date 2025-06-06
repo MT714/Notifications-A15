@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper.OrderStatus
-import com.embedded2025.notificationsa15.utils.FakeMediaPlayer
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 
 // Classe per gestire le azioni delle notifiche
@@ -19,10 +18,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
         const val LATER = "com.embedded2025.notificationsa15.ACTION_LATER"
         const val NEXT_STEP = "com.embedded2025.notificationsa15.ACTION_NEXT_STEP"
         const val REPLY = "com.embedded2025.notificationsa15.ACTION_REPLY"
-        const val MEDIA_PLAY_PAUSE = "com.embedded2025.notificationsa15.ACTION_MEDIA_PLAY_PAUSE"
-        const val MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
-        const val MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
-        const val MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
     }
 
     object IntentExtras {
@@ -40,10 +35,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
             NotificationAction.LATER -> handleLater(context, intent)
             NotificationAction.NEXT_STEP -> handleNextStep(context, intent)
             NotificationAction.REPLY -> handleReply(context, intent)
-            NotificationAction.MEDIA_PLAY_PAUSE -> handleMediaPlayPause(context, intent)
-            NotificationAction.MEDIA_NEXT -> handleMediaNext(context, intent)
-            NotificationAction.MEDIA_PREVIOUS -> handleMediaPrevious(context, intent)
-            NotificationAction.MEDIA_STOP -> handleMediaStop(context, intent)
             else -> Log.w("NotificationActionReceiver", "Azione sconosciuta: ${intent.action}")
         }
     }
@@ -78,48 +69,5 @@ class NotificationActionReceiver : BroadcastReceiver() {
         } else {
             Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun handleMediaPlayPause(context: Context, intent: Intent) {
-        val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
-        Toast.makeText(context, "Azione: Play/Pausa (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-        Log.i("MediaPlayerAction", "Play/Pause Toggled")
-        FakeMediaPlayer.togglePlayPause()
-        DemoNotificationsHelper.showMediaPlayerNotification(
-            songTitle = FakeMediaPlayer.currentSong,
-            artistName = FakeMediaPlayer.currentArtist,
-            albumArt = FakeMediaPlayer.getAlbumArt(context),
-            isPlaying = FakeMediaPlayer.isPlaying
-        )
-    }
-
-    private fun handleMediaNext(context: Context, intent: Intent) {
-        val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
-        Toast.makeText(context, "Azione: Successivo (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-        Log.i("MediaPlayerAction", "Next Track")
-        FakeMediaPlayer.nextTrack()
-        DemoNotificationsHelper.showMediaPlayerNotification(
-            songTitle = FakeMediaPlayer.currentSong,
-            artistName = FakeMediaPlayer.currentArtist,
-            albumArt = FakeMediaPlayer.getAlbumArt(context),
-            isPlaying = FakeMediaPlayer.isPlaying
-        )
-    }
-
-    private fun handleMediaPrevious(context: Context, intent: Intent) {
-        val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
-        Toast.makeText(context, "Azione: Precedente (ID: $notificationId)", Toast.LENGTH_SHORT).show()
-        Log.i("MediaPlayerAction", "Previous Track")
-        FakeMediaPlayer.previousTrack()
-        DemoNotificationsHelper.showMediaPlayerNotification(
-            songTitle = FakeMediaPlayer.currentSong,
-            artistName = FakeMediaPlayer.currentArtist,
-            albumArt = FakeMediaPlayer.getAlbumArt(context),
-            isPlaying = FakeMediaPlayer.isPlaying
-        )
-    }
-
-    private fun handleMediaStop(context: Context, intent: Intent) {
-
     }
 }

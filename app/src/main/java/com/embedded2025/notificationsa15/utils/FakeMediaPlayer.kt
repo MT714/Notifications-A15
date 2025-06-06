@@ -22,7 +22,7 @@ object FakeMediaPlayer {
         Triple("Stairway to Heaven", "Led Zeppelin", R.drawable.album_art_2),
         Triple("Hotel California", "Eagles", R.drawable.album_art_3)
     )
-    private var currentTrackIndex = -1
+    var currentTrackIndex = -1
 
     fun togglePlayPause() {
         if (playlist.isEmpty()) return
@@ -47,6 +47,13 @@ object FakeMediaPlayer {
     fun pause() {
         isPlaying = false
         Log.d("FakeMediaPlayer", "Paused: $currentSong")
+    }
+
+    fun stop() {
+        isPlaying = false
+        currentTrackIndex = -1
+        updateTrackInfo()
+        Log.d("FakeMediaPlayer", "Player stopped and state reset.")
     }
 
     fun nextTrack() {

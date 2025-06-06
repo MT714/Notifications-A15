@@ -10,8 +10,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -24,10 +22,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.FakeMediaPlayer
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
+import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 
 class NotificationService : Service() {
 
@@ -52,10 +53,10 @@ class NotificationService : Service() {
         const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
 
         // ID
-        const val PROGRESS_CHANNEL_ID = NotificationsHelper.DEMO_CHANNEL_ID
-        const val MEDIA_PLAYER_CHANNEL_ID = NotificationsHelper.MEDIA_PLAYER_CHANNEL_ID
-        const val PROGRESS_NOTIFICATION_ID = NotificationsHelper.DEMO_PROGRESS_NOTIFICATION_ID
-        const val MEDIA_PLAYER_NOTIFICATION_ID = NotificationsHelper.DEMO_MEDIA_PLAYER_NOTIFICATION_ID
+        const val PROGRESS_CHANNEL_ID = NotificationsHelper.ChannelID.DEMO
+        const val MEDIA_PLAYER_CHANNEL_ID = NotificationsHelper.ChannelID.MEDIA_PLAYER
+        const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
+        const val MEDIA_PLAYER_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.MEDIA_PLAYER
 
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_PROGRESS }
@@ -132,7 +133,7 @@ class NotificationService : Service() {
     private fun updateMediaPlaybackState() {
         if (mediaSession == null) return
         val isPlaying = FakeMediaPlayer.isPlaying
-        val isStopped = FakeMediaPlayer.currentTrackIndex == -1
+        val isStopped = FakeMediaPlayer.currentTrackIndex == -1 //TODO Controlla l'utilitá
 
         val playbackStateBuilder = PlaybackStateCompat.Builder()
             .setActions(
@@ -246,7 +247,7 @@ class NotificationService : Service() {
     }
 
     private fun buildProgressNotification(progress: Int, max: Int, indeterminate: Boolean, contentText: String): Notification {
-        val pendingContentIntent = NotificationsHelper.createContentPendingIntent(this, R.id.progressNotificationFragment)
+        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
         return NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
@@ -262,7 +263,7 @@ class NotificationService : Service() {
     }
 
     private fun buildFinalProgressNotification(contentText: String): Notification {
-        val pendingContentIntent = NotificationsHelper.createContentPendingIntent(this, R.id.progressNotificationFragment)
+        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
         return NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.progress_notification_title))
