@@ -16,7 +16,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.toBitmap
-import com.embedded2025.notificationsa15.NotificationAction
+import com.embedded2025.notificationsa15.NotificationActionReceiver.NotificationAction
+import com.embedded2025.notificationsa15.NotificationActionReceiver.IntentExtras
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigPicture
@@ -133,7 +134,7 @@ object DemoNotificationsHelper {
      */
     fun showActionNotification() {
         val extras = Bundle().apply {
-            putInt("notification_id", NotificationID.ACTIONS)
+            putInt(IntentExtras.NOTIFICATION_ID, NotificationID.ACTIONS)
         }
         val archivePendingIntent = PendingIntentHelper.createBroadcast(NotificationAction.ARCHIVE, extras)
         val laterPendingIntent = PendingIntentHelper.createBroadcast(NotificationAction.LATER, extras)
@@ -154,7 +155,7 @@ object DemoNotificationsHelper {
      * Crea e pubblica una notifica di risposta di demo.
      */
     fun showReplyNotification() {
-        val remoteInput = RemoteInput.Builder("key_text_reply")
+        val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
             .build()
 
@@ -295,7 +296,7 @@ object DemoNotificationsHelper {
 
     fun showLiveUpdateNotification(step : Int) {
         val extras = Bundle().apply {
-            putInt("order_step", step)
+            putInt(IntentExtras.ORDER_STEP, step)
         }
         val updateIntent = PendingIntentHelper.createBroadcast(NotificationAction.NEXT_STEP, extras)
 
@@ -340,26 +341,24 @@ object DemoNotificationsHelper {
         isPlaying: Boolean,
         mediaSessionToken: android.support.v4.media.session.MediaSessionCompat.Token? = null
     ) {
-        val notificationId = NotificationID.MEDIA_PLAYER
-        val extra = Bundle().apply {
-            putInt("notification_id", notificationId)
+        val extras = Bundle().apply {
+            putInt(IntentExtras.NOTIFICATION_ID, NotificationID.MEDIA_PLAYER)
         }
-        val playPauseIntent = PendingIntentHelper.createBroadcast(NotificationAction.MEDIA_PLAY_PAUSE, extra)
+        val playPauseIntent = PendingIntentHelper.createBroadcast(NotificationAction.MEDIA_PLAY_PAUSE, extras)
         val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
         val playPauseTitle = if (isPlaying) ctx.getString(R.string.notif_media_player_demo_pause)
             else ctx.getString(R.string.notif_media_player_demo_play)
-        val extras = Bundle().apply {
-            putInt("notification_id", notificationId)
-        }
         val nextIntent = PendingIntentHelper.createBroadcast(NotificationAction.MEDIA_NEXT, extras)
         val previousIntent = PendingIntentHelper.createBroadcast(NotificationAction.MEDIA_PREVIOUS, extras)
         val stopIntent = PendingIntentHelper.createBroadcast(NotificationAction.MEDIA_STOP, extras)
-        val builder = NotificationCompat.Builder(ctx, ChannelID.MEDIA_PLAYER)
-            .setSmallIcon(R.drawable.ic_music_note)
-            .setContentTitle(songTitle)
-            .setContentText(artistName)
+
+        val notif = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.MEDIA_PLAYER,
+            songTitle,
+            artistName,
+            R.id.mediaPlayerNotificationFragment
+        )
             .setLargeIcon(albumArt)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setOngoing(isPlaying)
             .addAction(R.drawable.ic_previous, ctx.getString(R.string.notif_media_player_demo_previous), previousIntent)
@@ -373,6 +372,6 @@ object DemoNotificationsHelper {
                     .setCancelButtonIntent(stopIntent)
             )
 
-        safeNotifyDemo(notificationId, builder)
+        safeNotifyDemo(NotificationID.MEDIA_PLAYER, notif)
     }
 }

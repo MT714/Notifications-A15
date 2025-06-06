@@ -13,6 +13,11 @@ import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
 
 object PendingIntentHelper {
 
+    /**
+     * Crea un PendingIntent per aprire una destinazione specifica della navigazione.
+     *
+     * @param destination l'ID della destinazione da aprire.
+     */
     fun createWithDestination(destination: Int): PendingIntent =
         NavDeepLinkBuilder(ctx)
             .setComponentName(ComponentName(ctx, MainActivity::class.java))
@@ -20,6 +25,12 @@ object PendingIntentHelper {
             .setDestination(destination)
             .createPendingIntent()
 
+    /**
+     * Crea un PendingIntent per un'azione di notifica.
+     *
+     * @param action l'azione da eseguire.
+     * @param extras eventuali dati aggiuntivi da passare con l'azione.
+     */
     fun createBroadcast(action: String, extras: Bundle? = null): PendingIntent {
         val intent = Intent(ctx, NotificationActionReceiver::class.java).apply {
             this.action = action

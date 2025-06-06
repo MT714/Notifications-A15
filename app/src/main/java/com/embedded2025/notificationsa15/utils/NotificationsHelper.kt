@@ -124,9 +124,13 @@ object NotificationsHelper {
      * @return il builder della notifica con l'immagine della notifica espansa.
      */
     fun NotificationCompat.Builder.setBigPicture(bitmap: Bitmap?): NotificationCompat.Builder =
-            setStyle(NotificationCompat.BigPictureStyle()
-                .bigPicture(bitmap))
+        setStyle(NotificationCompat.BigPictureStyle()
+            .bigPicture(bitmap))
 
-    fun cancel(notificationId: Int) =
-        notifManager.cancel(notificationId)
+    /**
+     * Cancella una notifica.
+     *
+     * @param notificationId l'ID della notifica da cancellare.
+     */
+    fun cancel(notificationId: Int) = notifManager.cancel(notificationId)
 }
