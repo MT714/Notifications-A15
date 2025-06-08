@@ -3,26 +3,38 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
         android:title="@string/home_title"/>
     <item
         android:id="@id/simpleNotificationFragment"
+        android:icon="@drawable/ic_simple"
         android:title="@string/simple_notification_title"/>
     <item
         android:id="@id/expandableNotificationFragment"
+        android:icon="@drawable/ic_expandable"
         android:title="@string/expandable_notification_title"/>
     <item
         android:id="@id/actionsNotificationFragment"
+        android:icon="@drawable/ic_action"
         android:title="@string/actions_notification_title"/>
     <item
         android:id="@id/replyNotificationFragment"
+        android:icon="@drawable/ic_reply"
         android:title="@string/reply_notification_title"/>
     <item
         android:id="@id/progressNotificationFragment"
+        android:icon="@drawable/ic_progress"
         android:title="@string/progress_notification_title"/>
     <item
         android:id="@id/mediaPlayerNotificationFragment"
+        android:icon="@drawable/ic_media"
         android:title="@string/media_player_notif_title"/>
     <item
         android:id="@id/liveUpdateNotificationFragment"
+        android:icon="@drawable/ic_live"
         android:title="@string/liveUpdate_notification_title"/>
+    <item
+        android:id="@+id/callNotificationFragment"
+        android:icon="@drawable/ic_call"
+        android:title="@string/fragment_call_title" />
 </menu>

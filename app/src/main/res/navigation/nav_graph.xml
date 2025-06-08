@@ -45,5 +45,10 @@
         android:name="com.embedded2025.notificationsa15.fragments.MediaPlayerNotificationFragment"
         android:label="@string/media_player_notif_title"
         android:layout="@layout/fragment_media_player_notification"/>
+    <fragment
+        android:id="@+id/callNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.CallNotificationFragment"
+        android:label="@string/fragment_call_title"
+        tools:layout="@layout/fragment_call_notification" />
 
 </navigation>

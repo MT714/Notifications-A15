@@ -52,7 +52,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
         if (replyText != null) {
             Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
             val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.ChannelID.DEMO)
-                .setSmallIcon(R.drawable.ic_notification_actions)
+                .setSmallIcon(R.drawable.ic_action)
                 .setContentText("Risposta inviata: \"$replyText\"")
             NotificationsHelper.safeNotify(notificationId, repliedNotification)
         } else {

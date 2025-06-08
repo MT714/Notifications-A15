@@ -2,17 +2,24 @@ package com.embedded2025.notificationsa15
 
 import android.Manifest
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.os.Build
 import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.embedded2025.notificationsa15.utils.PendingIntentHelper
@@ -32,6 +39,7 @@ class NotificationService : Service() {
 
     private var progressJob: Job? = null
     private var liveUpdateJob: Job? = null
+    private var ringtone: Ringtone? = null
 
     private lateinit var notificationManager: NotificationManager
 
@@ -46,12 +54,18 @@ class NotificationService : Service() {
         const val ACTION_START_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_START_LIVE_UPDATE"
         const val ACTION_ADVANCE_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_ADVANCE_LIVE_UPDATE"
 
+        // Azioni per Call Notification
+        const val ACTION_START_CALL = "com.embedded2025.notificationsa15.ACTION_START_CALL"
+        const val ACTION_ANSWER_CALL = "com.embedded2025.notificationsa15.ACTION_ANSWER_CALL"
+        const val ACTION_DECLINE_CALL = "com.embedded2025.notificationsa15.ACTION_DECLINE_CALL"
+
         // ID delle notifiche
         const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
         const val LIVE_UPDATE_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.LIVE_UPDATE
+        const val CALL_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.CALL
 
-        // Extra
         const val EXTRA_LIVE_UPDATE_STEP = "extra_live_update_step"
+        const val EXTRA_CALL_DELAY_SECONDS = "extra_call_delay_seconds"
 
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_PROGRESS }
@@ -59,6 +73,13 @@ class NotificationService : Service() {
 
         fun getStartLiveUpdateIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_LIVE_UPDATE }
+        }
+
+        fun getStartCallIntent(context: Context, delayInSeconds: Int): Intent {
+            return Intent(context, NotificationService::class.java).apply {
+                action = ACTION_START_CALL
+                putExtra(EXTRA_CALL_DELAY_SECONDS, delayInSeconds)
+            }
         }
 
         private fun getAdvanceLiveUpdateIntent(context: Context, currentStep: Int): Intent {
@@ -72,7 +93,6 @@ class NotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannels()
         Log.d(TAG, "Servizio creato.")
     }
 
@@ -87,6 +107,12 @@ class NotificationService : Service() {
                 val currentStep = intent.getIntExtra(EXTRA_LIVE_UPDATE_STEP, 0)
                 handleLiveUpdateAdvancement(currentStep)
             }
+            ACTION_START_CALL -> {
+                val delay = intent.getIntExtra(EXTRA_CALL_DELAY_SECONDS, 0)
+                scheduleCallNotification(delay)
+            }
+            ACTION_ANSWER_CALL -> handleCallAnswer()
+            ACTION_DECLINE_CALL -> handleCallDecline()
         }
         return START_NOT_STICKY
     }
@@ -124,7 +150,7 @@ class NotificationService : Service() {
     private fun buildLiveUpdateNotification(step: Int): Notification {
         val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.liveUpdateNotificationFragment)
         val builder = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
-            .setSmallIcon(R.drawable.ic_notification_actions)
+            .setSmallIcon(R.drawable.ic_live)
             .setContentIntent(pendingContentIntent)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
@@ -235,6 +261,77 @@ class NotificationService : Service() {
             .setAutoCancel(true).build()
     }
 
+    private fun scheduleCallNotification(delayInSeconds: Int) {
+        serviceScope.launch {
+            delay(delayInSeconds * 1000L)
+            if (isActive) {
+                buildCallNotification()
+            }
+        }
+    }
+    private fun buildCallNotification() {
+        val callerName = "Mario Rossi"
+
+        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.callNotificationFragment)
+        val fullScreenIntent = Intent(this, MainActivity::class.java)
+        val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val answerIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_ANSWER_CALL }
+        val answerPendingIntent = PendingIntent.getService(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val declineIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_DECLINE_CALL }
+        val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val caller = Person.Builder()
+            .setName(callerName)
+            .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call))
+            .build()
+
+        val notification = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.CALLS)
+            .setSmallIcon(R.drawable.ic_call)
+            .setStyle(NotificationCompat.CallStyle.forIncomingCall(caller, declinePendingIntent, answerPendingIntent))
+            .setContentTitle("Chiamata in arrivo")
+            .setContentText(callerName)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setContentIntent(pendingContentIntent)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setOngoing(true)
+            .build()
+        try {
+            val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+            ringtone = RingtoneManager.getRingtone(applicationContext, ringtoneUri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ringtone?.isLooping = true
+            }
+            ringtone?.play()
+
+            @Suppress("DEPRECATION")
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+            val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
+            vibrator.vibrate(vibrationEffect)
+        } catch (e: Exception) {
+            Log.e(TAG, "Errore durante la riproduzione della suoneria", e)
+        }
+
+        startForeground(CALL_NOTIFICATION_ID, notification)
+    }
+
+    private fun handleCallAnswer() {
+        stopRingtoneAndVibration()
+        Toast.makeText(this, "Risposto", Toast.LENGTH_SHORT).show()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    private fun handleCallDecline() {
+        stopRingtoneAndVibration()
+        Toast.makeText(this, "Chiamata rifiutata", Toast.LENGTH_SHORT).show()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
     private fun checkAndStopSelf() {
         if (progressJob?.isActive != true && liveUpdateJob?.isActive != true) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
@@ -242,12 +339,13 @@ class NotificationService : Service() {
         }
     }
 
-    private fun createNotificationChannels() {
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channels = listOf(
-            NotificationChannel(NotificationsHelper.ChannelID.DEMO, getString(R.string.channel_demo_name), NotificationManager.IMPORTANCE_DEFAULT),
-        )
-        manager.createNotificationChannels(channels)
+    private fun stopRingtoneAndVibration() {
+        ringtone?.stop()
+        ringtone = null
+
+        @Suppress("DEPRECATION")
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.cancel()
     }
 
     private fun getPendingIntentFlags(mutable: Boolean = false): Int {
@@ -260,6 +358,7 @@ class NotificationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopRingtoneAndVibration()
         serviceJob.cancel()
     }
 }

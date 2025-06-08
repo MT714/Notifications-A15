@@ -11,6 +11,8 @@
     <string name="channel_media_player_description">Canale per notifiche di riproduzione multimediale</string>
     <string name="channel_weather_name">Meteo</string>
     <string name="channel_weather_description">Canale per notifiche relative al meteo</string>
+    <string name="channel_calls_name">Chiamate in Arrivo</string>
+    <string name="channel_calls_description">Notifiche per le chiamate in arrivo</string>
 
     <!-- Notifications -->
     <string name="notif_simple_demo_title">Notifica semplice</string>

@@ -6,9 +6,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import android.media.AudioAttributes
 import com.embedded2025.notificationsa15.R
 
 object NotificationsHelper {
@@ -17,6 +19,7 @@ object NotificationsHelper {
         const val DEFAULT = "channel_default"
         const val MEDIA_PLAYER = "channel_media_player"
         const val WEATHER = "channel_weather"
+        const val CALLS = "channel_call"
     }
 
     private object NotificationID {
@@ -39,6 +42,11 @@ object NotificationsHelper {
      */
     fun initialize(context: Context) {
         appContext = context.applicationContext
+
+        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+            .build()
 
         // Create channels
         val channels = listOf<NotificationChannel>(
@@ -69,6 +77,13 @@ object NotificationsHelper {
             ).apply {
                 description = ctx.getString(R.string.channel_weather_description)
                 setShowBadge(true)
+            },
+            NotificationChannel(ChannelID.CALLS,
+                ctx.getString(R.string.channel_calls_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = ctx.getString(R.string.channel_calls_description)
+                setShowBadge(false)
             }
         )
 

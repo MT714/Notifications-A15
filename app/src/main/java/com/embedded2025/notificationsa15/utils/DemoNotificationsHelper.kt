@@ -7,8 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -36,7 +34,7 @@ object DemoNotificationsHelper {
         const val REPLY = 4
         const val PROGRESS = 5
         const val LIVE_UPDATE = 6
-        const val MEDIA_PLAYER = 7
+        const val CALL = 7
     }
 
     object OrderStatus{
@@ -195,6 +193,7 @@ object DemoNotificationsHelper {
         Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per progresso inviata.")
     }
 
+    //Mostra una notifica di aggiornamento in tempo reale
     fun showLiveUpdateNotification(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -205,5 +204,18 @@ object DemoNotificationsHelper {
         val serviceIntent = NotificationService.getStartLiveUpdateIntent(context)
         context.startForegroundService(serviceIntent)
         Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per live update inviata.")
+    }
+
+    //Mostra una notifica di chiamata
+    fun showCallNotification(context: Context, delayInSeconds: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di chiamata.")
+            Toast.makeText(context, context.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            return
+        }
+        val serviceIntent = NotificationService.getStartCallIntent(context, delayInSeconds)
+        context.startForegroundService(serviceIntent)
+        Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per chiamata fittizia inviata.")
     }
 }

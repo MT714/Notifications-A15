@@ -48,4 +48,13 @@
     <!-- Weather notification -->
     <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
 
+    <!-- Call notification -->
+    <string name="call_notification_description">Inserisci un ritardo in secondi, poi premi il pulsante per pianificare una notifica di chiamata.</string>
+    <string name="call_notification_delay_hint">Ritardo (secondi)</string>
+    <string name="call_notification_schedule_button">Pianifica Chiamata</string>
+    <string name="call_notification_scheduled_toast">Chiamata pianificata tra %1$d secondi.</string>
+    <string name="call_notification_invalid_delay">Per favore, inserisci un ritardo valido.</string>
+    <string name="fragment_call_title">Notifica di Chiamata</string>
+
+
 </resources>
