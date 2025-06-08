@@ -5,17 +5,6 @@ import retrofit2.http.Query
 
 interface WeatherApi {
     /**
-     * Ottiene le informazioni meteo in base alla città
-     */
-    @GET("data/2.5/weather")
-    suspend fun getWeather(
-        @Query("q") city: String,
-        @Query("appid") apiKey: String,
-        @Query("units") units: String = "metric",
-        @Query("lang") lang: String = "it"
-    ): WeatherResponse
-
-    /**
      * Ottiene le informazioni meteo in base alle coordinate geografiche
      */
     @GET("data/2.5/weather")

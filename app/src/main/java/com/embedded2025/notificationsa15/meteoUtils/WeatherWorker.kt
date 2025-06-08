@@ -84,12 +84,5 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
     companion object {
         const val WORKER_NAME = "weather_worker"
-
-        fun createInputData(lat: Double, lon: Double): Data {
-            return workDataOf(
-                "latitude" to lat,
-                "longitude" to lon
-            )
-        }
     }
 }
