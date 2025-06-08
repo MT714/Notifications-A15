@@ -47,5 +47,12 @@
 
     <!-- Weather notification -->
     <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
+    <string name="weather_update_interval">Ricevi la notifica ogni:</string>
+    <string-array name="intervals_array">
+        <item>15 minuti</item>
+        <item>30 minuti</item>
+        <item>60 minuti</item>
+        <item>120 minuti</item>
+    </string-array>
 
 </resources>

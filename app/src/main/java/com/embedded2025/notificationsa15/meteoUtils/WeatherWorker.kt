@@ -5,9 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.*
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
@@ -21,11 +19,8 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
     override suspend fun doWork(): Result {
         return try {
-            Log.i("WeatherWorker", "Inizio Worker")
-
             val location = getCurrentLocation() ?: return Result.retry()
 
-            Log.i("WeatherWorker", "Post getCurrentLocation()")
             val lat = location.latitude
             val lon = location.longitude
 
@@ -69,8 +64,6 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             }.addOnFailureListener { exception ->
                 cont.resume(null)
             }
-
-            Log.i("WeatherWorker", "Fine try")
         } catch (e: Exception) {
             Log.e("WeatherWorker", "Exception catturata nella richiesta posizione", e)
             cont.resume(null)
