@@ -36,6 +36,7 @@ class NotificationService : Service() {
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
 
     private var progressJob: Job? = null
+    private var liveUpdateJob: Job? = null
 
     private lateinit var notificationManager: NotificationManager
 
@@ -45,13 +46,29 @@ class NotificationService : Service() {
         // Azioni
         const val ACTION_START_PROGRESS = "com.embedded2025.notificationsa15.ACTION_START_PROGRESS"
         const val ACTION_CANCEL_PROGRESS = "com.embedded2025.notificationsa15.ACTION_CANCEL_PROGRESS"
+        const val ACTION_START_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_START_LIVE_UPDATE"
+        const val ACTION_ADVANCE_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_ADVANCE_LIVE_UPDATE"
 
         // ID
         const val PROGRESS_CHANNEL_ID = NotificationsHelper.ChannelID.DEMO
         const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
+        const val LIVE_UPDATE_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.LIVE_UPDATE
+
+        const val EXTRA_LIVE_UPDATE_STEP = "extra_live_update_step"
 
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_PROGRESS }
+        }
+
+        fun getStartLiveUpdateIntent(context: Context): Intent {
+            return Intent(context, NotificationService::class.java).apply { action = ACTION_START_LIVE_UPDATE }
+        }
+
+        private fun getAdvanceLiveUpdateIntent(context: Context, currentStep: Int): Intent {
+            return Intent(context, NotificationService::class.java).apply {
+                action = ACTION_ADVANCE_LIVE_UPDATE
+                putExtra(EXTRA_LIVE_UPDATE_STEP, currentStep)
+            }
         }
     }
 
@@ -67,7 +84,12 @@ class NotificationService : Service() {
         when (intent?.action) {
             ACTION_START_PROGRESS -> startForegroundWithProgress()
             ACTION_CANCEL_PROGRESS -> handleProgressCancellation("Azione di cancellazione utente")
+            ACTION_START_LIVE_UPDATE -> startLiveUpdateFlow()
+            ACTION_ADVANCE_LIVE_UPDATE -> {
+                val currentStep = intent.getIntExtra(EXTRA_LIVE_UPDATE_STEP, 0)
+                handleLiveUpdateAdvancement(currentStep)
             }
+        }
         return START_NOT_STICKY
     }
 
@@ -146,10 +168,76 @@ class NotificationService : Service() {
     }
 
     private fun checkAndStopSelf() {
-        if (progressJob?.isActive != true) {
+        if (progressJob?.isActive != true && liveUpdateJob?.isActive != true) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
             stopSelf()
         }
+    }
+
+    private fun startLiveUpdateFlow() {
+        liveUpdateJob?.cancel()
+        liveUpdateJob = serviceScope.launch {
+            val initialNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_PLACED)
+            startForeground(LIVE_UPDATE_NOTIFICATION_ID, initialNotification)
+            Log.d(TAG, "Servizio in foreground per LIVE UPDATE.")
+
+            delay(10000)
+
+            if (isActive) {
+                val onTheWayNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY)
+                notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, onTheWayNotification)
+            }
+        }
+    }
+
+    private fun handleLiveUpdateAdvancement(currentStep: Int) {
+        liveUpdateJob?.cancel()
+        val nextStep = (currentStep + 1).coerceAtMost(DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE)
+        val finalNotification = buildLiveUpdateNotification(nextStep)
+        notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, finalNotification)
+
+        if (nextStep == DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE) {
+            handler.postDelayed({
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                checkAndStopSelf()
+            }, 4000)
+        }
+    }
+
+    private fun buildLiveUpdateNotification(step: Int): Notification {
+        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.liveUpdateNotificationFragment)
+        val builder = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
+            .setSmallIcon(R.drawable.ic_notification_actions)
+            .setContentIntent(pendingContentIntent)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentText(getString(R.string.notif_live_update_demo_text))
+
+        when (step) {
+            DemoNotificationsHelper.OrderStatus.ORDER_PLACED -> {
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_placed))
+                    .setProgress(3, step + 1, false)
+            }
+            DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY -> {
+                val advanceIntent = getAdvanceLiveUpdateIntent(this, step)
+                val pendingAdvanceIntent = PendingIntent.getService(this, 201, advanceIntent, getPendingIntentFlags())
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_sent))
+                    .setProgress(3, step + 1, false)
+                    .addAction(R.drawable.ic_later, "Ho già ricevuto l'ordine", pendingAdvanceIntent)
+            }
+            DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE -> {
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_complete))
+                    .setProgress(0, 0, false)
+                    .setContentText("")
+                    .setOngoing(false)
+                    .setAutoCancel(true)
+            }
+        }
+        return builder.build()
     }
 
     private fun createNotificationChannels() {

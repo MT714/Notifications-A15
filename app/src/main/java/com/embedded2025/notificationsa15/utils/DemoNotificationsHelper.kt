@@ -195,43 +195,15 @@ object DemoNotificationsHelper {
         Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per progresso inviata.")
     }
 
-    fun showLiveUpdateNotification(step : Int) {
-        val extras = Bundle().apply {
-            putInt(IntentExtras.ORDER_STEP, step)
+    fun showLiveUpdateNotification(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio.")
+            Toast.makeText(context, context.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            return
         }
-        val updateIntent = PendingIntentHelper.createBroadcast(NotificationAction.NEXT_STEP, extras)
-
-        val notif = NotificationsHelper.createBasicNotificationBuilder(
-            ChannelID.DEMO,
-            "",
-            ctx.getString(R.string.notif_live_update_demo_text),
-            R.id.liveUpdateNotificationFragment
-        )
-            .setProgress(3, step+1, false)
-
-        when (step) {
-            OrderStatus.ORDER_PLACED -> {
-                notif.setContentTitle(ctx.getString(R.string.notif_live_update_demo_order_placed))
-
-                //Passa allo step successivo dopo 10s
-                Handler(Looper.getMainLooper()).postDelayed({
-                    showLiveUpdateNotification(OrderStatus.ORDER_ON_THE_WAY)
-                }, 10000)
-            }
-            OrderStatus.ORDER_ON_THE_WAY -> {
-                notif
-                    .setContentTitle(ctx.getString(R.string.notif_live_update_demo_order_sent))
-                    .addAction(R.drawable.ic_later, "Ho già ricevuto l'ordine", updateIntent)
-            }
-            OrderStatus.ORDER_COMPLETE -> {
-                notif
-                    .setContentTitle(ctx.getString(R.string.notif_live_update_demo_order_complete))
-                    .setProgress(0, 0, false)
-                    .setContentText("")
-            }
-            else -> notif.setContentTitle("Errore") // TODO: chiarisci
-        }
-
-        safeNotifyDemo(NotificationID.LIVE_UPDATE, notif)
+        val serviceIntent = NotificationService.getStartLiveUpdateIntent(context)
+        context.startForegroundService(serviceIntent)
+        Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per live update inviata.")
     }
 }
