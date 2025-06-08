@@ -14,7 +14,7 @@ class LiveUpdateNotificationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_live_update_notification, container, false).apply {
             findViewById<Button>(R.id.btnLiveUpdate_create).setOnClickListener {
-                DemoNotificationsHelper.showLiveUpdateNotification(0)
+                DemoNotificationsHelper.showLiveUpdateNotification(requireContext())
             }
         }
 

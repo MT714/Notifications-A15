@@ -6,18 +6,16 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.media.session.MediaButtonReceiver
+import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
+import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,44 +23,49 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
-import com.embedded2025.notificationsa15.utils.FakeMediaPlayer
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
-import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 
 class NotificationService : Service() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
 
     private var progressJob: Job? = null
+    private var liveUpdateJob: Job? = null
 
     private lateinit var notificationManager: NotificationManager
-    private var mediaSession: MediaSessionCompat? = null
 
     companion object {
         private const val TAG = "NotificationService"
 
-        // Azioni
+        // Azioni per Progress
         const val ACTION_START_PROGRESS = "com.embedded2025.notificationsa15.ACTION_START_PROGRESS"
         const val ACTION_CANCEL_PROGRESS = "com.embedded2025.notificationsa15.ACTION_CANCEL_PROGRESS"
-        const val ACTION_MEDIA_PLAY = "com.embedded2025.notificationsa15.ACTION_MEDIA_PLAY"
-        const val ACTION_MEDIA_PAUSE = "com.embedded2025.notificationsa15.ACTION_MEDIA_PAUSE"
-        const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
-        const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
-        const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
 
-        // ID
-        const val PROGRESS_CHANNEL_ID = NotificationsHelper.ChannelID.DEMO
-        const val MEDIA_PLAYER_CHANNEL_ID = NotificationsHelper.ChannelID.MEDIA_PLAYER
+        // Azioni per Live Update
+        const val ACTION_START_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_START_LIVE_UPDATE"
+        const val ACTION_ADVANCE_LIVE_UPDATE = "com.embedded2025.notificationsa15.ACTION_ADVANCE_LIVE_UPDATE"
+
+        // ID delle notifiche
         const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
-        const val MEDIA_PLAYER_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.MEDIA_PLAYER
+        const val LIVE_UPDATE_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.LIVE_UPDATE
+
+        // Extra
+        const val EXTRA_LIVE_UPDATE_STEP = "extra_live_update_step"
 
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_PROGRESS }
         }
-        fun getMediaControlIntent(context: Context, mediaAction: String): Intent {
-            return Intent(context, NotificationService::class.java).apply { action = mediaAction }
+
+        fun getStartLiveUpdateIntent(context: Context): Intent {
+            return Intent(context, NotificationService::class.java).apply { action = ACTION_START_LIVE_UPDATE }
+        }
+
+        private fun getAdvanceLiveUpdateIntent(context: Context, currentStep: Int): Intent {
+            return Intent(context, NotificationService::class.java).apply {
+                action = ACTION_ADVANCE_LIVE_UPDATE
+                putExtra(EXTRA_LIVE_UPDATE_STEP, currentStep)
+            }
         }
     }
 
@@ -70,139 +73,100 @@ class NotificationService : Service() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannels()
-        initializeMediaSession()
         Log.d(TAG, "Servizio creato.")
-    }
-
-    private fun initializeMediaSession() {
-        val mediaButtonReceiver = ComponentName(applicationContext, MediaButtonReceiver::class.java)
-        mediaSession = MediaSessionCompat(applicationContext, TAG, mediaButtonReceiver, null).apply {
-            val initialState = PlaybackStateCompat.Builder()
-                .setActions(
-                    PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                            PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
-                ).setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f).build()
-            setPlaybackState(initialState)
-            setCallback(mediaSessionCallback)
-            isActive = true
-        }
-        Log.d(TAG, "MediaSession inizializzata.")
-    }
-
-    private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
-        override fun onPlay() { super.onPlay(); Log.d(TAG, "Callback: onPlay"); FakeMediaPlayer.play(); updateMediaPlaybackState() }
-        override fun onPause() { super.onPause(); Log.d(TAG, "Callback: onPause"); FakeMediaPlayer.pause(); updateMediaPlaybackState() }
-        override fun onSkipToNext() { super.onSkipToNext(); Log.d(TAG, "Callback: onSkipToNext"); FakeMediaPlayer.nextTrack(); updateMediaPlaybackState() }
-        override fun onSkipToPrevious() { super.onSkipToPrevious(); Log.d(TAG, "Callback: onSkipToPrevious"); FakeMediaPlayer.previousTrack(); updateMediaPlaybackState() }
-        override fun onStop() {
-            super.onStop()
-            Log.d(TAG, "Callback: onStop")
-            FakeMediaPlayer.stop()
-            updateMediaPlaybackState()
-            checkAndStopSelf()
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
 
-        if (intent?.action == Intent.ACTION_MEDIA_BUTTON) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, buildMediaNotification())
-            } else {
-                stopSelf(startId)
-                return START_NOT_STICKY
-            }
-        }
-
-        MediaButtonReceiver.handleIntent(mediaSession, intent)
-
         when (intent?.action) {
             ACTION_START_PROGRESS -> startForegroundWithProgress()
             ACTION_CANCEL_PROGRESS -> handleProgressCancellation("Azione di cancellazione utente")
-            ACTION_MEDIA_PLAY -> mediaSession?.controller?.transportControls?.play()
-            ACTION_MEDIA_PAUSE -> mediaSession?.controller?.transportControls?.pause()
-            ACTION_MEDIA_NEXT -> mediaSession?.controller?.transportControls?.skipToNext()
-            ACTION_MEDIA_PREVIOUS -> mediaSession?.controller?.transportControls?.skipToPrevious()
-            ACTION_MEDIA_STOP -> mediaSession?.controller?.transportControls?.stop()
+            ACTION_START_LIVE_UPDATE -> startLiveUpdateFlow()
+            ACTION_ADVANCE_LIVE_UPDATE -> {
+                val currentStep = intent.getIntExtra(EXTRA_LIVE_UPDATE_STEP, 0)
+                handleLiveUpdateAdvancement(currentStep)
+            }
         }
         return START_NOT_STICKY
     }
 
-    private fun updateMediaPlaybackState() {
-        if (mediaSession == null) return
-        val isPlaying = FakeMediaPlayer.isPlaying
-        val isStopped = FakeMediaPlayer.currentTrackIndex == -1 //TODO Controlla l'utilitá
+    private fun startLiveUpdateFlow() {
+        liveUpdateJob?.cancel()
+        liveUpdateJob = serviceScope.launch {
+            val initialNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_PLACED)
+            startForeground(LIVE_UPDATE_NOTIFICATION_ID, initialNotification)
+            Log.d(TAG, "Servizio in foreground per LIVE UPDATE.")
 
-        val playbackStateBuilder = PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_PLAY or
-                        PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
-            ).setState(
-                when {
-                    isPlaying -> PlaybackStateCompat.STATE_PLAYING
-                    !isStopped -> PlaybackStateCompat.STATE_PAUSED
-                    else -> PlaybackStateCompat.STATE_STOPPED
-                }, 0, 1.0f
-            )
-        mediaSession!!.setPlaybackState(playbackStateBuilder.build())
+            delay(10000)
 
-        val metadataBuilder = MediaMetadataCompat.Builder()
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, FakeMediaPlayer.currentSong)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, FakeMediaPlayer.currentArtist)
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, FakeMediaPlayer.getAlbumArt(this))
-        mediaSession!!.setMetadata(metadataBuilder.build())
-
-        if (!isStopped) {
-            val notification = buildMediaNotification()
-            if (isPlaying) {
-                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-            } else {
-                stopForeground(STOP_FOREGROUND_DETACH)
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                    notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-                }
+            if (isActive) {
+                val onTheWayNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY)
+                notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, onTheWayNotification)
             }
-        } else {
-            stopForeground(STOP_FOREGROUND_REMOVE)
         }
     }
 
-    private fun buildMediaNotification(): Notification {
-        val controller = mediaSession!!.controller
-        val description = controller.metadata?.description
-        val isPlaying = controller.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
+    private fun handleLiveUpdateAdvancement(currentStep: Int) {
+        liveUpdateJob?.cancel()
+        val nextStep = (currentStep + 1).coerceAtMost(DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE)
+        val finalNotification = buildLiveUpdateNotification(nextStep)
+        notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, finalNotification)
 
-        val builder = NotificationCompat.Builder(this, MEDIA_PLAYER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_music_note)
-            .setContentTitle(description?.title ?: "Nessun Titolo")
-            .setContentText(description?.subtitle ?: "Nessun Artista")
-            .setLargeIcon(description?.iconBitmap)
-            .setContentIntent(controller.sessionActivity)
-            .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        if (nextStep == DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE) {
+            handler.postDelayed({
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                checkAndStopSelf()
+            }, 4000)
+        }
+    }
+
+    private fun buildLiveUpdateNotification(step: Int): Notification {
+        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.liveUpdateNotificationFragment)
+        val builder = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
+            .setSmallIcon(R.drawable.ic_notification_actions)
+            .setContentIntent(pendingContentIntent)
+            .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .setOngoing(isPlaying)
-            .addAction(R.drawable.ic_previous, getString(R.string.notif_media_player_demo_previous), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS))
-            .addAction(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play, if (isPlaying) "Pausa" else "Play", MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE))
-            .addAction(R.drawable.ic_next, getString(R.string.notif_media_player_demo_next), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_NEXT))
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession!!.sessionToken)
-                    .setShowActionsInCompactView(0, 1, 2)
-                    .setShowCancelButton(true)
-                    .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
-            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentText(getString(R.string.notif_live_update_demo_text))
+
+        when (step) {
+            DemoNotificationsHelper.OrderStatus.ORDER_PLACED -> {
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_placed))
+                    .setProgress(3, step + 1, false)
+            }
+            DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY -> {
+                val advanceIntent = getAdvanceLiveUpdateIntent(this, step)
+                val pendingAdvanceIntent = PendingIntent.getService(this, 201, advanceIntent, getPendingIntentFlags())
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_sent))
+                    .setProgress(3, step + 1, false)
+                    .addAction(R.drawable.ic_later, "Ho già ricevuto l'ordine", pendingAdvanceIntent)
+            }
+            DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE -> {
+                builder
+                    .setContentTitle(getString(R.string.notif_live_update_demo_order_complete))
+                    .setProgress(0, 0, false)
+                    .setContentText("")
+                    .setOngoing(false)
+                    .setAutoCancel(true)
+            }
+        }
         return builder.build()
     }
 
     private fun startForegroundWithProgress() {
         progressJob?.cancel()
         progressJob = serviceScope.launch {
-            val initialNotification = buildProgressNotification(0, 100, false, "Avvio operazione...")
-            if (ActivityCompat.checkSelfPermission(this@NotificationService, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            val initialNotification =
+                buildProgressNotification(0, 100, false, "Avvio operazione...")
+            if (ActivityCompat.checkSelfPermission(
+                    this@NotificationService,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 Log.w(TAG, "Permesso negato, impossibile avviare progresso.")
                 return@launch
             }
@@ -211,37 +175,33 @@ class NotificationService : Service() {
 
             var currentProgress = 0
             val maxProgress = 100
-            try {
-                while (currentProgress <= maxProgress && isActive) {
-                    val progressText = getString(R.string.notif_progress_demo_det, currentProgress)
-                    val notificationUpdate = buildProgressNotification(currentProgress, maxProgress, false, progressText)
-                    notificationManager.notify(PROGRESS_NOTIFICATION_ID, notificationUpdate)
-                    delay(500)
-                    currentProgress += 5
-                }
-                if (isActive) {
-                    val finalNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
-                    notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
-                }
-            } finally {
-                if (!FakeMediaPlayer.isPlaying) {
-                    stopForeground(STOP_FOREGROUND_DETACH)
-                }
+            while (currentProgress <= maxProgress && isActive) {
+                val progressText = getString(R.string.notif_progress_demo_det, currentProgress)
+                val notificationUpdate =
+                    buildProgressNotification(currentProgress, maxProgress, false, progressText)
+                notificationManager.notify(PROGRESS_NOTIFICATION_ID, notificationUpdate)
+                delay(500)
+                currentProgress += 5
+            }
+            if (isActive) {
+                stopForeground(Service.STOP_FOREGROUND_DETACH)
+                val finalNotification =
+                    buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
+                notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
                 checkAndStopSelf()
             }
         }
     }
 
     private fun handleProgressCancellation(reason: String) {
-        if (progressJob?.isActive != true) return
         progressJob?.cancel()
         Log.i(TAG, "Gestione cancellazione progresso: $reason")
+
+        stopForeground(Service.STOP_FOREGROUND_DETACH)
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             val cancelledNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_cancelled))
             notificationManager.notify(PROGRESS_NOTIFICATION_ID, cancelledNotification)
-        }
-        if (!FakeMediaPlayer.isPlaying) {
-            stopForeground(STOP_FOREGROUND_DETACH)
         }
         checkAndStopSelf()
     }
@@ -250,7 +210,7 @@ class NotificationService : Service() {
         val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
-        return NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
+        return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
@@ -264,7 +224,7 @@ class NotificationService : Service() {
 
     private fun buildFinalProgressNotification(contentText: String): Notification {
         val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
-        return NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
+        return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
@@ -276,8 +236,7 @@ class NotificationService : Service() {
     }
 
     private fun checkAndStopSelf() {
-        val isMediaRunning = FakeMediaPlayer.currentTrackIndex != -1
-        if (progressJob?.isActive != true && !isMediaRunning) {
+        if (progressJob?.isActive != true && liveUpdateJob?.isActive != true) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
             stopSelf()
         }
@@ -286,20 +245,21 @@ class NotificationService : Service() {
     private fun createNotificationChannels() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channels = listOf(
-            NotificationChannel(PROGRESS_CHANNEL_ID, getString(R.string.channel_demo_name), NotificationManager.IMPORTANCE_DEFAULT), // Aumentato a DEFAULT
-            NotificationChannel(MEDIA_PLAYER_CHANNEL_ID, getString(R.string.channel_media_player_name), NotificationManager.IMPORTANCE_LOW)
+            NotificationChannel(NotificationsHelper.ChannelID.DEMO, getString(R.string.channel_demo_name), NotificationManager.IMPORTANCE_DEFAULT),
         )
         manager.createNotificationChannels(channels)
     }
+
     private fun getPendingIntentFlags(mutable: Boolean = false): Int {
         var flags = PendingIntent.FLAG_UPDATE_CURRENT
         flags = if (mutable) flags or PendingIntent.FLAG_MUTABLE else flags or PendingIntent.FLAG_IMMUTABLE
         return flags
     }
+
     override fun onBind(intent: Intent?): IBinder? = null
+
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
-        mediaSession?.release()
     }
 }

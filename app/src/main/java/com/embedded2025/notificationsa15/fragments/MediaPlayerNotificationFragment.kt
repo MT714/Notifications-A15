@@ -1,6 +1,7 @@
 package com.embedded2025.notificationsa15.fragments
 
 import android.content.ComponentName
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,9 @@ class MediaPlayerNotificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val serviceIntent = Intent(requireContext(), PlaybackService::class.java)
+        requireContext().startService(serviceIntent)
 
         val sessionToken = SessionToken(
             requireContext(),
