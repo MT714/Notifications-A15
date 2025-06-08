@@ -20,6 +20,7 @@
     <string name="expandable_notif_descr">Questa è una notifica estendibile. Premi un bottone per una demo</string>
     <string name="expandable_notif_text_descr">La notifica espandibile con testo mostra del testo</string>
     <string name="expandable_notif_picture_descr">La notifica espandibile con immagine mostra una immagine</string>
+    <string name="news_switch_text">Notifiche news</string>
 
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
