@@ -234,20 +234,4 @@ object DemoNotificationsHelper {
 
         safeNotifyDemo(NotificationID.LIVE_UPDATE, notif)
     }
-
-    fun showMediaPlayerNotification(context: Context, mediaAction: String) {
-        if (mediaAction == NotificationService.ACTION_MEDIA_PLAY &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.w("NotificationsHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il media player service.")
-            Toast.makeText(context, context.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val serviceIntent = NotificationService.getMediaControlIntent(context, mediaAction)
-        context.startForegroundService(serviceIntent)
-        Log.d("NotificationsHelper", "Richiesta NotificationService per media action '$mediaAction' inviata.")
-    }
-
-
 }

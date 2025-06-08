@@ -26,7 +26,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
-import com.embedded2025.notificationsa15.utils.FakeMediaPlayer
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 
@@ -39,7 +38,6 @@ class NotificationService : Service() {
     private var progressJob: Job? = null
 
     private lateinit var notificationManager: NotificationManager
-    private var mediaSession: MediaSessionCompat? = null
 
     companion object {
         private const val TAG = "NotificationService"
@@ -47,23 +45,13 @@ class NotificationService : Service() {
         // Azioni
         const val ACTION_START_PROGRESS = "com.embedded2025.notificationsa15.ACTION_START_PROGRESS"
         const val ACTION_CANCEL_PROGRESS = "com.embedded2025.notificationsa15.ACTION_CANCEL_PROGRESS"
-        const val ACTION_MEDIA_PLAY = "com.embedded2025.notificationsa15.ACTION_MEDIA_PLAY"
-        const val ACTION_MEDIA_PAUSE = "com.embedded2025.notificationsa15.ACTION_MEDIA_PAUSE"
-        const val ACTION_MEDIA_NEXT = "com.embedded2025.notificationsa15.ACTION_MEDIA_NEXT"
-        const val ACTION_MEDIA_PREVIOUS = "com.embedded2025.notificationsa15.ACTION_MEDIA_PREVIOUS"
-        const val ACTION_MEDIA_STOP = "com.embedded2025.notificationsa15.ACTION_MEDIA_STOP"
 
         // ID
         const val PROGRESS_CHANNEL_ID = NotificationsHelper.ChannelID.DEMO
-        const val MEDIA_PLAYER_CHANNEL_ID = NotificationsHelper.ChannelID.MEDIA_PLAYER
         const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
-        const val MEDIA_PLAYER_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.MEDIA_PLAYER
 
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, NotificationService::class.java).apply { action = ACTION_START_PROGRESS }
-        }
-        fun getMediaControlIntent(context: Context, mediaAction: String): Intent {
-            return Intent(context, NotificationService::class.java).apply { action = mediaAction }
         }
     }
 
@@ -71,132 +59,16 @@ class NotificationService : Service() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannels()
-        initializeMediaSession()
         Log.d(TAG, "Servizio creato.")
     }
-
-    private fun initializeMediaSession() {
-        val mediaButtonReceiver = ComponentName(applicationContext, MediaButtonReceiver::class.java)
-        mediaSession = MediaSessionCompat(applicationContext, TAG, mediaButtonReceiver, null).apply {
-            val initialState = PlaybackStateCompat.Builder()
-                .setActions(
-                    PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                            PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
-                ).setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f).build()
-            setPlaybackState(initialState)
-            setCallback(mediaSessionCallback)
-            isActive = true
-        }
-        Log.d(TAG, "MediaSession inizializzata.")
-    }
-
-    private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
-        override fun onPlay() { super.onPlay(); Log.d(TAG, "Callback: onPlay"); FakeMediaPlayer.play(); updateMediaPlaybackState() }
-        override fun onPause() { super.onPause(); Log.d(TAG, "Callback: onPause"); FakeMediaPlayer.pause(); updateMediaPlaybackState() }
-        override fun onSkipToNext() { super.onSkipToNext(); Log.d(TAG, "Callback: onSkipToNext"); FakeMediaPlayer.nextTrack(); updateMediaPlaybackState() }
-        override fun onSkipToPrevious() { super.onSkipToPrevious(); Log.d(TAG, "Callback: onSkipToPrevious"); FakeMediaPlayer.previousTrack(); updateMediaPlaybackState() }
-        override fun onStop() {
-            super.onStop()
-            Log.d(TAG, "Callback: onStop")
-            FakeMediaPlayer.stop()
-            updateMediaPlaybackState()
-            checkAndStopSelf()
-        }
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
-
-        if (intent?.action == Intent.ACTION_MEDIA_BUTTON) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, buildMediaNotification())
-            } else {
-                stopSelf(startId)
-                return START_NOT_STICKY
-            }
-        }
-
-        MediaButtonReceiver.handleIntent(mediaSession, intent)
 
         when (intent?.action) {
             ACTION_START_PROGRESS -> startForegroundWithProgress()
             ACTION_CANCEL_PROGRESS -> handleProgressCancellation("Azione di cancellazione utente")
-            ACTION_MEDIA_PLAY -> mediaSession?.controller?.transportControls?.play()
-            ACTION_MEDIA_PAUSE -> mediaSession?.controller?.transportControls?.pause()
-            ACTION_MEDIA_NEXT -> mediaSession?.controller?.transportControls?.skipToNext()
-            ACTION_MEDIA_PREVIOUS -> mediaSession?.controller?.transportControls?.skipToPrevious()
-            ACTION_MEDIA_STOP -> mediaSession?.controller?.transportControls?.stop()
-        }
-        return START_NOT_STICKY
-    }
-
-    private fun updateMediaPlaybackState() {
-        if (mediaSession == null) return
-        val isPlaying = FakeMediaPlayer.isPlaying
-        val isStopped = FakeMediaPlayer.currentTrackIndex == -1 //TODO Controlla l'utilitá
-
-        val playbackStateBuilder = PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_PLAY or
-                        PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
-            ).setState(
-                when {
-                    isPlaying -> PlaybackStateCompat.STATE_PLAYING
-                    !isStopped -> PlaybackStateCompat.STATE_PAUSED
-                    else -> PlaybackStateCompat.STATE_STOPPED
-                }, 0, 1.0f
-            )
-        mediaSession!!.setPlaybackState(playbackStateBuilder.build())
-
-        val metadataBuilder = MediaMetadataCompat.Builder()
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, FakeMediaPlayer.currentSong)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, FakeMediaPlayer.currentArtist)
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, FakeMediaPlayer.getAlbumArt(this))
-        mediaSession!!.setMetadata(metadataBuilder.build())
-
-        if (!isStopped) {
-            val notification = buildMediaNotification()
-            if (isPlaying) {
-                startForeground(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-            } else {
-                stopForeground(STOP_FOREGROUND_DETACH)
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                    notificationManager.notify(MEDIA_PLAYER_NOTIFICATION_ID, notification)
-                }
             }
-        } else {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        }
-    }
-
-    private fun buildMediaNotification(): Notification {
-        val controller = mediaSession!!.controller
-        val description = controller.metadata?.description
-        val isPlaying = controller.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
-
-        val builder = NotificationCompat.Builder(this, MEDIA_PLAYER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_music_note)
-            .setContentTitle(description?.title ?: "Nessun Titolo")
-            .setContentText(description?.subtitle ?: "Nessun Artista")
-            .setLargeIcon(description?.iconBitmap)
-            .setContentIntent(controller.sessionActivity)
-            .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOnlyAlertOnce(true)
-            .setOngoing(isPlaying)
-            .addAction(R.drawable.ic_previous, getString(R.string.notif_media_player_demo_previous), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS))
-            .addAction(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play, if (isPlaying) "Pausa" else "Play", MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE))
-            .addAction(R.drawable.ic_next, getString(R.string.notif_media_player_demo_next), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_SKIP_TO_NEXT))
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession!!.sessionToken)
-                    .setShowActionsInCompactView(0, 1, 2)
-                    .setShowCancelButton(true)
-                    .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
-            )
-        return builder.build()
+        return START_NOT_STICKY
     }
 
     private fun startForegroundWithProgress() {
@@ -229,9 +101,6 @@ class NotificationService : Service() {
                 val finalNotification =
                     buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
                 notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
-                if (!FakeMediaPlayer.isPlaying) {
-                    stopForeground(STOP_FOREGROUND_DETACH)
-                }
                 handler.postDelayed({checkAndStopSelf()},200)
             }
         }
@@ -243,9 +112,6 @@ class NotificationService : Service() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             val cancelledNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_cancelled))
             notificationManager.notify(PROGRESS_NOTIFICATION_ID, cancelledNotification)
-        }
-        if (!FakeMediaPlayer.isPlaying) {
-            stopForeground(STOP_FOREGROUND_DETACH)
         }
         checkAndStopSelf()
     }
@@ -280,8 +146,7 @@ class NotificationService : Service() {
     }
 
     private fun checkAndStopSelf() {
-        val isMediaRunning = FakeMediaPlayer.currentTrackIndex != -1
-        if (progressJob?.isActive != true && !isMediaRunning) {
+        if (progressJob?.isActive != true) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
             stopSelf()
         }
@@ -290,8 +155,7 @@ class NotificationService : Service() {
     private fun createNotificationChannels() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channels = listOf(
-            NotificationChannel(PROGRESS_CHANNEL_ID, getString(R.string.channel_demo_name), NotificationManager.IMPORTANCE_DEFAULT), // Aumentato a DEFAULT
-            NotificationChannel(MEDIA_PLAYER_CHANNEL_ID, getString(R.string.channel_media_player_name), NotificationManager.IMPORTANCE_LOW)
+            NotificationChannel(PROGRESS_CHANNEL_ID, getString(R.string.channel_demo_name), NotificationManager.IMPORTANCE_DEFAULT),
         )
         manager.createNotificationChannels(channels)
     }
@@ -304,6 +168,5 @@ class NotificationService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
-        mediaSession?.release()
     }
 }
