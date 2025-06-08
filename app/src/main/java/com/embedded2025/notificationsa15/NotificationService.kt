@@ -34,6 +34,7 @@ class NotificationService : Service() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
 
     private var progressJob: Job? = null
 
@@ -201,8 +202,13 @@ class NotificationService : Service() {
     private fun startForegroundWithProgress() {
         progressJob?.cancel()
         progressJob = serviceScope.launch {
-            val initialNotification = buildProgressNotification(0, 100, false, "Avvio operazione...")
-            if (ActivityCompat.checkSelfPermission(this@NotificationService, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            val initialNotification =
+                buildProgressNotification(0, 100, false, "Avvio operazione...")
+            if (ActivityCompat.checkSelfPermission(
+                    this@NotificationService,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 Log.w(TAG, "Permesso negato, impossibile avviare progresso.")
                 return@launch
             }
@@ -211,29 +217,27 @@ class NotificationService : Service() {
 
             var currentProgress = 0
             val maxProgress = 100
-            try {
-                while (currentProgress <= maxProgress && isActive) {
-                    val progressText = getString(R.string.notif_progress_demo_det, currentProgress)
-                    val notificationUpdate = buildProgressNotification(currentProgress, maxProgress, false, progressText)
-                    notificationManager.notify(PROGRESS_NOTIFICATION_ID, notificationUpdate)
-                    delay(500)
-                    currentProgress += 5
-                }
-                if (isActive) {
-                    val finalNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
-                    notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
-                }
-            } finally {
+            while (currentProgress <= maxProgress && isActive) {
+                val progressText = getString(R.string.notif_progress_demo_det, currentProgress)
+                val notificationUpdate =
+                    buildProgressNotification(currentProgress, maxProgress, false, progressText)
+                notificationManager.notify(PROGRESS_NOTIFICATION_ID, notificationUpdate)
+                delay(500)
+                currentProgress += 5
+            }
+            if (isActive) {
+                val finalNotification =
+                    buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
+                notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
                 if (!FakeMediaPlayer.isPlaying) {
                     stopForeground(STOP_FOREGROUND_DETACH)
                 }
-                checkAndStopSelf()
+                handler.postDelayed({checkAndStopSelf()},200)
             }
         }
     }
 
     private fun handleProgressCancellation(reason: String) {
-        if (progressJob?.isActive != true) return
         progressJob?.cancel()
         Log.i(TAG, "Gestione cancellazione progresso: $reason")
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
