@@ -1,22 +1,26 @@
 package com.embedded2025.notificationsa15
 
-import android.app.Service
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
+import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.DefaultMediaNotificationProvider
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaSessionService
 import com.embedded2025.notificationsa15.utils.AutoPlayForwardingPlayer
+import com.embedded2025.notificationsa15.utils.NotificationsHelper
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var player: ExoPlayer
     private lateinit var forwardingPlayer: AutoPlayForwardingPlayer
-    private lateinit var playerListener: Player.Listener
+
+    private val MEDIA_NOTIFICATION_ID = 1002
 
     private val playlist = listOf(
         MediaItem.Builder()
@@ -48,35 +52,48 @@ class PlaybackService : MediaSessionService() {
             .build()
     )
 
-    private inner class PlayerListener : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            if (!isPlaying) {
-                stopForeground(STOP_FOREGROUND_DETACH)
-            }
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
+
+        val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
+            .setNotificationId(MEDIA_NOTIFICATION_ID)
+            .setChannelId(NotificationsHelper.ChannelID.MEDIA_PLAYER)
+            .build()
+        setMediaNotificationProvider(notificationProvider)
+
         player = ExoPlayer.Builder(this).build().apply {
             setMediaItems(playlist)
             repeatMode = Player.REPEAT_MODE_ALL
             prepare()
         }
 
-        playerListener = PlayerListener()
-        player.addListener(playerListener)
+        player.addListener(object: Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isPlaying) {
+                    Log.d("PlaybackService", "Player in play, avvio servizio in foreground.")
+
+                    val dummyNotification = NotificationCompat.Builder(this@PlaybackService, NotificationsHelper.ChannelID.MEDIA_PLAYER)
+                        .setSmallIcon(R.drawable.ic_media)
+                        .build()
+                    startForeground(MEDIA_NOTIFICATION_ID, dummyNotification)
+
+                } else {
+                    Log.d("PlaybackService", "Player in pausa/stoppato, rimuovo da foreground.")
+                    stopForeground(STOP_FOREGROUND_DETACH)
+                }
+            }
+        })
 
         forwardingPlayer = AutoPlayForwardingPlayer(player)
-
-        mediaSession = MediaSession.Builder(this, forwardingPlayer).build()
+        mediaSession = MediaSession.Builder(this, forwardingPlayer)
+            .build()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
 
     override fun onDestroy() {
-        player.removeListener(playerListener)
         mediaSession?.run {
             this.player.release()
             this.release()

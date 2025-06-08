@@ -43,11 +43,6 @@ object NotificationsHelper {
     fun initialize(context: Context) {
         appContext = context.applicationContext
 
-        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-            .build()
-
         // Create channels
         val channels = listOf<NotificationChannel>(
             NotificationChannel(ChannelID.DEMO,

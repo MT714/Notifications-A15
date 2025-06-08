@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.NotificationsA15" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Theme.NotificationsA15" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
+        <item name="colorPrimary">@color/green_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/green_light</item>
+        <item name="colorOnSecondary">@color/black</item>
+    </style>
 </resources>
