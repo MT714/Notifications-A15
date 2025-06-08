@@ -23,9 +23,9 @@ object NotificationsHelper {
         const val METEO = 1001
     }
 
-    private var appContext: Context? = null
+    private lateinit var appContext: Context
     val ctx: Context
-        get() = appContext!!
+        get() = appContext
 
     val notifManager: NotificationManager
         get() = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
