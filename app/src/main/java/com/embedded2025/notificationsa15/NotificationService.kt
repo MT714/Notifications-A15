@@ -30,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import android.media.AudioManager
 
 class NotificationService : Service() {
 
@@ -298,19 +299,36 @@ class NotificationService : Service() {
             .setFullScreenIntent(fullScreenPendingIntent, true)
             .setOngoing(true)
             .build()
-        try {
-            val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-            ringtone = RingtoneManager.getRingtone(applicationContext, ringtoneUri)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ringtone?.isLooping = true
-            }
-            ringtone?.play()
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-            @Suppress("DEPRECATION")
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
-            val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
-            vibrator.vibrate(vibrationEffect)
+        try {
+            when (audioManager.ringerMode) {
+                AudioManager.RINGER_MODE_NORMAL -> {
+                    // Suoneria e vibrazione
+                    val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                    ringtone = RingtoneManager.getRingtone(applicationContext, ringtoneUri)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ringtone?.isLooping = true
+                    }
+                    ringtone?.play()
+
+                    @Suppress("DEPRECATION")
+                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+                    val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
+                    vibrator.vibrate(vibrationEffect)
+                }
+                AudioManager.RINGER_MODE_VIBRATE -> {
+                    @Suppress("DEPRECATION")
+                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+                    val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
+                    vibrator.vibrate(vibrationEffect)
+                }
+                AudioManager.RINGER_MODE_SILENT -> {
+                    // Niente suoneria né vibrazione
+                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Errore durante la riproduzione della suoneria", e)
         }
