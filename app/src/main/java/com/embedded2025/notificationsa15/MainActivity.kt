@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,16 +17,9 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import com.embedded2025.notificationsa15.meteoUtils.MeteoWorker
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {

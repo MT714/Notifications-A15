@@ -1,6 +1,6 @@
 package com.embedded2025.notificationsa15.meteoUtils
 
-data class MeteoResponse(
+data class WeatherResponse(
     val weather: List<Weather>,
     val main: Main,
     val name: String

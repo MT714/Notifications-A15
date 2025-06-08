@@ -146,8 +146,6 @@ object NotificationsHelper {
      */
     fun cancel(notificationId: Int) = notifManager.cancel(notificationId)
 
-
-    //TODO Lasciare qui o Demo?
     /**
      * Pubblica una notifica di aggiornamento meteo.
      *
@@ -160,7 +158,7 @@ object NotificationsHelper {
             ChannelID.WEATHER,
             titolo,
             contenuto,
-            R.id.homeFragment
+            R.id.simpleNotificationFragment
         )
 
         safeNotify(NotificationID.METEO, notif)

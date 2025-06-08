@@ -6,6 +6,7 @@ kotlinxCoroutinesCore = "1.7.3"
 lifecycleRuntimeKtx = "2.9.0"
 media = "1.7.0"
 navigation = "2.9.0"
+playServicesLocation = "21.3.0"
 retrofit = "2.9.0"
 workRuntimeKtx = "2.10.1"
 
@@ -19,6 +20,7 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
