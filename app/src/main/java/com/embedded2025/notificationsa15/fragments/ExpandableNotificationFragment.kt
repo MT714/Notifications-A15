@@ -6,7 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.work.Constraints
@@ -39,19 +42,71 @@ class ExpandableNotificationFragment : Fragment() {
         newsSwitch.isChecked = prefs.getBoolean(SharedPrefsNames.NEWS_ENABLED, false)
         newsSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit { putBoolean(SharedPrefsNames.NEWS_ENABLED, isChecked) }
-            if (isChecked) startNewsWorker()
+            if (isChecked) startNewsWorker(prefs.getLong(SharedPrefsNames.NEWS_NOTIFICATION_INTERVAL_VALUE,15L))
             else stopNewsWorker()
+        }
+
+        val spinner = view.findViewById<Spinner>(R.id.spinnerInterval)
+        var isSpinnerInitialized = false
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.news_intervals_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+            spinner.setSelection(prefs.getInt(SharedPrefsNames.NEWS_NOTIFICATION_INTERVAL_INDEX, 0))
+        }
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (!isSpinnerInitialized) {
+                    isSpinnerInitialized = true
+                    return
+                }
+                val intervalMinutes = when (position) {
+                    0 -> 15L
+                    1 -> 30L
+                    2 -> 60L
+                    3 -> 120L
+                    else -> 15L
+                }
+                prefs.edit {
+                    putInt(SharedPrefsNames.NEWS_NOTIFICATION_INTERVAL_INDEX, position)
+                    putLong(SharedPrefsNames.NEWS_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
+                }
+
+                Log.i("NewsWorker", "Intervallo di aggiornamento news impostato a $intervalMinutes minuti")
+
+                /**
+                 * Quando modifico l'intrevallo, se c'è già un worker lo cancello e ne creo uno con il nuovo intervallo
+                 */
+                if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)) {
+                    Log.i("WeatherWorker", "Worker già attivo, modifico l'intervallo")
+                    stopNewsWorker()
+                    startNewsWorker(intervalMinutes)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
         }
 
         return view
     }
 
-    private fun startNewsWorker() {
+    private fun startNewsWorker(intervalMinutes : Long) {
+        Log.i("NewsWorker", "Worker attivato con intervallo di $intervalMinutes minuti")
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val newsRequest = PeriodicWorkRequestBuilder<NewsWorker>(15, TimeUnit.MINUTES)
+        val newsRequest = PeriodicWorkRequestBuilder<NewsWorker>(intervalMinutes, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
 

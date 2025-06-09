@@ -14,6 +14,15 @@
     <string name="simple_notification_title">Simple notification</string>
     <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
     <string name="weather_switch_text">Notifiche meteo</string>
+    <!-- Weather notification -->
+    <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
+    <string name="weather_update_interval">Ricevi la notifica ogni:</string>
+    <string-array name="weather_intervals_array">
+        <item>15 minuti</item>
+        <item>30 minuti</item>
+        <item>60 minuti</item>
+        <item>120 minuti</item>
+    </string-array>
 
     <!-- Expandable notification -->
     <string name="expandable_notification_title">Expandable notification</string>
@@ -21,6 +30,13 @@
     <string name="expandable_notif_text_descr">La notifica espandibile con testo mostra del testo</string>
     <string name="expandable_notif_picture_descr">La notifica espandibile con immagine mostra una immagine</string>
     <string name="news_switch_text">Notifiche news</string>
+    <string name="news_update_interval">Ricevi la notifica ogni:</string>
+    <string-array name="news_intervals_array">
+        <item>15 minuti</item>
+        <item>30 minuti</item>
+        <item>60 minuti</item>
+        <item>120 minuti</item>
+    </string-array>
 
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
@@ -44,16 +60,6 @@
     <string name="liveUpdate_notification_title">Live Update Notification</string>
     <string name="liveUpdate_notification_description">Questa è una notifica di aggiornamento in tempo reale. Premendo il bottone, verrà mostrata la demo di una notifica relativa allo stato di un ordine.</string>
     <string name="demo_update_notification_button">Aggiorna notifica demo</string>
-
-    <!-- Weather notification -->
-    <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
-    <string name="weather_update_interval">Ricevi la notifica ogni:</string>
-    <string-array name="intervals_array">
-        <item>15 minuti</item>
-        <item>30 minuti</item>
-        <item>60 minuti</item>
-        <item>120 minuti</item>
-    </string-array>
 
     <!-- Call notification -->
     <string name="call_notification_description">Inserisci un ritardo in secondi, poi premi il pulsante per pianificare una notifica di chiamata.</string>

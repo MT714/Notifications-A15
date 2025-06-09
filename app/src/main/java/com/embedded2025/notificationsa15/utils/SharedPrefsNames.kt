@@ -8,5 +8,6 @@ object SharedPrefsNames {
     const val WEATHER_NOTIFICATION_INTERVAL_VALUE = "weather_notification_interval_value"
 
     const val NEWS_ENABLED = "news_enabled"
-    const val NEWS_NOTIFICATION_INTERVAL = "news_notification_interval"
+    const val NEWS_NOTIFICATION_INTERVAL_INDEX = "news_notification_interval_index"
+    const val NEWS_NOTIFICATION_INTERVAL_VALUE = "news_notification_interval_value"
 }

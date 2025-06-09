@@ -54,10 +54,10 @@ class SimpleNotificationFragment : Fragment() {
             }
 
             val spinner = findViewById<Spinner>(R.id.spinnerInterval)
-            var isSpinnerInitialized = false    //per non triggerare il lstener quando faccio spinner.setSelection()
+            var isSpinnerInitialized = false
             ArrayAdapter.createFromResource(
                 requireContext(),
-                R.array.intervals_array,
+                R.array.weather_intervals_array,
                 android.R.layout.simple_spinner_item
             ).also { adapter ->
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -70,7 +70,6 @@ class SimpleNotificationFragment : Fragment() {
                         isSpinnerInitialized = true
                         return
                     }
-
                     val intervalMinutes = when (position) {
                         0 -> 15L
                         1 -> 30L
@@ -78,7 +77,6 @@ class SimpleNotificationFragment : Fragment() {
                         3 -> 120L
                         else -> 15L
                     }
-
                     prefs.edit {
                         putInt(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_INDEX, position)
                         putLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
