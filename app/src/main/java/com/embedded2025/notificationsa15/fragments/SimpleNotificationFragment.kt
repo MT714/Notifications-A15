@@ -164,10 +164,9 @@ class SimpleNotificationFragment : Fragment() {
         if (isGranted) {
             Log.d("LOCATION PERMISSION", "Permesso posizione concesso")
             onLocationPermissionGranted?.invoke()
-            onLocationPermissionGranted = null // cleanup
+            onLocationPermissionGranted = null
 
             checkBackgroundLocationPermission {}
-
         }
         else Log.d("LCOATION PERMISSION", "Permesso posizione negato")
     }

@@ -30,7 +30,7 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             }
             Log.i("WeatherWorker", "Latitudine: $lat, Longitudine: $lon")
 
-            val apiKey = ctx.getString(R.string.weather_api_key)
+            val apiKey = applicationContext.getString(R.string.weather_api_key)
             val response = RetrofitClient.api.getWeatherByCoords(lat, lon, apiKey)
             val cityName = response.name
             val temp = response.main.temp
@@ -55,6 +55,47 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         val fusedClient = LocationServices.getFusedLocationProviderClient(applicationContext)
         val cancellationTokenSource = CancellationTokenSource()
 
+        // Prova con getCurrentLocation (attiva)
+        fusedClient.getCurrentLocation(
+            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+            cancellationTokenSource.token
+        ).addOnSuccessListener { location ->
+            if (location != null) {
+                cont.resume(location)
+            } else {
+                // Se fallisce, fallback su getLastLocation (passiva)
+                fusedClient.lastLocation
+                    .addOnSuccessListener { lastLoc ->
+                        Log.w("WeatherWorker", "Fallback su lastLocation")
+                        cont.resume(lastLoc)
+                    }
+                    .addOnFailureListener {
+                        Log.e("WeatherWorker", "lastLocation fallita")
+                        cont.resume(null)
+                    }
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("WeatherWorker", "getCurrentLocation fallita", exception)
+            // Fallimento diretto, prova lastLocation
+            fusedClient.lastLocation
+                .addOnSuccessListener { lastLoc ->
+                    Log.w("WeatherWorker", "Fallback su lastLocation dopo errore")
+                    cont.resume(lastLoc)
+                }
+                .addOnFailureListener {
+                    cont.resume(null)
+                }
+        }
+
+        cont.invokeOnCancellation {
+            cancellationTokenSource.cancel()
+        }
+    }
+    /*@SuppressLint("MissingPermission")
+    private suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { cont ->
+        val fusedClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+        val cancellationTokenSource = CancellationTokenSource()
+
         try {
             fusedClient.getCurrentLocation(
                 Priority.PRIORITY_BALANCED_POWER_ACCURACY,
@@ -72,7 +113,7 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         cont.invokeOnCancellation {
             cancellationTokenSource.cancel()
         }
-    }
+    }*/
 
 
     companion object {
