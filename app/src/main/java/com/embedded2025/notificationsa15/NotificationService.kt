@@ -31,12 +31,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.media.AudioManager
+import kotlin.coroutines.cancellation.CancellationException
 
 class NotificationService : Service() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+
+    @Volatile private var isCancellationRequested = false
 
     private var progressJob: Job? = null
     private var liveUpdateJob: Job? = null
@@ -186,6 +189,8 @@ class NotificationService : Service() {
 
     private fun startForegroundWithProgress() {
         progressJob?.cancel()
+        isCancellationRequested = false
+
         progressJob = serviceScope.launch {
             val initialNotification =
                 buildProgressNotification(0, 100, false, "Avvio operazione...")
@@ -202,7 +207,7 @@ class NotificationService : Service() {
 
             var currentProgress = 0
             val maxProgress = 100
-            while (currentProgress <= maxProgress && isActive) {
+            while (currentProgress <= maxProgress && !isCancellationRequested) {
                 val progressText = getString(R.string.notif_progress_demo_det, currentProgress)
                 val notificationUpdate =
                     buildProgressNotification(currentProgress, maxProgress, false, progressText)
@@ -210,27 +215,23 @@ class NotificationService : Service() {
                 delay(500)
                 currentProgress += 5
             }
-            if (isActive) {
-                stopForeground(Service.STOP_FOREGROUND_DETACH)
+
+            stopForeground(STOP_FOREGROUND_DETACH)
+            if (isCancellationRequested) {
+                val cancelledNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_cancelled))
+                notificationManager.notify(PROGRESS_NOTIFICATION_ID, cancelledNotification)
+            } else {
                 val finalNotification =
                     buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
                 notificationManager.notify(PROGRESS_NOTIFICATION_ID, finalNotification)
-                checkAndStopSelf()
             }
+            checkAndStopSelf()
         }
     }
 
     private fun handleProgressCancellation(reason: String) {
-        progressJob?.cancel()
         Log.i(TAG, "Gestione cancellazione progresso: $reason")
-
-        stopForeground(Service.STOP_FOREGROUND_DETACH)
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            val cancelledNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_cancelled))
-            notificationManager.notify(PROGRESS_NOTIFICATION_ID, cancelledNotification)
-        }
-        checkAndStopSelf()
+        isCancellationRequested = true
     }
 
     private fun buildProgressNotification(progress: Int, max: Int, indeterminate: Boolean, contentText: String): Notification {
@@ -238,7 +239,7 @@ class NotificationService : Service() {
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
         return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -252,7 +253,7 @@ class NotificationService : Service() {
     private fun buildFinalProgressNotification(contentText: String): Notification {
         val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
         return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

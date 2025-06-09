@@ -148,6 +148,7 @@ object DemoNotificationsHelper {
             .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archivePendingIntent)
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterPendingIntent)
             .setAutoCancel(true)
+            .setSmallIcon(R.drawable.ic_action)
 
         safeNotifyDemo(NotificationID.ACTIONS, notif)
     }
@@ -160,10 +161,14 @@ object DemoNotificationsHelper {
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
             .build()
 
+        val extras = Bundle().apply {
+            putInt(IntentExtras.NOTIFICATION_ID, NotificationID.REPLY)
+        }
+
         val replyAction = Action.Builder(
-            R.drawable.ic_reply_icon,
+            R.drawable.ic_reply,
             ctx.getString(R.string.notif_reply_demo_action),
-            PendingIntentHelper.createBroadcast(NotificationAction.REPLY)
+            PendingIntentHelper.createBroadcast(NotificationAction.REPLY, extras)
         )
             .addRemoteInput(remoteInput)
             .build()
@@ -176,6 +181,7 @@ object DemoNotificationsHelper {
         )
             .addAction(replyAction)
             .setAutoCancel(true)
+            .setSmallIcon(R.drawable.ic_reply)
 
         safeNotifyDemo(NotificationID.REPLY, notif)
     }

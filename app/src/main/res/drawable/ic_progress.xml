@@ -2,14 +2,15 @@
     android:width="800dp"
     android:height="800dp"
     android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
   <path
       android:pathData="M22,16V15C22,12.172 22,10.758 21.121,9.879C20.242,9.001 18.828,9.001 16,9.001H8C5.171,9.001 3.757,9.001 2.878,9.879C2,10.758 2,12.171 2,14.998V15V16C2,18.829 2,20.243 2.879,21.122C3.757,22 5.172,22 8,22H16H16C18.828,22 20.243,22 21.121,21.122C22,20.243 22,18.829 22,16Z"
       android:strokeAlpha="0.5"
-      android:fillColor="#1C274C"
+      android:fillColor="@android:color/white"
       android:fillAlpha="0.5"/>
   <path
       android:pathData="M12,1.25C11.586,1.25 11.25,1.586 11.25,2L11.25,12.973L9.569,11.012C9.3,10.697 8.826,10.661 8.512,10.931C8.197,11.2 8.161,11.674 8.431,11.988L11.431,15.488C11.573,15.654 11.781,15.75 12,15.75C12.219,15.75 12.427,15.654 12.569,15.488L15.569,11.988C15.839,11.674 15.803,11.2 15.488,10.931C15.174,10.661 14.7,10.697 14.431,11.012L12.75,12.973L12.75,2C12.75,1.586 12.414,1.25 12,1.25Z"
-      android:fillColor="#1C274C"
+      android:fillColor="@android:color/white"
       android:fillType="evenOdd"/>
 </vector>

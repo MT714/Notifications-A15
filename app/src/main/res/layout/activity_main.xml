@@ -18,7 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.AppCompat.Toolbar" />
+            style="@style/Widget.AppCompat.Toolbar"
+            android:titleTextColor="@color/green_light"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
@@ -35,6 +36,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/green_dark"
         app:headerLayout="@layout/nav_header"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:menu="@menu/menu_main"/>
 </androidx.drawerlayout.widget.DrawerLayout>

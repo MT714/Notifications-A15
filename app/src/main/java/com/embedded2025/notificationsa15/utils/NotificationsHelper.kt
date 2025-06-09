@@ -6,11 +6,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import android.media.AudioAttributes
 import com.embedded2025.notificationsa15.R
 
 object NotificationsHelper {
@@ -123,7 +121,7 @@ object NotificationsHelper {
             .setContentTitle(title)
             .setContentText(text)
             .setContentIntent(PendingIntentHelper.createWithDestination(destinationId))
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_simple)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
@@ -137,6 +135,7 @@ object NotificationsHelper {
     fun NotificationCompat.Builder.setBigText(text: String): NotificationCompat.Builder =
         setStyle(NotificationCompat.BigTextStyle()
             .bigText(text))
+            .setSmallIcon(R.drawable.ic_expandable)
 
     /**
      * Imposta l'immagine della notifica quando espansa.
@@ -148,6 +147,7 @@ object NotificationsHelper {
     fun NotificationCompat.Builder.setBigPicture(bitmap: Bitmap?): NotificationCompat.Builder =
         setStyle(NotificationCompat.BigPictureStyle()
             .bigPicture(bitmap))
+            .setSmallIcon(R.drawable.ic_expandable)
 
     /**
      * Cancella una notifica.
