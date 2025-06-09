@@ -162,8 +162,7 @@ object NotificationsHelper {
      * @param titolo il titolo -> Aggiornamento meteo a "" .
      * @param contenuto -> temperatura e meteo.
      * */
-    fun showWeatherNotification(titolo: String, contenuto: String) {
-
+    fun showWeatherNotification(titolo: String, contenuto: String, iconCode: String = "01d") {
         val notif = createBasicNotificationBuilder(
             ChannelID.WEATHER,
             titolo,
@@ -171,6 +170,20 @@ object NotificationsHelper {
             R.id.simpleNotificationFragment
         )
 
+        val smallIconRes = getWeatherIconRes(iconCode)
+        notif.setSmallIcon(smallIconRes)
         safeNotify(NotificationID.METEO, notif)
+    }
+
+    fun getWeatherIconRes(iconCode: String): Int {
+        //TODO reperire icone on rispettivo codice da https://openweathermap.org/weather-conditions#Icon-list
+        /*return when (iconCode) {
+            "01d" -> R.drawable.ic_weather_01d
+            "01n" -> R.drawable.ic_weather_01n
+            "02d" -> R.drawable.ic_weather_02d
+            "02n" -> R.drawable.ic_weather_02n
+
+        }*/
+        return 1;
     }
 }
