@@ -68,23 +68,6 @@ class PlaybackService : MediaSessionService() {
             prepare()
         }
 
-        player.addListener(object: Player.Listener {
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                if (isPlaying) {
-                    Log.d("PlaybackService", "Player in play, avvio servizio in foreground.")
-
-                    val dummyNotification = NotificationCompat.Builder(this@PlaybackService, NotificationsHelper.ChannelID.MEDIA_PLAYER)
-                        .setSmallIcon(R.drawable.ic_media)
-                        .build()
-                    startForeground(MEDIA_NOTIFICATION_ID, dummyNotification)
-
-                } else {
-                    Log.d("PlaybackService", "Player in pausa/stoppato, rimuovo da foreground.")
-                    stopForeground(STOP_FOREGROUND_DETACH)
-                }
-            }
-        })
-
         forwardingPlayer = AutoPlayForwardingPlayer(player)
         mediaSession = MediaSession.Builder(this, forwardingPlayer)
             .build()

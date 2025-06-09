@@ -31,7 +31,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.media.AudioManager
-import kotlin.coroutines.cancellation.CancellationException
 
 class NotificationService : Service() {
 
