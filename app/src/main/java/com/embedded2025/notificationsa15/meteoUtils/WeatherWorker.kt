@@ -8,7 +8,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.*
-import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
