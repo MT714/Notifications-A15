@@ -6,10 +6,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.embedded2025.notificationsa15.R
 
 object NotificationsHelper {
@@ -170,17 +171,18 @@ object NotificationsHelper {
             contenuto,
             R.id.simpleNotificationFragment
         )
+            .setLargeIcon(getDrawable(ctx, getWeatherIconRes(iconCode))?.toBitmap())
+            .setAutoCancel(true)
 
-        val largeIcon = BitmapFactory.decodeResource(appContext.resources, getWeatherIconRes(iconCode))
-        notif.setLargeIcon(largeIcon)
         safeNotify(NotificationID.METEO, notif)
     }
 
     /**
-     * Ottiene il risorsa dell'icona meteo in base al codice dell'icona.
+     * Ottiene la risorsa dell'icona meteo in base al codice dell'icona.
      * Non comprende le icone relative alle meteo di notte, ma solo di giorno
+     *
      * @param iconCode il codice dell'icona.
-     * @return il risorsa dell'icona.
+     * @return la risorsa dell'icona.
      */
     private fun getWeatherIconRes(iconCode: String): Int {
         return when (iconCode) {
