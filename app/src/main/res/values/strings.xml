@@ -75,6 +75,6 @@
 
     <!-- Final fragment -->
     <string name="final_fragment_title">End of Tutorial</string>
-    <string name="final_fragment_text">Hai completato il tour delle notifiche! Clicca il pulsante per uscire dall\'applicazione</string>
+    <string name="final_fragment_text">Hai completato il tour delle notifiche! </string>
 
 </resources>
