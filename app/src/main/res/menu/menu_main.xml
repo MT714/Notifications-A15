@@ -22,6 +22,10 @@
         android:icon="@drawable/ic_reply"
         android:title="@string/reply_notification_title"/>
     <item
+        android:id="@id/chatFragment"
+        android:icon="@drawable/ic_reply"
+        android:title="@string/reply_notification_title"/>
+    <item
         android:id="@id/actionsNotificationFragment"
         android:icon="@drawable/ic_action"
         android:title="@string/actions_notification_title"/>

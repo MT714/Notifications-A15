@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".notificationa15"
+        android:name=".NotificationsLabApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

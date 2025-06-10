@@ -59,5 +59,9 @@
         android:id="@+id/finalFragment"
         android:label="@string/final_fragment_title"
         android:name="com.embedded2025.notificationsa15.fragments.FinalFragment" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ChatFragment"
+        android:label="ChatFragment" />
 
 </navigation>

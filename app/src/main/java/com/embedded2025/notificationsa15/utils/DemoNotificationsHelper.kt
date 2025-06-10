@@ -39,6 +39,7 @@ object DemoNotificationsHelper {
          const val INBOX_2 = 9
          const val INBOX_3 = 10
          const val INBOX_SUMMARY = 11
+         const val CHAT = 12
     }
 
     private const val EMAIL_GROUP_KEY = "com.embedded2025.notificationsa15.EMAIL_GROUP"
@@ -294,5 +295,36 @@ object DemoNotificationsHelper {
         notifManager.notify(NotificationID.INBOX_2, notif2)
         notifManager.notify(NotificationID.INBOX_3, notif3)
         notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
+    }
+
+    fun showMessageNotification(message: String) {
+        val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
+            .setLabel(ctx.getString(R.string.notif_reply_demo_label))
+            .build()
+
+        val extras = Bundle().apply {
+            putInt(IntentExtras.NOTIFICATION_ID, NotificationID.CHAT)
+            putBoolean(IntentExtras.IS_DEMO, false)
+        }
+
+        val replyAction = Action.Builder(
+            R.drawable.ic_reply,
+            ctx.getString(R.string.notif_reply_demo_action),
+            PendingIntentHelper.createBroadcast(NotificationAction.REPLY, extras)
+        )
+            .addRemoteInput(remoteInput)
+            .build()
+
+        val notif = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.DEFAULT,
+            "Messaggio assistente",
+            message,
+            R.id.chatFragment
+        )
+            .setSmallIcon(R.drawable.ic_reply)
+            .setAutoCancel(true)
+            .addAction(replyAction)
+
+        NotificationsHelper.safeNotify(NotificationID.CHAT, notif)
     }
 }
