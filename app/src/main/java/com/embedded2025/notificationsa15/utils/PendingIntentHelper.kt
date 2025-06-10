@@ -10,6 +10,7 @@ import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.NotificationActionReceiver
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
+import androidx.core.net.toUri
 
 object PendingIntentHelper {
 
@@ -42,5 +43,15 @@ object PendingIntentHelper {
         else PendingIntent.FLAG_UPDATE_CURRENT
 
         return PendingIntent.getBroadcast(ctx, 0, intent, flags)
+    }
+
+    fun createOpenUrlIntent(url: String): PendingIntent {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        else PendingIntent.FLAG_UPDATE_CURRENT
+
+        return PendingIntent.getActivity(ctx, 0, intent, flags)
     }
 }

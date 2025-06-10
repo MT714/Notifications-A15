@@ -10,6 +10,7 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigPicture
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigText
+import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -67,6 +68,7 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
         )
             .setBigText(article.content ?: article.description ?: "")
             .setAutoCancel(true)
+            .setContentIntent(PendingIntentHelper.createOpenUrlIntent(article.url))
 
         if (bigPicture != null) {
             notif.setBigPicture(bigPicture)

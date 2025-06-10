@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.embedded2025.notificationsa15.R
 
 object NotificationsHelper {
@@ -169,21 +171,32 @@ object NotificationsHelper {
             contenuto,
             R.id.simpleNotificationFragment
         )
+            .setLargeIcon(getDrawable(ctx, getWeatherIconRes(iconCode))?.toBitmap())
+            .setAutoCancel(true)
 
-        val smallIconRes = getWeatherIconRes(iconCode)
-        notif.setSmallIcon(smallIconRes)
         safeNotify(NotificationID.METEO, notif)
     }
 
-    fun getWeatherIconRes(iconCode: String): Int {
-        //TODO reperire icone on rispettivo codice da https://openweathermap.org/weather-conditions#Icon-list
-        /*return when (iconCode) {
+    /**
+     * Ottiene la risorsa dell'icona meteo in base al codice dell'icona.
+     * Non comprende le icone relative alle meteo di notte, ma solo di giorno
+     *
+     * @param iconCode il codice dell'icona.
+     * @return la risorsa dell'icona.
+     */
+    private fun getWeatherIconRes(iconCode: String): Int {
+        return when (iconCode) {
             "01d" -> R.drawable.ic_weather_01d
-            "01n" -> R.drawable.ic_weather_01n
             "02d" -> R.drawable.ic_weather_02d
-            "02n" -> R.drawable.ic_weather_02n
+            "03d" -> R.drawable.ic_weather_03d
+            "04d" -> R.drawable.ic_weather_04d
+            "09d" -> R.drawable.ic_weather_09d
+            "10d" -> R.drawable.ic_weather_10d
+            "11d" -> R.drawable.ic_weather_11d
+            "13d" -> R.drawable.ic_weather_13d
+            "50d" -> R.drawable.ic_weather_50d
 
-        }*/
-        return 1;
+            else -> {R.drawable.ic_weather_02d}
+        }
     }
 }

@@ -35,13 +35,10 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             val temp = response.main.temp
             val description = response.weather.firstOrNull()?.description ?: "N/A"
             val weatherText = "$temp°C – $description"
-            val iconCode = response.weather.firstOrNull()?.icon ?: "01d"
+            val iconCode = response.weather.firstOrNull()?.icon ?: "02d"
 
-
-
-            NotificationsHelper.showWeatherNotification("Aggiornamento Meteo a $cityName", weatherText, iconCode)
+            NotificationsHelper.showWeatherNotification("Meteo a $cityName", weatherText, iconCode)
             Result.success()
-
         } catch (e: Exception) {
             e.printStackTrace()
             Result.retry()
