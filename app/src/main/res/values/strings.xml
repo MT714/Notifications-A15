@@ -12,7 +12,7 @@
 
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
-    <string name="simple_notif_descr">Questa è una semplice notifica, premi il bottone per una demo</string>
+    <string name="simple_notif_descr">Questa è una semplice notifica. Premi il bottone per una demo</string>
     <string name="weather_switch_text">Notifiche meteo</string>
     <!-- Weather notification -->
     <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
@@ -69,5 +69,12 @@
     <string name="call_notification_invalid_delay">Per favore, inserisci un ritardo valido.</string>
     <string name="fragment_call_title">Notifica di Chiamata</string>
 
+    <!-- Email notification -->
+    <string name="email_notification_title">Email Notification</string>
+    <string name="email_notif_descr">Questa è una notifica di email. Premi un bottone per una demo</string>
+
+    <!-- Final fragment -->
+    <string name="final_fragment_title">End of Tutorial</string>
+    <string name="final_fragment_text">Hai completato il tour delle notifiche! Clicca il pulsante per uscire dall\'applicazione</string>
 
 </resources>

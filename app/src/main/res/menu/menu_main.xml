@@ -14,21 +14,21 @@
         android:icon="@drawable/ic_expandable"
         android:title="@string/expandable_notification_title"/>
     <item
-        android:id="@id/actionsNotificationFragment"
-        android:icon="@drawable/ic_action"
-        android:title="@string/actions_notification_title"/>
+        android:id="@+id/emailNotificationFragment"
+        android:icon="@drawable/ic_email"
+        android:title="@string/email_notification_title" />
     <item
         android:id="@id/replyNotificationFragment"
         android:icon="@drawable/ic_reply"
         android:title="@string/reply_notification_title"/>
     <item
+        android:id="@id/actionsNotificationFragment"
+        android:icon="@drawable/ic_action"
+        android:title="@string/actions_notification_title"/>
+    <item
         android:id="@id/progressNotificationFragment"
         android:icon="@drawable/ic_progress"
         android:title="@string/progress_notification_title"/>
-    <item
-        android:id="@id/mediaPlayerNotificationFragment"
-        android:icon="@drawable/ic_media"
-        android:title="@string/media_player_notif_title"/>
     <item
         android:id="@id/liveUpdateNotificationFragment"
         android:icon="@drawable/ic_live"
@@ -37,4 +37,12 @@
         android:id="@+id/callNotificationFragment"
         android:icon="@drawable/ic_call"
         android:title="@string/fragment_call_title" />
+    <item
+        android:id="@id/mediaPlayerNotificationFragment"
+        android:icon="@drawable/ic_media"
+        android:title="@string/media_player_notif_title"/>
+    <item
+        android:id="@id/finalFragment"
+        android:icon="@drawable/ic_done"
+        android:title="@string/final_fragment_title"/>
 </menu>

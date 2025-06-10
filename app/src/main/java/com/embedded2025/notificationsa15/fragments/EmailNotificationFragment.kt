@@ -11,26 +11,25 @@ import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 
-
-class ReplyNotificationFragment : Fragment(){
+class EmailNotificationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_reply_notification, container, false)
+        return inflater.inflate(R.layout.fragment_email_notification, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.btnReplyNotification).setOnClickListener {
-            DemoNotificationsHelper.showReplyNotification()
+        view.findViewById<Button>(R.id.btnEmailNotification).setOnClickListener {
+            DemoNotificationsHelper.showGroupedInboxNotifications()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-            findNavController().navigate(R.id.emailNotificationFragment)
+            findNavController().navigate(R.id.simpleNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
-            findNavController().navigate(R.id.actionsNotificationFragment)
+            findNavController().navigate(R.id.replyNotificationFragment)
         }
     }
 }

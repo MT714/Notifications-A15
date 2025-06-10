@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
@@ -40,19 +41,59 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
         setSupportActionBar(toolbar)
-        setTitle(getString(R.string.home_title))
+        supportActionBar?.setDisplayShowTitleEnabled(true)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val builder = AppBarConfiguration.Builder(navController.graph)
+
+        val topLevelDestinations = setOf(
+            R.id.homeFragment,
+            R.id.simpleNotificationFragment,
+            R.id.expandableNotificationFragment,
+            R.id.actionsNotificationFragment,
+            R.id.replyNotificationFragment,
+            R.id.progressNotificationFragment,
+            R.id.mediaPlayerNotificationFragment,
+            R.id.liveUpdateNotificationFragment,
+            R.id.callNotificationFragment,
+            R.id.emailNotificationFragment,
+            R.id.finalFragment
+        )
+
+        val appBarConfiguration = AppBarConfiguration.Builder(topLevelDestinations)
             .setOpenableLayout(drawer)
-        val appBarConfiguration = builder.build()
+            .build()
+
         toolbar.setupWithNavController(navController, appBarConfiguration)
         val navView = findViewById<NavigationView>(R.id.nav_view)
         NavigationUI.setupWithNavController(navView, navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            supportActionBar?.title = destination.label ?: getString(R.string.app_name)
+            toolbarTitle.text = destination.label ?: getString(R.string.app_name)
+            supportActionBar?.title = ""
+
+            val iconRes = when (destination.id) {
+                R.id.homeFragment -> R.drawable.ic_home
+                R.id.simpleNotificationFragment -> R.drawable.ic_simple
+                R.id.expandableNotificationFragment -> R.drawable.ic_expandable
+                R.id.actionsNotificationFragment -> R.drawable.ic_action
+                R.id.replyNotificationFragment -> R.drawable.ic_reply
+                R.id.progressNotificationFragment -> R.drawable.ic_progress
+                R.id.mediaPlayerNotificationFragment -> R.drawable.ic_media
+                R.id.liveUpdateNotificationFragment -> R.drawable.ic_live
+                R.id.callNotificationFragment -> R.drawable.ic_call
+                R.id.emailNotificationFragment -> R.drawable.ic_email
+                R.id.finalFragment -> R.drawable.ic_done
+                else -> 0
+            }
+            val menuItem = toolbar.menu.findItem(R.id.action_current_fragment_icon)
+            if (iconRes != 0) {
+                menuItem?.setIcon(iconRes)
+                menuItem?.isVisible = true
+            } else {
+                menuItem?.isVisible = false
+            }
         }
     }
 
