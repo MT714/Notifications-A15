@@ -30,7 +30,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Precedente"
             android:src="@drawable/ic_arrow_left" />
-
+<!--
         <ImageButton
             android:id="@+id/btn_exit_app"
             android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Chiudi App"
             android:src="@drawable/ic_exit" />
-
+-->
     </RelativeLayout>
 
 </RelativeLayout>

@@ -24,9 +24,9 @@ class FinalFragment : Fragment() {
         view.findViewById<ImageButton>(R.id.btn_previous_final).setOnClickListener {
             findNavController().navigate(R.id.mediaPlayerNotificationFragment)
         }
-
+/*
         view.findViewById<ImageButton>(R.id.btn_exit_app).setOnClickListener {
             activity?.finishAffinity()
-        }
+        }*/
     }
 }

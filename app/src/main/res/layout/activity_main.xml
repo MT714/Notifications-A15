@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/home_title"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="@color/colorSecondary"
                 style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
                 />
 

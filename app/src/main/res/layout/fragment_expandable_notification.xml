@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:padding="5dp"
-                android:textAppearance="@style/MyGreenHeadline"
+                android:textAppearance="@style/MyHeadline"
                 android:text="@string/expandable_notif_descr" />
 
             <LinearLayout
@@ -36,7 +36,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textAppearance="@style/MyGreenHeadline"
+                    android:textAppearance="@style/MyHeadline"
                     android:text="@string/expandable_notif_text_descr" />
 
                 <Button
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textAppearance="@style/MyButton"
-                    android:textColor="@color/yellow"
+                    android:textColor="@color/colorSecondary"
                     android:text="@string/demo_button" />
 
             </LinearLayout>
@@ -59,7 +59,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textAppearance="@style/MyGreenHeadline"
+                    android:textAppearance="@style/MyHeadline"
                     android:text="@string/expandable_notif_picture_descr" />
 
                 <Button
@@ -67,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textAppearance="@style/MyButton"
-                    android:textColor="@color/yellow"
+                    android:textColor="@color/colorSecondary"
                     android:text="@string/demo_button" />
 
             </LinearLayout>
@@ -76,6 +76,7 @@
                 android:id="@+id/swtNews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/MyHeadline"
                 android:text="@string/news_switch_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +92,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textAppearance="@style/MyGreenHeadline"
+                    android:textAppearance="@style/MyHeadline"
                     android:text="@string/weather_update_interval"
                     android:textSize="16sp" />
 
