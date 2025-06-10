@@ -18,8 +18,19 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.AppCompat.Toolbar"
-            app:titleTextColor="@color/green_light"/>
+            style="@style/Widget.AppCompat.Toolbar">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/home_title"
+                android:textColor="?attr/colorOnPrimary"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                />
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"

@@ -73,5 +73,8 @@
     <string name="email_notification_title">Email Notification</string>
     <string name="email_notif_descr">Questa è una notifica di email. Premi un bottone per una demo</string>
 
+    <!-- Final fragment -->
+    <string name="final_fragment_title">End of Tutorial</string>
+    <string name="final_fragment_text">Hai completato il tour delle notifiche! Clicca il pulsante per uscire dall\'applicazione</string>
 
 </resources>

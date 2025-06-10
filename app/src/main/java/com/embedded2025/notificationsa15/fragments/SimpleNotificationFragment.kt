@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -27,77 +28,86 @@ import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 import androidx.core.content.edit
+import androidx.navigation.fragment.findNavController
 
 
 class SimpleNotificationFragment : Fragment() {
     private var onLocationPermissionGranted: (() -> Unit)? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_simple_notification, container, false).apply {
-            findViewById<Button>(R.id.btnSimple).setOnClickListener {
-                DemoNotificationsHelper.showSimpleNotification()
-            }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_simple_notification, container, false)
+    }
 
-            val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            val weatherSwitch = findViewById<SwitchMaterial>(R.id.swtWeather)
-            weatherSwitch.isChecked = prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)
-            weatherSwitch.setOnCheckedChangeListener { _, isChecked ->
-                prefs.edit { putBoolean(SharedPrefsNames.WEATHER_ENABLED, isChecked) }
-                if (isChecked) {
-                    checkLocationPermission {
-                        startWeatherWorker(prefs.getLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, 15L))
-                    }
-                } else {
-                    stopWeatherWorker()
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
+            findNavController().navigate(R.id.homeFragment)
+        }
+        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
+            findNavController().navigate(R.id.expandableNotificationFragment)
+        }
+
+        view.findViewById<Button>(R.id.btnSimple).setOnClickListener {
+            DemoNotificationsHelper.showSimpleNotification()
+        }
+
+        val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+
+        val weatherSwitch = view.findViewById<SwitchMaterial>(R.id.swtWeather)
+        weatherSwitch.isChecked = prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)
+        weatherSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit { putBoolean(SharedPrefsNames.WEATHER_ENABLED, isChecked) }
+            if (isChecked) {
+                checkLocationPermission {
+                    startWeatherWorker(prefs.getLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, 15L))
                 }
-            }
-
-            val spinner = findViewById<Spinner>(R.id.spinnerInterval)
-            var isSpinnerInitialized = false
-            ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.weather_intervals_array,
-                android.R.layout.simple_spinner_item
-            ).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinner.adapter = adapter
-                spinner.setSelection(prefs.getInt(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_INDEX, 0))
-            }
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                    if (!isSpinnerInitialized) {
-                        isSpinnerInitialized = true
-                        return
-                    }
-                    val intervalMinutes = when (position) {
-                        0 -> 15L
-                        1 -> 30L
-                        2 -> 60L
-                        3 -> 120L
-                        else -> 15L
-                    }
-                    prefs.edit {
-                        putInt(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_INDEX, position)
-                        putLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
-                    }
-
-                    Log.i("WeatherWorker", "intervallo di aggiornamento meteo impostato a $intervalMinutes minuti")
-
-                    /**
-                     * Quando modifico l'intrevallo, se c'è già un worker lo cancello e ne creo uno con il nuovo intervallo
-                     */
-                    if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)) {
-                        Log.i("WeatherWorker", "Worker già attivo, modifico l'intervallo")
-                        stopWeatherWorker()
-                        startWeatherWorker(intervalMinutes)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                }
+            } else {
+                stopWeatherWorker()
             }
         }
+
+        val spinner = view.findViewById<Spinner>(R.id.spinnerInterval)
+        var isSpinnerInitialized = false
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.weather_intervals_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+            spinner.setSelection(prefs.getInt(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_INDEX, 0))
+        }
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (!isSpinnerInitialized) {
+                    isSpinnerInitialized = true
+                    return
+                }
+
+                val intervalMinutes = when (position) {
+                    0 -> 15L
+                    1 -> 30L
+                    2 -> 60L
+                    3 -> 120L
+                    else -> 15L
+                }
+
+                prefs.edit {
+                    putInt(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_INDEX, position)
+                    putLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
+                }
+
+                if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)) {
+                    stopWeatherWorker()
+                    startWeatherWorker(intervalMinutes)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+    }
 
     private fun startWeatherWorker(intervalMinutes : Long) {
         Log.i("WeatherWorker", "Worker attivato con intervallo di $intervalMinutes minuti")

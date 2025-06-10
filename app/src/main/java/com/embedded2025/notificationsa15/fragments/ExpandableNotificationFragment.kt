@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -27,13 +29,23 @@ import java.util.concurrent.TimeUnit
 class ExpandableNotificationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_expandable_notification, container, false)
+        return inflater.inflate(R.layout.fragment_expandable_notification, container, false)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnExpandableText).setOnClickListener {
             DemoNotificationsHelper.showExpandableTextNotification()
         }
         view.findViewById<Button>(R.id.btnExpandablePicture).setOnClickListener {
             DemoNotificationsHelper.showExpandablePictureNotification()
+        }
+
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
+            findNavController().navigate(R.id.simpleNotificationFragment)
+        }
+        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
+            findNavController().navigate(R.id.emailNotificationFragment)
         }
 
         val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
@@ -80,7 +92,10 @@ class ExpandableNotificationFragment : Fragment() {
                     putLong(SharedPrefsNames.NEWS_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
                 }
 
-                Log.i("NewsWorker", "Intervallo di aggiornamento news impostato a $intervalMinutes minuti")
+                Log.i(
+                    "NewsWorker",
+                    "Intervallo di aggiornamento news impostato a $intervalMinutes minuti"
+                )
 
                 /**
                  * Quando modifico l'intrevallo, se c'è già un worker lo cancello e ne creo uno con il nuovo intervallo
@@ -95,8 +110,6 @@ class ExpandableNotificationFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
-
-        return view
     }
 
     private fun startNewsWorker(intervalMinutes : Long) {
