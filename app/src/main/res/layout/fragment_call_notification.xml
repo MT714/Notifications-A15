@@ -48,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/call_notification_schedule_button"
-                android:textAppearance="@style/MyButton" />
+                android:textAppearance="@style/MyButton"
+                android:textColor="@color/colorSecondary" />
 
         </LinearLayout>
     </ScrollView>

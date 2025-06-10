@@ -11,6 +11,7 @@
     </style>
     <style name="MyButton" parent="TextAppearance.AppCompat.Button">
         <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorSecondary</item>
     </style>
 
     <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
