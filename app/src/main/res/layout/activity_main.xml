@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             style="@style/Widget.AppCompat.Toolbar"
-            android:titleTextColor="@color/green_light"/>
+            app:titleTextColor="@color/green_light"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"

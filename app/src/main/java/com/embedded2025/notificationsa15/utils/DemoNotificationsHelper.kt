@@ -27,15 +27,21 @@ import com.embedded2025.notificationsa15.utils.NotificationsHelper.ChannelID
 
 object DemoNotificationsHelper {
      object NotificationID {
-        const val SIMPLE = 0
-        const val EXPANDABLE_TEXT = 1
-        const val EXPANDABLE_PICTURE = 2
-        const val ACTIONS = 3
-        const val REPLY = 4
-        const val PROGRESS = 5
-        const val LIVE_UPDATE = 6
-        const val CALL = 7
+         const val SIMPLE = 0
+         const val EXPANDABLE_TEXT = 1
+         const val EXPANDABLE_PICTURE = 2
+         const val ACTIONS = 3
+         const val REPLY = 4
+         const val PROGRESS = 5
+         const val LIVE_UPDATE = 6
+         const val CALL = 7
+         const val INBOX_1 = 8
+         const val INBOX_2 = 9
+         const val INBOX_3 = 10
+         const val INBOX_SUMMARY = 11
     }
+
+    private const val EMAIL_GROUP_KEY = "com.embedded2025.notificationsa15.EMAIL_GROUP"
 
     object OrderStatus{
         const val ORDER_PLACED = 0
@@ -223,5 +229,70 @@ object DemoNotificationsHelper {
         val serviceIntent = NotificationService.getStartCallIntent(context, delayInSeconds)
         context.startForegroundService(serviceIntent)
         Log.d("NotificationsHelper", "Richiesta di avvio NotificationService per chiamata fittizia inviata.")
+    }
+
+    fun showGroupedInboxNotifications() {
+        // Notifica 1
+        val notif1 = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.DEMO,
+            "Marco",
+            "Esame domani?",
+            R.id.emailNotificationFragment
+        )
+            .setStyle(NotificationCompat.InboxStyle()
+                .addLine("Certo che si.")
+                .addLine("Anch'io!"))
+            .setGroup(EMAIL_GROUP_KEY)
+            .setAutoCancel(true)
+            .build()
+
+        // Notifica 2
+        val notif2 = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.DEMO,
+            "Alberto",
+            "Report settimanale",
+            R.id.emailNotificationFragment
+        )
+            .setStyle(NotificationCompat.InboxStyle()
+                .addLine("In allegato il report")
+                .setSummaryText("2 nuovi messaggi"))
+            .setGroup(EMAIL_GROUP_KEY)
+            .setAutoCancel(true)
+            .build()
+
+        // Notifica 3
+        val notif3 = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.DEMO,
+            "Mattia",
+            "Saluti da Padova!",
+            R.id.emailNotificationFragment
+        )
+            .setGroup(EMAIL_GROUP_KEY)
+            .setAutoCancel(true)
+            .build()
+
+        val summaryNotification = NotificationsHelper.createBasicNotificationBuilder(
+            ChannelID.DEMO,
+            "3 Nuove Email",
+            "Da Marco, Alberto e Mattia",
+            R.id.emailNotificationFragment
+        )
+            .setSmallIcon(R.drawable.ic_email)
+            .setStyle(NotificationCompat.InboxStyle()
+                .addLine("Marco: Esame domani?")
+                .addLine("Alberto: Report settimanale")
+                .addLine("Mattia: Saluti da Padova!")
+                .setBigContentTitle("3 Nuove Email")
+                .setSummaryText("posta in arrivo"))
+            .setGroup(EMAIL_GROUP_KEY)
+            .setGroupSummary(true)
+            .setAutoCancel(true)
+            .build()
+
+        val notifManager = NotificationsHelper.notifManager
+        notifManager.notify(NotificationID.INBOX_1, notif1)
+        notifManager.notify(NotificationID.INBOX_2, notif2)
+        notifManager.notify(NotificationID.INBOX_3, notif3)
+        notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
     }
 }

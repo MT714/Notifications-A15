@@ -6,4 +6,10 @@
         <item name="colorSecondary">@color/green_light</item>
         <item name="colorOnSecondary">@color/black</item>
     </style>
+    <style name="MyGreenHeadline" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/green_light</item>
+    </style>
+    <style name="MyButton" parent="TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint">@color/green_dark</item>
+    </style>
 </resources>

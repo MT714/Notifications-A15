@@ -37,4 +37,9 @@
         android:id="@+id/callNotificationFragment"
         android:icon="@drawable/ic_call"
         android:title="@string/fragment_call_title" />
+    <item
+        android:id="@+id/emailNotificationFragment"
+        android:icon="@drawable/ic_email"
+        android:title="@string/email_notification_title" />
+
 </menu>

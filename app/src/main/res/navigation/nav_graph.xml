@@ -50,5 +50,10 @@
         android:name="com.embedded2025.notificationsa15.fragments.CallNotificationFragment"
         android:label="@string/fragment_call_title"
         tools:layout="@layout/fragment_call_notification" />
+    <fragment
+        android:id="@+id/emailNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.EmailNotificationFragment"
+        android:label="@string/email_notification_title"
+        tools:layout="@layout/fragment_email_notification" />
 
 </navigation>
