@@ -5,19 +5,45 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HomeFragment">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/home_text"
-        android:layout_centerInParent="true"
-        style="@style/MyHeadline"
-        android:gravity="center"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/navigation_buttons_container"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/welcome_text_top"
+                style="@style/MyHeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:text="@string/Welcome" />
+
+            <TextView
+                android:id="@+id/home_text_center"
+                style="@style/MyBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/home_text" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <include
+        android:id="@+id/navigation_buttons_container"
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp" />
 
 </RelativeLayout>

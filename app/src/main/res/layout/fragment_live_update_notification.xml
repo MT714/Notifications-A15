@@ -9,20 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation_buttons_container"
+        android:fillViewport="true"
         android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:gravity="center"
                 android:lineSpacingMultiplier="1.2"
                 android:text="@string/liveUpdate_notification_description"
-                android:textAppearance="@style/MyHeadline" />
+                android:textAppearance="@style/MyBody" />
 
             <Button
                 android:id="@+id/btnLiveUpdate_create"
@@ -40,8 +43,8 @@
         android:id="@+id/navigation_buttons_container"
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
-        android:layout_marginBottom="30dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp" />
 
 </RelativeLayout>

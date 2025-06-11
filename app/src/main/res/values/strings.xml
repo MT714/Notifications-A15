@@ -4,7 +4,8 @@
     <string name="nav_header_description">Logo</string>
 
     <string name="home_title">Home</string>
-    <string name="home_text">Testo schermata home</string>
+    <string name="Welcome">Benvenuto in Notifications Lab</string>
+    <string name="home_text">Questa applicazione è un laboratorio interattivo progettato per esplorare le diverse tipologie di notifiche disponibili su Android. Ogni sezione è un capitolo di questo tutorial: naviga con le frecce per scoprire e testare ogni funzionalità.</string>
 
     <string name="demo_button">DEMO</string>
 
@@ -12,8 +13,9 @@
 
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
-    <string name="simple_notif_descr">Questa è una semplice notifica. Premi il bottone per una demo</string>
+    <string name="simple_notif_descr">Questa è la notifica più comune: un semplice avviso con un titolo e un testo. In questa sezione puoi anche attivare le notifiche meteo periodiche, un esempio di notifica generata da un\'operazione in background.</string>
     <string name="weather_switch_text">Notifiche meteo</string>
+
     <!-- Weather notification -->
     <string name="weather_api_key">a27d381d28d670043d522fb859a7b797</string>
     <string name="weather_update_interval">Ricevi la notifica ogni:</string>
@@ -26,9 +28,9 @@
 
     <!-- Expandable notification -->
     <string name="expandable_notification_title">Expandable notification</string>
-    <string name="expandable_notif_descr">Questa è una notifica estendibile. Premi un bottone per una demo</string>
-    <string name="expandable_notif_text_descr">La notifica espandibile con testo mostra del testo</string>
-    <string name="expandable_notif_picture_descr">La notifica espandibile con immagine mostra una immagine</string>
+    <string name="expandable_notif_descr">Una notifica può mostrare più di un semplice testo. Qui puoi generare notifiche che, una volta espanse, rivelano un testo lungo o un\'immagine. Prova anche ad attivare le notifiche di news per vederle in azione.</string>
+    <string name="expandable_notif_text_descr">La notifica espandibile con testo </string>
+    <string name="expandable_notif_picture_descr">La notifica espandibile con immagine </string>
     <string name="news_switch_text">Notifiche news</string>
     <string name="news_update_interval">Ricevi la notifica ogni:</string>
     <string-array name="news_intervals_array">
@@ -40,11 +42,11 @@
 
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
-    <string name="actions_notif_descr">Questa è una notifica con azioni. Premi un bottone per una demo</string>
+    <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione, puoi creare una notifica che include pulsanti di azione, come \'Archivia\' o \'Rimanda\', permettendo all\'utente di compiere azioni rapide senza aprire l\'app.</string>
 
     <!-- Reply notification -->
     <string name="reply_notification_title">Reply notification</string>
-    <string name="reply_notif_descr">Questa è una notifica di risposta. Premi un bottone per una demo</string>
+    <string name="reply_notif_descr">Questa notifica simula un messaggio in arrivo e include un campo di testo per rispondere direttamente dalla barra di stato. È una funzionalità fondamentale per le app di messaggistica.</string>
 
     <!-- Chat notification -->
     <string name="chat_notification_title">Chat notification</string>
@@ -54,12 +56,12 @@
 
     <!-- Progress notification -->
     <string name="progress_notification_title">Progress notification</string>
-    <string name="progress_notif_descr">Questa è una notifica di progresso. Premi un bottone per una demo</string>
+    <string name="progress_notif_descr">Per operazioni di lunga durata, come un download o un\'elaborazione, è utile mostrare l\'avanzamento. Premi il pulsante per visualizzare una notifica con una barra di progresso che si aggiorna in tempo reale.</string>
     <string name="action_cancel">Cancella</string>
 
     <!-- Media player notification -->
     <string name="media_player_notif_title">Media player notification</string>
-    <string name="media_player_notif_descr">Questa è una notifica di riproduzione multimediale. Premi un bottone per una demo</string>
+    <string name="media_player_notif_descr">Questa è la classica notifica per il controllo multimediale. Viene gestita da un servizio apposito per rimanere attiva anche quando l\'app è in background e per rispondere ai comandi di dispositivi esterni, come gli auricolari.</string>
 
     <!-- Live Update notification -->
     <string name="liveUpdate_notification_title">Live Update Notification</string>
@@ -67,16 +69,16 @@
     <string name="demo_update_notification_button">Aggiorna notifica demo</string>
 
     <!-- Call notification -->
-    <string name="call_notification_description">Inserisci un ritardo in secondi, poi premi il pulsante per pianificare una notifica di chiamata.</string>
+    <string name="call_notification_description">Questa notifica speciale usa uno stile ad alta priorità per simulare una chiamata in arrivo. Inserisci un ritardo in secondi per pianificarla.</string>
     <string name="call_notification_delay_hint">Ritardo (secondi)</string>
     <string name="call_notification_schedule_button">Pianifica Chiamata</string>
     <string name="call_notification_scheduled_toast">Chiamata pianificata tra %1$d secondi.</string>
     <string name="call_notification_invalid_delay">Per favore, inserisci un ritardo valido.</string>
-    <string name="fragment_call_title">Notifica di Chiamata</string>
+    <string name="fragment_call_title">Call notification</string>
 
     <!-- Email notification -->
     <string name="email_notification_title">Email Notification</string>
-    <string name="email_notif_descr">Questa è una notifica di email. Premi un bottone per una demo</string>
+    <string name="email_notif_descr">Questo esempio mostra come tre notifiche individuali vengano automaticamente raggruppate dal sistema sotto un\'unica intestazione, proprio come in un\'app di posta elettronica.</string>
 
     <!-- Final fragment -->
     <string name="final_fragment_title">End of Tutorial</string>

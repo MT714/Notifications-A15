@@ -6,7 +6,12 @@
 
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
     </style>
-    <style name="MyHeadline" parent="TextAppearance.AppCompat.Body2">
+
+    <style name="MyHeadline" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="MyBody" parent="TextAppearance.AppCompat.Body2">
         <item name="android:textColor">@color/black</item>
     </style>
     <style name="MyButton" parent="TextAppearance.AppCompat.Button">

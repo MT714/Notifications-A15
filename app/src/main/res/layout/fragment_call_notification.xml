@@ -24,7 +24,7 @@
                 android:layout_marginBottom="24dp"
                 android:gravity="center"
                 android:text="@string/call_notification_description"
-                android:textAppearance="@style/MyHeadline" />
+                android:textAppearance="@style/MyBody" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDelay"

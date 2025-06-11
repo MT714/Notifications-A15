@@ -56,9 +56,6 @@
             android:name=".NotificationService"
             android:exported="false"
             android:foregroundServiceType="dataSync|mediaPlayback">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
         </service>
     </application>
 </manifest>
