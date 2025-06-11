@@ -115,7 +115,7 @@ object DemoNotificationsHelper {
             ctx.getString(R.string.notif_expandable_demo_text),
             R.id.expandableNotificationFragment,
         )
-            .setBigText(ctx.getString(R.string.notif_expandable_demo_text))
+            .setBigText(ctx.getString(R.string.notif_expandable_demo_bigtext))
             .setAutoCancel(true)
 
         safeNotifyDemo(NotificationID.EXPANDABLE_TEXT, notif)
@@ -297,6 +297,7 @@ object DemoNotificationsHelper {
         notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
     }
 
+    //ToDo: Mostra una notifica espandibile con messaggi lunghi
     fun showMessageNotification(message: String) {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
@@ -308,7 +309,7 @@ object DemoNotificationsHelper {
         }
 
         val replyAction = Action.Builder(
-            R.drawable.ic_reply,
+            R.drawable.ic_chat,
             ctx.getString(R.string.notif_reply_demo_action),
             PendingIntentHelper.createBroadcast(NotificationAction.REPLY, extras)
         )
