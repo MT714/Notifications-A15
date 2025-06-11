@@ -14,12 +14,14 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
+import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.toBitmap
 import com.embedded2025.notificationsa15.NotificationActionReceiver.NotificationAction
 import com.embedded2025.notificationsa15.NotificationActionReceiver.IntentExtras
 import com.embedded2025.notificationsa15.NotificationService
 import com.embedded2025.notificationsa15.R
+import com.embedded2025.notificationsa15.chat.RepositoryMessage
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigPicture
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigText
@@ -303,7 +305,7 @@ object DemoNotificationsHelper {
         notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
     }
 
-    fun showMessageNotification(message: String) {
+    fun showMessageNotification(messages: List<RepositoryMessage>) {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
             .build()
@@ -321,18 +323,21 @@ object DemoNotificationsHelper {
             .addRemoteInput(remoteInput)
             .build()
 
+        val style = NotificationCompat.MessagingStyle(Person.Builder().setName("Assistente").build())
+        for(msg in messages)
+            style.addMessage(msg.content, msg.timeStamp, Person.Builder().setName(msg.role).build())
+
+
         val notif = NotificationsHelper.createBasicNotificationBuilder(
             ChannelID.DEFAULT,
             "Messaggio assistente",
-            message,
+            "",
             R.id.chatNotificationFragment
         )
             .setSmallIcon(R.drawable.ic_chat)
             .setAutoCancel(true)
             .addAction(replyAction)
-
-        if (message.length > 75)
-            notif.setBigText(message)
+            .setStyle(style)
 
         NotificationsHelper.safeNotify(NotificationID.CHAT, notif)
     }

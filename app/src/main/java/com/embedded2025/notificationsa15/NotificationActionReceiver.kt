@@ -61,8 +61,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
         }
         else {
             if (replyText != null) {
-                Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                runBlocking { NotificationsLabApplication.chatRepository.addUserMessage(replyText.toString()) }
+                val chatRepo = NotificationsLabApplication.chatRepository
+                runBlocking { chatRepo.addUserMessage(replyText.toString(), true) }
             }
             else Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
         }

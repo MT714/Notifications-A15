@@ -18,6 +18,9 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(message: RepositoryMessage)
 
+    @Query("SELECT * FROM messages ORDER BY timestamp DESC LIMIT :limit")
+    suspend fun getLastMessages(limit: Int): List<RepositoryMessage>
+
     @Query("DELETE FROM messages")
     suspend fun clearAllMessages()
 }
