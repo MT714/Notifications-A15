@@ -17,15 +17,15 @@ import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.toBitmap
-import com.embedded2025.notificationsa15.NotificationActionReceiver.NotificationAction
 import com.embedded2025.notificationsa15.NotificationActionReceiver.IntentExtras
+import com.embedded2025.notificationsa15.NotificationActionReceiver.NotificationAction
 import com.embedded2025.notificationsa15.NotificationService
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.chat.RepositoryMessage
+import com.embedded2025.notificationsa15.chat.Message
+import com.embedded2025.notificationsa15.utils.NotificationsHelper.ChannelID
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.ctx
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigPicture
 import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigText
-import com.embedded2025.notificationsa15.utils.NotificationsHelper.ChannelID
 
 object DemoNotificationsHelper {
      object NotificationID {
@@ -305,7 +305,7 @@ object DemoNotificationsHelper {
         notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
     }
 
-    fun showMessageNotification(messages: List<RepositoryMessage>) {
+    fun showMessageNotification(messages: List<Message>) {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
             .build()
@@ -324,9 +324,10 @@ object DemoNotificationsHelper {
             .build()
 
         val style = NotificationCompat.MessagingStyle(Person.Builder().setName("Assistente").build())
-        for(msg in messages)
-            style.addMessage(msg.content, msg.timeStamp, Person.Builder().setName(msg.role).build())
 
+        messages.forEach {
+            style.addMessage(it.content, it.timestamp, Person.Builder().setName(it.role).build())
+        }
 
         val notif = NotificationsHelper.createBasicNotificationBuilder(
             ChannelID.DEFAULT,

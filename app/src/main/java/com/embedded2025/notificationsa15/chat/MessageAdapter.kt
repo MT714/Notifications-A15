@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.embedded2025.notificationsa15.R
 
-class MessageAdapter : ListAdapter<RepositoryMessage, MessageAdapter.MessageViewHolder>(DiffCallback()) {
+class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(DiffCallback()) {
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val roleTextView: TextView = itemView.findViewById(R.id.roleTextView)
         private val contentTextView: TextView = itemView.findViewById(R.id.contentTextView)
 
-        fun bind(message: RepositoryMessage) {
+        fun bind(message: Message) {
             roleTextView.text = message.role
             contentTextView.text = message.content
         }
@@ -30,12 +30,12 @@ class MessageAdapter : ListAdapter<RepositoryMessage, MessageAdapter.MessageView
         holder.bind(getItem(position))
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<RepositoryMessage>() {
-        override fun areItemsTheSame(oldItem: RepositoryMessage, newItem: RepositoryMessage): Boolean {
+    class DiffCallback : DiffUtil.ItemCallback<Message>() {
+        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: RepositoryMessage, newItem: RepositoryMessage): Boolean {
+        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
             return oldItem == newItem
         }
     }

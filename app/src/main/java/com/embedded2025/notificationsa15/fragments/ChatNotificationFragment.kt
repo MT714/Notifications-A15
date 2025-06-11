@@ -45,7 +45,10 @@ class  ChatNotificationFragment: Fragment() {
             val editText = view.findViewById<EditText>(R.id.message_input)
             val messageText = editText.text.toString()
             if (messageText.isNotBlank()) {
-                lifecycleScope.launch { NotificationsLabApplication.chatRepository.addUserMessage(messageText) }
+                lifecycleScope.launch {
+                    NotificationsLabApplication.chatRepository.processUserMessageAndGetResponse(messageText)
+                    DemoNotificationsHelper.showMessageNotification(NotificationsLabApplication.chatRepository.getLastMessages(4))
+                }
                 editText.text.clear()
             }
         }

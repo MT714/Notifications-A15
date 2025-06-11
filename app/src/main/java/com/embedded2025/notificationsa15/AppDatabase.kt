@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.embedded2025.notificationsa15.chat.MessageDao
-import com.embedded2025.notificationsa15.chat.RepositoryMessage
+import com.embedded2025.notificationsa15.chat.ChatDao
+import com.embedded2025.notificationsa15.chat.Message
 
-@Database(entities = [RepositoryMessage::class], version = 1, exportSchema = true)
+@Database(entities = [Message::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun messageDao(): MessageDao
+    abstract fun messageDao(): ChatDao
 
     companion object {
         @Volatile
