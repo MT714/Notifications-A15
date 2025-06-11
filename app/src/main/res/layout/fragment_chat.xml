@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TODO: labels da spostare in strings-->
     <Button
         android:id="@+id/btn_clear_chat"
         android:layout_width="match_parent"
@@ -12,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:textAppearance="@style/MyButton"
         android:textColor="@color/colorSecondary"
-        android:text="Clear Chat" />
+        android:text="@string/chat_clear_button" />
 
     <include
         android:id="@+id/navigation_buttons_container"
@@ -33,15 +32,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Scrivi qualcosa"
-            android:inputType="text" />
+            android:hint="@string/chat_write_hint"
+            android:inputType="textMultiLine"
+            android:autofillHints="no" />
 
         <Button
             android:id="@+id/send_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Invia"
+            android:text="@string/chat_send_button"
             android:textAppearance="@style/MyButton"
             android:textColor="@color/colorSecondary" />
     </LinearLayout>

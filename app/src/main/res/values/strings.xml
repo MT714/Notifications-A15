@@ -48,6 +48,9 @@
 
     <!-- Chat notification -->
     <string name="chat_notification_title">Chat notification</string>
+    <string name="chat_clear_button">Cancella chat</string>
+    <string name="chat_write_hint">Scrivi qualcosa…</string>
+    <string name="chat_send_button">Invia</string>
 
     <!-- Progress notification -->
     <string name="progress_notification_title">Progress notification</string>

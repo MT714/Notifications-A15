@@ -8,17 +8,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.embedded2025.notificationsa15.NotificationsLabApplication
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.chat.ChatViewModel
-import com.embedded2025.notificationsa15.chat.ChatViewModelFactory
 import com.embedded2025.notificationsa15.chat.MessageAdapter
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
@@ -27,9 +22,6 @@ import kotlinx.coroutines.runBlocking
 
 
 class  ChatNotificationFragment: Fragment() {
-    private val viewModel: ChatViewModel by viewModels {
-        ChatViewModelFactory(NotificationsLabApplication.chatRepository)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_chat, container, false)
@@ -44,10 +36,8 @@ class  ChatNotificationFragment: Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.messages.collect { listOfMessages ->
-                    adapter.submitList(listOfMessages)
-                }
+            NotificationsLabApplication.chatRepository.messages.collect { listOfMessages ->
+                adapter.submitList(listOfMessages)
             }
         }
 
@@ -55,21 +45,21 @@ class  ChatNotificationFragment: Fragment() {
             val editText = view.findViewById<EditText>(R.id.message_input)
             val messageText = editText.text.toString()
             if (messageText.isNotBlank()) {
-                viewModel.sendUserMessage(messageText)
+                lifecycleScope.launch { NotificationsLabApplication.chatRepository.addUserMessage(messageText) }
                 editText.text.clear()
             }
         }
 
         view.findViewById<Button>(R.id.btn_clear_chat).setOnClickListener {
             NotificationsHelper.cancel(DemoNotificationsHelper.NotificationID.CHAT)
-            runBlocking { viewModel.repository.clearChat() }
+            runBlocking { NotificationsLabApplication.chatRepository.clearChat() }
         }
 
-        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
             findNavController().navigate(R.id.replyNotificationFragment)
         }
 
-        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
+        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
             findNavController().navigate(R.id.actionsNotificationFragment)
         }
     }

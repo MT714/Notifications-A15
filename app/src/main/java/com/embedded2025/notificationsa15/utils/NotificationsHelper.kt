@@ -123,7 +123,6 @@ object NotificationsHelper {
             .setContentTitle(title)
             .setContentText(text)
             .setContentIntent(PendingIntentHelper.createWithDestination(destinationId))
-            .setSmallIcon(R.drawable.ic_simple)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
 
@@ -171,6 +170,7 @@ object NotificationsHelper {
             contenuto,
             R.id.simpleNotificationFragment
         )
+            .setSmallIcon(getWeatherIconRes(iconCode))
             .setLargeIcon(getDrawable(ctx, getWeatherIconRes(iconCode))?.toBitmap())
             .setAutoCancel(true)
 

@@ -1,7 +1,6 @@
 package com.embedded2025.notificationsa15
 
 import android.app.Application
-import com.embedded2025.notificationsa15.chat.AppDatabase
 import com.embedded2025.notificationsa15.chat.ChatRepository
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
 

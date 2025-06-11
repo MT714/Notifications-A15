@@ -100,6 +100,7 @@ object DemoNotificationsHelper {
             ctx.getString(R.string.notif_simple_demo_text),
             R.id.simpleNotificationFragment,
         )
+            .setSmallIcon(R.drawable.ic_simple)
             .setAutoCancel(true)
 
         safeNotifyDemo(NotificationID.SIMPLE, notif)
@@ -115,6 +116,7 @@ object DemoNotificationsHelper {
             ctx.getString(R.string.notif_expandable_demo_text),
             R.id.expandableNotificationFragment,
         )
+            .setSmallIcon(R.drawable.ic_expandable)
             .setBigText(ctx.getString(R.string.notif_expandable_demo_bigtext))
             .setAutoCancel(true)
 
@@ -131,6 +133,7 @@ object DemoNotificationsHelper {
             ctx.getString(R.string.notif_expandable_demo_text),
             R.id.expandableNotificationFragment,
         )
+            .setSmallIcon(R.drawable.ic_expandable)
             .setBigPicture(getDrawable(ctx, R.drawable.project_logo)?.toBitmap())
             .setAutoCancel(true)
 
@@ -240,6 +243,7 @@ object DemoNotificationsHelper {
             "Esame domani?",
             R.id.emailNotificationFragment
         )
+            .setSmallIcon(R.drawable.ic_email)
             .setStyle(NotificationCompat.InboxStyle()
                 .addLine("Certo che si.")
                 .addLine("Anch'io!"))
@@ -254,6 +258,7 @@ object DemoNotificationsHelper {
             "Report settimanale",
             R.id.emailNotificationFragment
         )
+            .setSmallIcon(R.drawable.ic_email)
             .setStyle(NotificationCompat.InboxStyle()
                 .addLine("In allegato il report")
                 .setSummaryText("2 nuovi messaggi"))
@@ -268,6 +273,7 @@ object DemoNotificationsHelper {
             "Saluti da Padova!",
             R.id.emailNotificationFragment
         )
+            .setSmallIcon(R.drawable.ic_email)
             .setGroup(EMAIL_GROUP_KEY)
             .setAutoCancel(true)
             .build()
@@ -297,7 +303,6 @@ object DemoNotificationsHelper {
         notifManager.notify(NotificationID.INBOX_SUMMARY, summaryNotification)
     }
 
-    //ToDo: Mostra una notifica espandibile con messaggi lunghi
     fun showMessageNotification(message: String) {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_demo_label))
@@ -325,6 +330,9 @@ object DemoNotificationsHelper {
             .setSmallIcon(R.drawable.ic_chat)
             .setAutoCancel(true)
             .addAction(replyAction)
+
+        if (message.length > 75)
+            notif.setBigText(message)
 
         NotificationsHelper.safeNotify(NotificationID.CHAT, notif)
     }
