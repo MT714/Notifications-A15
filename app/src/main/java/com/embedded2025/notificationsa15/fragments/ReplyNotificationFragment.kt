@@ -30,7 +30,7 @@ class ReplyNotificationFragment : Fragment(){
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
-            findNavController().navigate(R.id.actionsNotificationFragment)
+            findNavController().navigate(R.id.chatNotificationFragment)
         }
     }
 }

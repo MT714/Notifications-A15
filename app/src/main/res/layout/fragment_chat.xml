@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!-- TODO: labels da spostare in strings-->
     <Button
         android:id="@+id/btn_clear_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@style/MyButton"
+        android:textColor="@color/colorSecondary"
         android:text="Clear Chat" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <include
+        android:id="@+id/navigation_buttons_container"
+        layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp" />
 
     <LinearLayout
+        android:id="@+id/input_area"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
+        android:layout_height="wrap_content"
+        android:layout_above="@id/navigation_buttons_container">
 
         <EditText
             android:id="@+id/message_input"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Scrivi qualcosa"
             android:inputType="text" />
@@ -36,19 +39,19 @@
         <Button
             android:id="@+id/send_message"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Invia"
             android:textAppearance="@style/MyButton"
-            android:textColor="@color/yellow" />
-
+            android:textColor="@color/colorSecondary" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/navigation_buttons_container"
-        layout="@layout/view_navigation_buttons"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="bottom" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@id/btn_clear_chat"
+        android:layout_above="@id/input_area"
+        />
+
+</RelativeLayout>

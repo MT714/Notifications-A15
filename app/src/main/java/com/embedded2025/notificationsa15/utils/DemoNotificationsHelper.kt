@@ -319,9 +319,9 @@ object DemoNotificationsHelper {
             ChannelID.DEFAULT,
             "Messaggio assistente",
             message,
-            R.id.chatFragment
+            R.id.chatNotificationFragment
         )
-            .setSmallIcon(R.drawable.ic_reply)
+            .setSmallIcon(R.drawable.ic_chat)
             .setAutoCancel(true)
             .addAction(replyAction)
 

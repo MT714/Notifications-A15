@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.embedded2025.notificationsa15.NotificationsLabApplication
@@ -24,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class ChatFragment: Fragment() {
+class  ChatNotificationFragment: Fragment() {
     private val viewModel: ChatViewModel by viewModels {
         ChatViewModelFactory(NotificationsLabApplication.chatRepository)
     }
@@ -61,6 +63,14 @@ class ChatFragment: Fragment() {
         view.findViewById<Button>(R.id.btn_clear_chat).setOnClickListener {
             NotificationsHelper.cancel(DemoNotificationsHelper.NotificationID.CHAT)
             runBlocking { viewModel.repository.clearChat() }
+        }
+
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
+            findNavController().navigate(R.id.replyNotificationFragment)
+        }
+
+        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
+            findNavController().navigate(R.id.actionsNotificationFragment)
         }
     }
 }

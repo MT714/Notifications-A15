@@ -26,7 +26,7 @@ class ActionsNotificationFragment : Fragment(){
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-            findNavController().navigate(R.id.replyNotificationFragment)
+            findNavController().navigate(R.id.chatNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){

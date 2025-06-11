@@ -42,10 +42,12 @@
     <string name="actions_notification_title">Actions notification</string>
     <string name="actions_notif_descr">Questa è una notifica con azioni. Premi un bottone per una demo</string>
 
-
     <!-- Reply notification -->
     <string name="reply_notification_title">Reply notification</string>
     <string name="reply_notif_descr">Questa è una notifica di risposta. Premi un bottone per una demo</string>
+
+    <!-- Chat notification -->
+    <string name="chat_notification_title">Chat notification</string>
 
     <!-- Progress notification -->
     <string name="progress_notification_title">Progress notification</string>

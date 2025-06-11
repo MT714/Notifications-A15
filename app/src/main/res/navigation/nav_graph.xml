@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/liveUpdateNotificationFragment"
         android:name="com.embedded2025.notificationsa15.fragments.LiveUpdateNotificationFragment"
-        android:label="Live Update Notification"
+        android:label="@string/liveUpdate_notification_title"
         tools:layout="@layout/fragment_live_update_notification" />
     <fragment
         android:id="@+id/progressNotificationFragment"
@@ -60,8 +60,8 @@
         android:label="@string/final_fragment_title"
         android:name="com.embedded2025.notificationsa15.fragments.FinalFragment" />
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.ChatFragment"
-        android:label="ChatFragment" />
+        android:id="@+id/chatNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ChatNotificationFragment"
+        android:label="@string/chat_notification_title" />
 
 </navigation>
