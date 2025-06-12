@@ -1,4 +1,4 @@
-package com.embedded2025.notificationsa15.meteoUtils
+package com.embedded2025.notificationsa15.weather
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -30,7 +30,7 @@ class WeatherWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             Log.i("WeatherWorker", "Latitudine: $lat, Longitudine: $lon")
 
             val apiKey = applicationContext.getString(R.string.weather_api_key)
-            val response = RetrofitClient.api.getWeatherByCoords(lat, lon, apiKey)
+            val response = OWMClient.api.getWeatherByCoords(lat, lon, apiKey)
             val cityName = response.name
             val temp = response.main.temp
             val description = response.weather.firstOrNull()?.description ?: "N/A"

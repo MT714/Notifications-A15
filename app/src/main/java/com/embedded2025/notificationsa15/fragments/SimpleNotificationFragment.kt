@@ -22,7 +22,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.meteoUtils.WeatherWorker
+import com.embedded2025.notificationsa15.weather.WeatherWorker
 import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial

@@ -13,25 +13,15 @@ import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigText
 import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
 
 class NewsWorker(appContext: Context, workerParams: WorkerParameters): CoroutineWorker(appContext, workerParams) {
-
-    private val api: NewsApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(NewsApi::class.java)
-    }
 
     override suspend fun doWork(): Result {
         Log.i("NewsWorker", "NewsWorker called")
 
         return try {
-            val response = api.getTopHeadlines(API_KEY)
+            val response = GNewsClient.api.getTopHeadlines(API_KEY)
 
             if (response.articles.isEmpty()) return Result.failure()
 
@@ -46,7 +36,7 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
         }
     }
 
-    private suspend fun showNotification(article: Article) {
+    private suspend fun showNotification(article: GNewsArticle) {
         NotificationsHelper.initialize(applicationContext)
 
         // Scarica immagine da URL (in background)
@@ -81,7 +71,6 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
     companion object {
         const val WORKER_NAME = "news_worker"
 
-        private const val BASE_URL = "https://gnews.io/api/"
         private const val API_KEY = "a1132ed12f858cb217c24f92d51874a2"
     }
 }
