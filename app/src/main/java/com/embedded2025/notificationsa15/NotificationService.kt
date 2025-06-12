@@ -33,7 +33,6 @@ import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestination
 import com.embedded2025.notificationsa15.utils.NotificationID
 import com.embedded2025.notificationsa15.utils.ChannelID
 
-
 class NotificationService : Service() {
     object OrderStatus{
         const val ORDER_PLACED = 0
