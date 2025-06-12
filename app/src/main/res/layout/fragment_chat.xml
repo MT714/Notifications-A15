@@ -2,32 +2,34 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
-    <Button
-        android:id="@+id/btn_clear_chat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:gravity="center"
-        android:text="@string/chat_clear_button"
-        android:textAppearance="@style/MyButton"
-        android:textColor="@color/colorSecondary" />
-
-    <include
-        android:id="@+id/navigation_buttons_container"
-        layout="@layout/view_navigation_buttons"
+    <TextView
+        android:id="@+id/chat_description_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp" />
+        android:text="@string/chat_notif_descr"
+        android:textAppearance="@style/MyBody"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_alignParentTop="true"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/chat_description_text"
+        android:layout_above="@id/input_area"
+        />
 
     <LinearLayout
         android:id="@+id/input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/navigation_buttons_container">
+        android:layout_above="@id/navigation_buttons_container"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/message_input"
@@ -42,18 +44,48 @@
             android:id="@+id/send_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="@string/chat_send_button"
             android:textAppearance="@style/MyButton"
             android:textColor="@color/colorSecondary" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <RelativeLayout
+        android:id="@+id/navigation_buttons_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/btn_clear_chat"
-        android:layout_above="@id/input_area"
-        />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Precedente"
+            android:src="@drawable/ic_arrow_left" />
+
+        <Button
+            android:id="@+id/btn_clear_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/chat_clear_button"
+            android:textAppearance="@style/MyButton"
+            android:textColor="@color/colorSecondary" />
+
+        <ImageButton
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Successivo"
+            android:src="@drawable/ic_arrow_right" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
