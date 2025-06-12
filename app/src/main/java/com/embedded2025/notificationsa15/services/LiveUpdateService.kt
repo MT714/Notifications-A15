@@ -118,7 +118,7 @@ class LiveUpdateService : Service() {
             R.drawable.ic_live,
             getString(R.string.notif_live_update_demo_title)
         )
-            .setDestinationFragment(R.id.liveUpdateNotificationFragment)
+            .setDestinationFragment(R.id.progressNotificationFragment)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentText(getString(R.string.notif_live_update_demo_text))
