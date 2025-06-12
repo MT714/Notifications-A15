@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 
 class ActionsNotificationFragment : Fragment(){
@@ -22,7 +22,7 @@ class ActionsNotificationFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnActionNotification).setOnClickListener {
-            DemoNotificationsHelper.showActionNotification()
+            NotificationHelper.showActionNotification()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){

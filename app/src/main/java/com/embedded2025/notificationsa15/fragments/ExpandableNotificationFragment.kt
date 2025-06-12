@@ -21,7 +21,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.news.NewsWorker
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
@@ -35,10 +35,10 @@ class ExpandableNotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnExpandableText).setOnClickListener {
-            DemoNotificationsHelper.showExpandableTextNotification()
+            NotificationHelper.showExpandableTextNotification()
         }
         view.findViewById<Button>(R.id.btnExpandablePicture).setOnClickListener {
-            DemoNotificationsHelper.showExpandablePictureNotification()
+            NotificationHelper.showExpandablePictureNotification()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {

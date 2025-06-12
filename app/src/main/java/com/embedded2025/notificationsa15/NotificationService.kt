@@ -20,9 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
-import com.embedded2025.notificationsa15.utils.PendingIntentHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,6 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.media.AudioManager
+import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationFragment
 
 class NotificationService : Service() {
 
@@ -63,9 +62,9 @@ class NotificationService : Service() {
         const val ACTION_DECLINE_CALL = "com.embedded2025.notificationsa15.ACTION_DECLINE_CALL"
 
         // ID delle notifiche
-        const val PROGRESS_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.PROGRESS
-        const val LIVE_UPDATE_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.LIVE_UPDATE
-        const val CALL_NOTIFICATION_ID = DemoNotificationsHelper.NotificationID.CALL
+        const val PROGRESS_NOTIFICATION_ID = NotificationHelper.NotificationID.PROGRESS
+        const val LIVE_UPDATE_NOTIFICATION_ID = NotificationHelper.NotificationID.LIVE_UPDATE
+        const val CALL_NOTIFICATION_ID = NotificationHelper.NotificationID.CALL
 
         const val EXTRA_LIVE_UPDATE_STEP = "extra_live_update_step"
         const val EXTRA_CALL_DELAY_SECONDS = "extra_call_delay_seconds"
@@ -123,21 +122,21 @@ class NotificationService : Service() {
     private fun startLiveUpdateFlow() {
         liveUpdateJob?.cancel()
         liveUpdateJob = serviceScope.launch {
-            val initialNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_PLACED)
+            val initialNotification = buildLiveUpdateNotification(NotificationHelper.OrderStatus.ORDER_PLACED)
             startForeground(LIVE_UPDATE_NOTIFICATION_ID, initialNotification)
             Log.d(TAG, "Servizio in foreground per LIVE UPDATE.")
 
             delay(10000)
 
             if (isActive) {
-                val onTheWayNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY)
+                val onTheWayNotification = buildLiveUpdateNotification(NotificationHelper.OrderStatus.ORDER_ON_THE_WAY)
                 notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, onTheWayNotification)
             }
 
             delay(10000)
 
             if (isActive) {
-                val completeNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE)
+                val completeNotification = buildLiveUpdateNotification(NotificationHelper.OrderStatus.ORDER_COMPLETE)
                 notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, completeNotification)
             }
         }
@@ -145,11 +144,11 @@ class NotificationService : Service() {
 
     private fun handleLiveUpdateAdvancement(currentStep: Int) {
         liveUpdateJob?.cancel()
-        val nextStep = (currentStep + 1).coerceAtMost(DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE)
+        val nextStep = (currentStep + 1).coerceAtMost(NotificationHelper.OrderStatus.ORDER_COMPLETE)
         val finalNotification = buildLiveUpdateNotification(nextStep)
         notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, finalNotification)
 
-        if (nextStep == DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE) {
+        if (nextStep == NotificationHelper.OrderStatus.ORDER_COMPLETE) {
             handler.postDelayed({
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 checkAndStopSelf()
@@ -158,22 +157,21 @@ class NotificationService : Service() {
     }
 
     private fun buildLiveUpdateNotification(step: Int): Notification {
-        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.liveUpdateNotificationFragment)
-        val builder = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
+        val builder = NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_live)
-            .setContentIntent(pendingContentIntent)
+            .setDestinationFragment(R.id.liveUpdateNotificationFragment)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentText(getString(R.string.notif_live_update_demo_text))
 
         when (step) {
-            DemoNotificationsHelper.OrderStatus.ORDER_PLACED -> {
+            NotificationHelper.OrderStatus.ORDER_PLACED -> {
                 builder
                     .setContentTitle(getString(R.string.notif_live_update_demo_order_placed))
                     .setProgress(3, step + 1, false)
             }
-            DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY -> {
+            NotificationHelper.OrderStatus.ORDER_ON_THE_WAY -> {
                 val advanceIntent = getAdvanceLiveUpdateIntent(this, step)
                 val pendingAdvanceIntent = PendingIntent.getService(this, 201, advanceIntent, getPendingIntentFlags())
                 builder
@@ -181,7 +179,7 @@ class NotificationService : Service() {
                     .setProgress(3, step + 1, false)
                     .addAction(R.drawable.ic_later, "Ho già ricevuto l'ordine", pendingAdvanceIntent)
             }
-            DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE -> {
+            NotificationHelper.OrderStatus.ORDER_COMPLETE -> {
                 builder
                     .setContentTitle(getString(R.string.notif_live_update_demo_order_complete))
                     .setProgress(0, 0, false)
@@ -241,10 +239,10 @@ class NotificationService : Service() {
     }
 
     private fun buildProgressNotification(progress: Int, max: Int, indeterminate: Boolean, contentText: String): Notification {
-        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
+
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
-        return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
+        return NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
@@ -252,20 +250,19 @@ class NotificationService : Service() {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setProgress(max, progress, indeterminate)
-            .setContentIntent(pendingContentIntent)
+            .setDestinationFragment(R.id.progressNotificationFragment)
             .addAction(R.drawable.ic_cancel, getString(R.string.action_cancel), pendingCancelIntent).build()
     }
 
     private fun buildFinalProgressNotification(contentText: String): Notification {
-        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.progressNotificationFragment)
-        return NotificationCompat.Builder(this, NotificationsHelper.ChannelID.DEMO)
+        return NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOngoing(false)
             .setProgress(0, 0, false)
-            .setContentIntent(pendingContentIntent)
+            .setDestinationFragment(R.id.progressNotificationFragment)
             .setAutoCancel(true).build()
     }
 
@@ -280,7 +277,6 @@ class NotificationService : Service() {
     private fun buildCallNotification() {
         val callerName = "Mario Rossi"
 
-        val pendingContentIntent = PendingIntentHelper.createWithDestination(R.id.callNotificationFragment)
         val fullScreenIntent = Intent(this, MainActivity::class.java)
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -295,14 +291,14 @@ class NotificationService : Service() {
             .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call))
             .build()
 
-        val notification = NotificationCompat.Builder(this, NotificationsHelper.ChannelID.CALLS)
+        val notification = NotificationCompat.Builder(this, NotificationHelper.ChannelID.CALLS)
             .setSmallIcon(R.drawable.ic_call)
             .setStyle(NotificationCompat.CallStyle.forIncomingCall(caller, declinePendingIntent, answerPendingIntent))
             .setContentTitle("Chiamata in arrivo")
             .setContentText(callerName)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setContentIntent(pendingContentIntent)
+            .setDestinationFragment(R.id.callNotificationFragment)
             .setFullScreenIntent(fullScreenPendingIntent, true)
             .setOngoing(true)
             .build()

@@ -18,7 +18,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -100,8 +99,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNotifications() {
-        NotificationsHelper.initialize(this)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED

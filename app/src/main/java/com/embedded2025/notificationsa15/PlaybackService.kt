@@ -1,7 +1,5 @@
 package com.embedded2025.notificationsa15
 
-import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -12,7 +10,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.embedded2025.notificationsa15.utils.AutoPlayForwardingPlayer
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
@@ -58,7 +56,7 @@ class PlaybackService : MediaSessionService() {
 
         val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
             .setNotificationId(MEDIA_NOTIFICATION_ID)
-            .setChannelId(NotificationsHelper.ChannelID.MEDIA_PLAYER)
+            .setChannelId(NotificationHelper.ChannelID.MEDIA_PLAYER)
             .build()
         setMediaNotificationProvider(notificationProvider)
 

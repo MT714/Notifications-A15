@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.embedded2025.notificationsa15.NotificationsLabApplication
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.chat.MessageAdapter
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -47,14 +46,14 @@ class  ChatNotificationFragment: Fragment() {
             if (messageText.isNotBlank()) {
                 lifecycleScope.launch {
                     NotificationsLabApplication.chatRepository.processUserMessageAndGetResponse(messageText)
-                    DemoNotificationsHelper.showMessageNotification(NotificationsLabApplication.chatRepository.getLastMessages(4))
+                    NotificationHelper.showMessageNotification(NotificationsLabApplication.chatRepository.getLastMessages(4))
                 }
                 editText.text.clear()
             }
         }
 
         view.findViewById<Button>(R.id.btn_clear_chat).setOnClickListener {
-            NotificationsHelper.cancel(DemoNotificationsHelper.NotificationID.CHAT)
+            NotificationHelper.cancel(NotificationHelper.NotificationID.CHAT)
             runBlocking { NotificationsLabApplication.chatRepository.clearChat() }
         }
 

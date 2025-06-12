@@ -7,8 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,13 +38,13 @@ class NotificationActionReceiver : BroadcastReceiver() {
 
     private fun handleArchive(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
-        NotificationsHelper.cancel(notificationId)
+        NotificationHelper.cancel(notificationId)
         Toast.makeText(context, "Azione: Archiviato (ID: $notificationId)", Toast.LENGTH_SHORT).show()
     }
 
     private fun handleLater(context: Context, intent:Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
-        NotificationsHelper.cancel(notificationId)
+        NotificationHelper.cancel(notificationId)
         Toast.makeText(context, "Azione: Più tardi (ID: $notificationId)", Toast.LENGTH_SHORT).show()
     }
 
@@ -55,10 +54,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
         if (intent.getBooleanExtra(IntentExtras.IS_DEMO, true)) {
             if (replyText != null) {
                 Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.ChannelID.DEMO)
+                val repliedNotification = NotificationCompat.Builder(context, NotificationHelper.ChannelID.DEMO)
                     .setSmallIcon(R.drawable.ic_action)
                     .setContentText("Risposta inviata: \"$replyText\"")
-                NotificationsHelper.safeNotify(notificationId, repliedNotification)
+                NotificationHelper.safeNotify(notificationId, repliedNotification)
             } else Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
 
         }
@@ -77,7 +76,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     } catch (e: Exception) {
                         Log.e("Notification Reply", "Errore: ${e.message}")
                     } finally {
-                        DemoNotificationsHelper.showMessageNotification(chatRepo.getLastMessages(4))
+                        NotificationHelper.showMessageNotification(chatRepo.getLastMessages(4))
                         pendingResult.finish()
                     }
                 }

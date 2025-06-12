@@ -1,7 +1,7 @@
 package com.embedded2025.notificationsa15.chat
 
 import android.util.Log
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +23,7 @@ class ChatRepository(private val chatDao: ChatDao) {
         val userMessage = Message(role = "user", content = userInput)
         chatDao.insertMessage(userMessage)
 
-        if (immediateNotify) DemoNotificationsHelper.showMessageNotification(getLastMessages(4))
+        if (immediateNotify) NotificationHelper.showMessageNotification(getLastMessages(4))
 
         val request = TogetherRequest(
             messages = messages.value.map {

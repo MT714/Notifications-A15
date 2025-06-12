@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 
 class ProgressNotificationFragment : Fragment() {
@@ -21,7 +21,7 @@ class ProgressNotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnProgressNotification).setOnClickListener {
-            DemoNotificationsHelper.showProgressNotification(context = requireContext())
+            NotificationHelper.showProgressNotification()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){

@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 
 class LiveUpdateNotificationFragment : Fragment() {
@@ -21,7 +21,7 @@ class LiveUpdateNotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnLiveUpdate_create).setOnClickListener {
-            DemoNotificationsHelper.showLiveUpdateNotification(requireContext())
+            NotificationHelper.showLiveUpdateNotification()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){

@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.google.android.material.textfield.TextInputEditText
 
 class CallNotificationFragment : Fragment() {
@@ -27,7 +27,7 @@ class CallNotificationFragment : Fragment() {
         scheduleButton.setOnClickListener {
             val delaySeconds = delayEditText.text.toString().toIntOrNull()
             if (delaySeconds != null && delaySeconds > 0) {
-                DemoNotificationsHelper.showCallNotification(requireContext(), delaySeconds)
+                NotificationHelper.showCallNotification(delaySeconds)
 
                 val message = getString(R.string.call_notification_scheduled_toast, delaySeconds)
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

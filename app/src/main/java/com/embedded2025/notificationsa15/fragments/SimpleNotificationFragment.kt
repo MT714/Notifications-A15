@@ -23,7 +23,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.weather.WeatherWorker
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
@@ -49,7 +49,7 @@ class SimpleNotificationFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.btnSimple).setOnClickListener {
-            DemoNotificationsHelper.showSimpleNotification()
+            NotificationHelper.showSimpleNotification()
         }
 
         val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)

@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 
 class ReplyNotificationFragment : Fragment(){
@@ -22,7 +22,7 @@ class ReplyNotificationFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btnReplyNotification).setOnClickListener {
-            DemoNotificationsHelper.showReplyNotification()
+            NotificationHelper.showReplyNotification()
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){

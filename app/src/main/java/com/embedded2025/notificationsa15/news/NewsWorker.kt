@@ -7,9 +7,10 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.utils.NotificationsHelper
-import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigPicture
-import com.embedded2025.notificationsa15.utils.NotificationsHelper.setBigText
+import com.embedded2025.notificationsa15.utils.NotificationHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigPicture
+import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigText
+import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationFragment
 import com.embedded2025.notificationsa15.utils.PendingIntentHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,7 +38,7 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
     }
 
     private suspend fun showNotification(article: GNewsArticle) {
-        NotificationsHelper.initialize(applicationContext)
+        NotificationHelper.initialize(applicationContext)
 
         // Scarica immagine da URL (in background)
         val bigPicture: Bitmap? = article.image?.let { imageUrl ->
@@ -50,12 +51,13 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
             }
         }
 
-        val notif = NotificationsHelper.createBasicNotificationBuilder(
-            NotificationsHelper.ChannelID.DEFAULT,
-            article.title,
-            article.description ?: "",
-            R.id.expandableNotificationFragment
+        val notif = NotificationHelper.createBasicBuilder(
+            NotificationHelper.ChannelID.DEFAULT,
+            R.drawable.ic_expandable,
+            article.title
         )
+            .setContentText(article.description ?: "")
+            .setDestinationFragment(R.id.expandableNotificationFragment)
             .setBigText(article.content ?: article.description ?: "")
             .setAutoCancel(true)
             .setContentIntent(PendingIntentHelper.createOpenUrlIntent(article.url))
@@ -65,7 +67,7 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
                 .setLargeIcon(bigPicture)
         }
 
-        NotificationsHelper.safeNotify(NotificationsHelper.getUniqueId(), notif)
+        NotificationHelper.safeNotify(NotificationHelper.getUniqueId(), notif)
     }
 
     companion object {
