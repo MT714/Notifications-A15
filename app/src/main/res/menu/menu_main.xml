@@ -6,11 +6,11 @@
         android:icon="@drawable/ic_home"
         android:title="@string/home_title"/>
     <item
-        android:id="@id/simpleNotificationFragment"
+        android:id="@+id/simpleNotificationFragment"
         android:icon="@drawable/ic_simple"
         android:title="@string/simple_notification_title"/>
     <item
-        android:id="@id/expandableNotificationFragment"
+        android:id="@+id/expandableNotificationFragment"
         android:icon="@drawable/ic_expandable"
         android:title="@string/expandable_notification_title"/>
     <item
