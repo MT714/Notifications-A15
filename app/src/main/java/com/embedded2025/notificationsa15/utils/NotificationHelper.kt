@@ -28,10 +28,12 @@ import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.NotificationActionReceiver
 import com.embedded2025.notificationsa15.NotificationActionReceiver.IntentExtras
 import com.embedded2025.notificationsa15.NotificationActionReceiver.NotificationAction
-import com.embedded2025.notificationsa15.NotificationService
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.chat.Message
 import com.embedded2025.notificationsa15.news.GNewsArticle
+import com.embedded2025.notificationsa15.services.CallService.Companion.getStartCallIntent
+import com.embedded2025.notificationsa15.services.LiveUpdateService.Companion.getStartLiveUpdateIntent
+import com.embedded2025.notificationsa15.services.ProgressService.Companion.getStartProgressIntent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
@@ -47,7 +49,7 @@ object ChannelID {
 
 object NotificationID {
     const val CHAT = 0
-    const val METEO = 1
+    const val WEATHER = 1
     const val PROGRESS = 2
     const val LIVE_UPDATE = 3
     const val CALL = 4
@@ -501,7 +503,7 @@ object NotificationHelper {
             ).show()
             return
         }
-        val serviceIntent = NotificationService.getStartProgressIntent(ctx)
+        val serviceIntent = getStartProgressIntent(ctx)
         ctx.startForegroundService(serviceIntent)
         Log.d("NotificationHelper", "Richiesta di avvio NotificationService per progresso inviata.")
     }
@@ -527,7 +529,7 @@ object NotificationHelper {
             ).show()
             return
         }
-        val serviceIntent = NotificationService.getStartLiveUpdateIntent(ctx)
+        val serviceIntent = getStartLiveUpdateIntent(ctx)
         ctx.startForegroundService(serviceIntent)
         Log.d(
             "NotificationHelper",
@@ -556,7 +558,7 @@ object NotificationHelper {
             ).show()
             return
         }
-        val serviceIntent = NotificationService.getStartCallIntent(ctx, delayInSeconds)
+        val serviceIntent = getStartCallIntent(ctx, delayInSeconds)
         ctx.startForegroundService(serviceIntent)
         Log.d(
             "NotificationHelper",
@@ -581,7 +583,7 @@ object NotificationHelper {
             .setLargeIcon(getDrawable(ctx, getWeatherIconRes(iconCode))?.toBitmap())
             .setAutoCancel(true)
 
-        safeNotify(NotificationID.METEO, builder)
+        safeNotify(NotificationID.WEATHER, builder)
     }
 
     /**
