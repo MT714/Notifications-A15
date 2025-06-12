@@ -1,20 +1,10 @@
 package com.embedded2025.notificationsa15.news
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationHelper
-import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigPicture
-import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigText
-import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationUrl
-import com.embedded2025.notificationsa15.utils.ChannelID
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URL
 
 class NewsWorker(appContext: Context, workerParams: WorkerParameters): CoroutineWorker(appContext, workerParams) {
 

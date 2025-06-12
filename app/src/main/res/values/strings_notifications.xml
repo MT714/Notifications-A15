@@ -9,8 +9,6 @@
     <string name="channel_high_priority_description">Canale per notifiche ad alta priorità (Heads-Up)</string>
     <string name="channel_media_player_name">Media player</string>
     <string name="channel_media_player_description">Canale per notifiche di riproduzione multimediale</string>
-    <string name="channel_weather_name">Meteo</string>
-    <string name="channel_weather_description">Canale per notifiche relative al meteo</string>
     <string name="channel_calls_name">Chiamate in Arrivo</string>
     <string name="channel_calls_description">Notifiche per le chiamate in arrivo</string>
 
@@ -33,15 +31,38 @@
         ipsum magna at nulla.
     </string>
 
+    <string name="notif_inbox_1_title">Marco</string>
+    <string name="notif_inbox_1_content">Esame domani?</string>
+    <string name="notif_inbox_1_line_1">Certo che sì.</string>
+    <string name="notif_inbox_1_line_2">Anch\'io!</string>
+
+    <string name="notif_inbox_2_title">Alberto</string>
+    <string name="notif_inbox_2_content">Report settimanale</string>
+    <string name="notif_inbox_2_line_1">In allegato il report.</string>
+    <string name="notif_inbox_2_line_2">2 nuovi messaggi.</string>
+
+    <string name="notif_inbox_3_title">Mattia</string>
+    <string name="notif_inbox_3_content">Saluti da Padova!</string>
+
+    <string name="notif_inbox_summary_title">Alberto</string>
+    <string name="notif_inbox_summary_big_content">3 Nuove Email</string>
+    <string name="notif_inbox_summary_line_1">Marco: Esame domani?</string>
+    <string name="notif_inbox_summary_line_2">Alberto: Report settimanale</string>
+    <string name="notif_inbox_summary_line_3">Mattia: Saluti da Padova!</string>
+    <string name="notif_inbox_summary_text">posta in arrivo</string>
+
+
     <string name="notif_action_demo_title">Notifica con azioni</string>
-    <string name="notif_action_demo_text">Questa è una notifica con azioni</string>
+    <string name="notif_action_demo_text">Questa è una notifica con azioni, puoi premere i pulsanti per fare qualcosa</string>
     <string name="notif_action_archive">Archivia</string>
     <string name="notif_action_later">Più tardi</string>
 
-    <string name="notif_reply_demo_title">Notifica di risposta</string>
-    <string name="notif_reply_demo_text">Questa è una notifica di risposta</string>
-    <string name="notif_reply_demo_label">Scrivi una risposta</string>
-    <string name="notif_reply_demo_action">Scrivi</string>
+    <string name="notif_reply_demo_title">Notifica di risposta diretta</string>
+    <string name="notif_reply_demo_text">Premi il pulsante sotto per rispondere direttamente alla notifica</string>
+    <string name="notif_reply_label">Scrivi qualcosa…</string>
+    <string name="notif_reply_action">Scrivi</string>
+
+    <string name="notif_chat_title">Chat assistente</string>
 
     <string name="notif_live_update_demo_title">Notifica di aggiornamento in tempo reale</string>
     <string name="notif_live_update_demo_text">Segui lo stato del tuo ordine:</string>
@@ -49,6 +70,7 @@
     <string name="notif_live_update_demo_order_placed">L\'ordine è in preparazione</string>
     <string name="notif_live_update_demo_order_sent">L\'ordine è stato spedito</string>
     <string name="notif_live_update_demo_order_complete">L\'ordine è stato consegnato</string>
+    <string name="notif_live_update_demo_order_already_received">Ho già ricevuto l\'ordine</string>
 
     <string name="notif_progress_demo_title">Operazione in corso</string>
     <string name="notif_progress_demo_text">Questa notifica mostra una barra di progresso</string>
@@ -57,6 +79,10 @@
     <string name="notif_progress_demo_complete">Operazione completata!</string>
     <string name="notif_progress_demo_fail">Operazione fallita.</string>
     <string name="notif_progress_demo_cancelled">Cancellato</string>
+    <string name="notif_progress_demo_start">"Avvio operazione…"</string>
+
+    <string name="notif_call_title">Chiamata in arrivo</string>
+    <string name="notif_call_caller">Mario Rossi</string>
 
     <string name="notif_media_player_demo_play">Play</string>
     <string name="notif_media_player_demo_pause">Pause</string>

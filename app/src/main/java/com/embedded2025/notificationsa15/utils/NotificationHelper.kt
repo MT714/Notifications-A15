@@ -43,7 +43,6 @@ object ChannelID {
     const val DEMO = "channel_demo"
     const val DEFAULT = "channel_default"
     const val MEDIA_PLAYER = "channel_media_player"
-    const val WEATHER = "channel_weather"
     const val CALLS = "channel_call"
 }
 
@@ -110,14 +109,6 @@ object NotificationHelper {
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = ctx.getString(R.string.channel_media_player_description)
-            },
-            NotificationChannel(
-                ChannelID.WEATHER,
-                ctx.getString(R.string.channel_weather_name),
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = ctx.getString(R.string.channel_weather_description)
-                setShowBadge(true)
             },
             NotificationChannel(
                 ChannelID.CALLS,
@@ -285,12 +276,12 @@ object NotificationHelper {
 
     fun NotificationCompat.Builder.addReplyAction(extras: Bundle?): NotificationCompat.Builder {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
-            .setLabel(ctx.getString(R.string.notif_reply_demo_label))
+            .setLabel(ctx.getString(R.string.notif_reply_label))
             .build()
 
         val replyAction = Action.Builder(
             R.drawable.ic_reply,
-            ctx.getString(R.string.notif_reply_demo_action),
+            ctx.getString(R.string.notif_reply_action),
             createBroadcastIntent(NotificationAction.REPLY, extras)
         )
             .addRemoteInput(remoteInput)
@@ -365,61 +356,58 @@ object NotificationHelper {
         val builder1 = createBasicBuilder(
             ChannelID.DEMO,
             R.drawable.ic_email,
-            "Marco"
+            ctx.getString(R.string.notif_inbox_1_title)
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
-            .setContentText("Esame domani?")
+            .setContentText(ctx.getString(R.string.notif_inbox_1_content))
             .setStyle(
                 NotificationCompat.InboxStyle()
-                    .addLine("Certo che si.")
-                    .addLine("Anch'io!")
+                    .addLine(ctx.getString(R.string.notif_inbox_1_line_1))
+                    .addLine(ctx.getString(R.string.notif_inbox_1_line_2))
             )
             .setGroup(groupKey)
-            .setGroupSummary(false)
             .setAutoCancel(true)
 
         // Notifica 2
         val builder2 = createBasicBuilder(
             ChannelID.DEMO,
             R.drawable.ic_email,
-            "Alberto"
+            ctx.getString(R.string.notif_inbox_2_title)
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
-            .setContentText("Report settimanale")
+            .setContentText(ctx.getString(R.string.notif_inbox_2_content))
             .setStyle(
                 NotificationCompat.InboxStyle()
-                    .addLine("In allegato il report")
-                    .setSummaryText("2 nuovi messaggi")
+                    .addLine(ctx.getString(R.string.notif_inbox_2_line_1))
+                    .setSummaryText(ctx.getString(R.string.notif_inbox_2_line_2))
             )
             .setGroup(groupKey)
-            .setGroupSummary(false)
             .setAutoCancel(true)
 
         // Notifica 3
         val builder3 = createBasicBuilder(
             ChannelID.DEMO,
             R.drawable.ic_email,
-            "Mattia"
+            ctx.getString(R.string.notif_inbox_3_title)
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
-            .setContentText("Saluti da Padova!")
+            .setContentText(ctx.getString(R.string.notif_inbox_3_content))
             .setGroup(groupKey)
-            .setGroupSummary(false)
             .setAutoCancel(true)
 
         val summaryBuilder = createBasicBuilder(
             ChannelID.DEMO,
             R.drawable.ic_email,
-            "3 Nuove Email"
+            ctx.getString(R.string.notif_inbox_summary_title)
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
             .setStyle(
                 NotificationCompat.InboxStyle()
-                    .addLine("Marco: Esame domani?")
-                    .addLine("Alberto: Report settimanale")
-                    .addLine("Mattia: Saluti da Padova!")
-                    .setBigContentTitle("3 Nuove Email")
-                    .setSummaryText("posta in arrivo")
+                    .addLine(ctx.getString(R.string.notif_inbox_summary_line_1))
+                    .addLine(ctx.getString(R.string.notif_inbox_summary_line_2))
+                    .addLine(ctx.getString(R.string.notif_inbox_summary_line_3))
+                    .setBigContentTitle(ctx.getString(R.string.notif_inbox_summary_big_content))
+                    .setSummaryText(ctx.getString(R.string.notif_inbox_summary_text))
             )
             .setGroup(groupKey)
             .setGroupSummary(true)
@@ -492,15 +480,8 @@ object NotificationHelper {
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.w(
-                "NotificationHelper",
-                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso."
-            )
-            Toast.makeText(
-                ctx,
-                ctx.getString(R.string.notif_permission_required_service),
-                Toast.LENGTH_LONG
-            ).show()
+            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso.")
+            Toast.makeText(ctx, ctx.getString(R.string.toast_permission_required_service), Toast.LENGTH_LONG).show()
             return
         }
         val serviceIntent = getStartProgressIntent(ctx)
@@ -512,29 +493,17 @@ object NotificationHelper {
      * Crea e pubblica una notifica demo di aggiornamenti live.
      */
     fun showLiveUpdateNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(
-                ctx,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.w(
-                "NotificationHelper",
-                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio."
-            )
-            Toast.makeText(
-                ctx,
-                ctx.getString(R.string.notif_permission_required_service),
-                Toast.LENGTH_LONG
-            ).show()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio.")
+            Toast.makeText(ctx, ctx.getString(R.string.toast_permission_required_service), Toast.LENGTH_LONG).show()
             return
         }
         val serviceIntent = getStartLiveUpdateIntent(ctx)
         ctx.startForegroundService(serviceIntent)
-        Log.d(
-            "NotificationHelper",
-            "Richiesta di avvio NotificationService per live update inviata."
-        )
+        Log.d("NotificationHelper", "Richiesta di avvio NotificationService per live update inviata.")
     }
 
     /**
@@ -547,23 +516,13 @@ object NotificationHelper {
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.w(
-                "NotificationHelper",
-                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di chiamata."
-            )
-            Toast.makeText(
-                ctx,
-                ctx.getString(R.string.notif_permission_required_service),
-                Toast.LENGTH_LONG
-            ).show()
+            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di chiamata.")
+            Toast.makeText(ctx, ctx.getString(R.string.toast_permission_required_service), Toast.LENGTH_LONG).show()
             return
         }
         val serviceIntent = getStartCallIntent(ctx, delayInSeconds)
         ctx.startForegroundService(serviceIntent)
-        Log.d(
-            "NotificationHelper",
-            "Richiesta di avvio NotificationService per chiamata fittizia inviata."
-        )
+        Log.d("NotificationHelper", "Richiesta di avvio NotificationService per chiamata fittizia inviata.")
     }
 
     /**
@@ -574,7 +533,7 @@ object NotificationHelper {
      * */
     fun showWeatherNotification(titolo: String, contenuto: String, iconCode: String = "01d") {
         val builder = createBasicBuilder(
-            ChannelID.WEATHER,
+            ChannelID.DEFAULT,
             getWeatherIconRes(iconCode),
             titolo
         )
@@ -652,7 +611,7 @@ object NotificationHelper {
         val builder = createBasicBuilder(
             ChannelID.DEFAULT,
             R.drawable.ic_chat,
-            "Messaggio assistente"
+            ctx.getString(R.string.notif_chat_title)
         )
             .addReplyAction(extras)
             .setDestinationFragment(R.id.chatNotificationFragment)

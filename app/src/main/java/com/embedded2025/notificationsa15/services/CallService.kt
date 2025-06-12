@@ -20,6 +20,7 @@ import androidx.core.graphics.drawable.IconCompat
 import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.ChannelID
+import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationFragment
 import com.embedded2025.notificationsa15.utils.NotificationID
 import kotlinx.coroutines.CoroutineScope
@@ -86,18 +87,18 @@ class CallService : Service() {
     }
 
     private fun buildCallNotification() {
-        val callerName = "Mario Rossi"
+        val callerName = getString(R.string.notif_call_caller)
 
         val fullScreenIntent = Intent(this, MainActivity::class.java)
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val answerIntent = Intent(this, CallService::class.java).apply { action =
-            ACTION_ANSWER_CALL
+        val answerIntent = Intent(this, CallService::class.java).apply {
+            action = ACTION_ANSWER_CALL
         }
         val answerPendingIntent = PendingIntent.getService(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val declineIntent = Intent(this, CallService::class.java).apply { action =
-            ACTION_DECLINE_CALL
+        val declineIntent = Intent(this, CallService::class.java).apply {
+            action = ACTION_DECLINE_CALL
         }
         val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -106,12 +107,13 @@ class CallService : Service() {
             .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call))
             .build()
 
-        val notification = NotificationCompat.Builder(this, ChannelID.CALLS)
-            .setSmallIcon(R.drawable.ic_call)
+        val notification = NotificationHelper.createBasicBuilder(
+            ChannelID.CALLS,
+            R.drawable.ic_call,
+            getString(R.string.notif_chat_title)
+        )
             .setStyle(NotificationCompat.CallStyle.forIncomingCall(caller, declinePendingIntent, answerPendingIntent))
-            .setContentTitle("Chiamata in arrivo")
             .setContentText(callerName)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setDestinationFragment(R.id.callNotificationFragment)
             .setFullScreenIntent(fullScreenPendingIntent, true)
@@ -156,14 +158,14 @@ class CallService : Service() {
 
     private fun handleCallAnswer() {
         stopRingtoneAndVibration()
-        Toast.makeText(this, "Risposto", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.toast_call_accepted), Toast.LENGTH_SHORT).show()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     private fun handleCallDecline() {
         stopRingtoneAndVibration()
-        Toast.makeText(this, "Chiamata rifiutata", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.toast_call_denied), Toast.LENGTH_SHORT).show()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

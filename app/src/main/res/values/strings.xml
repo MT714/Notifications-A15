@@ -9,7 +9,7 @@
 
     <string name="demo_button">DEMO</string>
 
-    <string name="notif_permission_required_service">Permission required</string>
+    <string name="toast_permission_required_service">Permesso richiesto</string>
 
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
@@ -77,9 +77,13 @@
     <string name="call_notification_description">Questa notifica speciale, usa uno stile ad alta priorità per simulare una chiamata in arrivo. Inserisci un ritardo in secondi per pianificarla. Prova a chiudere l\' applicazione mentre aspetti al chiamata.</string>
     <string name="call_notification_delay_hint">Ritardo (secondi)</string>
     <string name="call_notification_schedule_button">Pianifica Chiamata</string>
-    <string name="call_notification_scheduled_toast">Chiamata pianificata tra %1$d secondi.</string>
+
     <string name="call_notification_invalid_delay">Per favore, inserisci un ritardo valido.</string>
     <string name="fragment_call_title">Call notification</string>
+
+    <string name="toast_call_scheduled">Chiamata pianificata tra %1$d secondi.</string>
+    <string name="toast_call_accepted">Chiamata accettata</string>
+    <string name="toast_call_denied">Chiamata rifiutata</string>
 
     <!-- Email notification -->
     <string name="email_notification_title">Email Notification</string>

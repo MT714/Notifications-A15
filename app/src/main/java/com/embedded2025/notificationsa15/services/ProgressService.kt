@@ -67,7 +67,7 @@ class ProgressService : Service() {
 
         progressJob = serviceScope.launch {
             val initialNotification =
-                buildProgressNotification(0, "Avvio operazione…")
+                buildProgressNotification(0, getString(R.string.notif_progress_demo_start))
             if (ActivityCompat.checkSelfPermission(
                     this@ProgressService,
                     Manifest.permission.POST_NOTIFICATIONS

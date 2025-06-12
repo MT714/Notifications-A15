@@ -29,7 +29,7 @@ class CallNotificationFragment : Fragment() {
             if (delaySeconds != null && delaySeconds > 0) {
                 NotificationHelper.showCallNotification(delaySeconds)
 
-                val message = getString(R.string.call_notification_scheduled_toast, delaySeconds)
+                val message = getString(R.string.toast_call_scheduled, delaySeconds)
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.call_notification_invalid_delay), Toast.LENGTH_SHORT).show()
