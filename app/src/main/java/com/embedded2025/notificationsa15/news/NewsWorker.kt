@@ -10,8 +10,8 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigPicture
 import com.embedded2025.notificationsa15.utils.NotificationHelper.setBigText
-import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationFragment
-import com.embedded2025.notificationsa15.utils.PendingIntentHelper
+import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationUrl
+import com.embedded2025.notificationsa15.utils.ChannelID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
@@ -52,20 +52,17 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
         }
 
         val notif = NotificationHelper.createBasicBuilder(
-            NotificationHelper.ChannelID.DEFAULT,
+            ChannelID.DEFAULT,
             R.drawable.ic_expandable,
             article.title
         )
             .setContentText(article.description ?: "")
-            .setDestinationFragment(R.id.expandableNotificationFragment)
+            .setDestinationUrl(article.url)
             .setBigText(article.content ?: article.description ?: "")
             .setAutoCancel(true)
-            .setContentIntent(PendingIntentHelper.createOpenUrlIntent(article.url))
 
-        if (bigPicture != null) {
-            notif.setBigPicture(bigPicture)
-                .setLargeIcon(bigPicture)
-        }
+
+        if (bigPicture != null)  notif.setBigPicture(bigPicture)
 
         NotificationHelper.safeNotify(NotificationHelper.getUniqueId(), notif)
     }

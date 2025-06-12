@@ -30,6 +30,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.media.AudioManager
 import com.embedded2025.notificationsa15.utils.NotificationHelper.setDestinationFragment
+import com.embedded2025.notificationsa15.utils.NotificationID
+import com.embedded2025.notificationsa15.utils.ChannelID
 
 class NotificationService : Service() {
 
@@ -62,9 +64,9 @@ class NotificationService : Service() {
         const val ACTION_DECLINE_CALL = "com.embedded2025.notificationsa15.ACTION_DECLINE_CALL"
 
         // ID delle notifiche
-        const val PROGRESS_NOTIFICATION_ID = NotificationHelper.NotificationID.PROGRESS
-        const val LIVE_UPDATE_NOTIFICATION_ID = NotificationHelper.NotificationID.LIVE_UPDATE
-        const val CALL_NOTIFICATION_ID = NotificationHelper.NotificationID.CALL
+        const val PROGRESS_NOTIFICATION_ID = NotificationID.PROGRESS
+        const val LIVE_UPDATE_NOTIFICATION_ID = NotificationID.LIVE_UPDATE
+        const val CALL_NOTIFICATION_ID = NotificationID.CALL
 
         const val EXTRA_LIVE_UPDATE_STEP = "extra_live_update_step"
         const val EXTRA_CALL_DELAY_SECONDS = "extra_call_delay_seconds"
@@ -94,7 +96,7 @@ class NotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         Log.d(TAG, "Servizio creato.")
     }
 
@@ -157,7 +159,7 @@ class NotificationService : Service() {
     }
 
     private fun buildLiveUpdateNotification(step: Int): Notification {
-        val builder = NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
+        val builder = NotificationCompat.Builder(this, ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_live)
             .setDestinationFragment(R.id.liveUpdateNotificationFragment)
             .setOngoing(true)
@@ -242,7 +244,7 @@ class NotificationService : Service() {
 
         val cancelIntent = Intent(this, NotificationService::class.java).apply { action = ACTION_CANCEL_PROGRESS }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
-        return NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
+        return NotificationCompat.Builder(this, ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
@@ -255,7 +257,7 @@ class NotificationService : Service() {
     }
 
     private fun buildFinalProgressNotification(contentText: String): Notification {
-        return NotificationCompat.Builder(this, NotificationHelper.ChannelID.DEMO)
+        return NotificationCompat.Builder(this, ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_progress)
             .setContentTitle(getString(R.string.progress_notification_title))
             .setContentText(contentText)
@@ -291,7 +293,7 @@ class NotificationService : Service() {
             .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call))
             .build()
 
-        val notification = NotificationCompat.Builder(this, NotificationHelper.ChannelID.CALLS)
+        val notification = NotificationCompat.Builder(this, ChannelID.CALLS)
             .setSmallIcon(R.drawable.ic_call)
             .setStyle(NotificationCompat.CallStyle.forIncomingCall(caller, declinePendingIntent, answerPendingIntent))
             .setContentTitle("Chiamata in arrivo")
@@ -302,7 +304,7 @@ class NotificationService : Service() {
             .setFullScreenIntent(fullScreenPendingIntent, true)
             .setOngoing(true)
             .build()
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
         try {
             when (audioManager.ringerMode) {
@@ -316,14 +318,14 @@ class NotificationService : Service() {
                     ringtone?.play()
 
                     @Suppress("DEPRECATION")
-                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
                     val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
                     val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
                     vibrator.vibrate(vibrationEffect)
                 }
                 AudioManager.RINGER_MODE_VIBRATE -> {
                     @Suppress("DEPRECATION")
-                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
                     val vibrationPattern = longArrayOf(0, 1000, 500, 1000)
                     val vibrationEffect = VibrationEffect.createWaveform(vibrationPattern, 0)
                     vibrator.vibrate(vibrationEffect)
@@ -365,7 +367,7 @@ class NotificationService : Service() {
         ringtone = null
 
         @Suppress("DEPRECATION")
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         vibrator.cancel()
     }
 

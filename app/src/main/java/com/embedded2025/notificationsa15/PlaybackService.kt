@@ -10,6 +10,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.embedded2025.notificationsa15.utils.AutoPlayForwardingPlayer
+import com.embedded2025.notificationsa15.utils.ChannelID
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 @UnstableApi
@@ -56,7 +57,7 @@ class PlaybackService : MediaSessionService() {
 
         val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
             .setNotificationId(MEDIA_NOTIFICATION_ID)
-            .setChannelId(NotificationHelper.ChannelID.MEDIA_PLAYER)
+            .setChannelId(ChannelID.MEDIA_PLAYER)
             .build()
         setMediaNotificationProvider(notificationProvider)
 

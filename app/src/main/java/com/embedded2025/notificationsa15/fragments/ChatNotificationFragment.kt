@@ -16,6 +16,7 @@ import com.embedded2025.notificationsa15.NotificationsLabApplication
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.chat.MessageAdapter
 import com.embedded2025.notificationsa15.utils.NotificationHelper
+import com.embedded2025.notificationsa15.utils.NotificationID
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -53,7 +54,7 @@ class  ChatNotificationFragment: Fragment() {
         }
 
         view.findViewById<Button>(R.id.btn_clear_chat).setOnClickListener {
-            NotificationHelper.cancel(NotificationHelper.NotificationID.CHAT)
+            NotificationHelper.cancel(NotificationID.CHAT)
             runBlocking { NotificationsLabApplication.chatRepository.clearChat() }
         }
 

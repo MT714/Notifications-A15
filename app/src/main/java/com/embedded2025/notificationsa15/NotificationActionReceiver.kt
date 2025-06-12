@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.embedded2025.notificationsa15.utils.NotificationHelper
+import com.embedded2025.notificationsa15.utils.ChannelID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
         if (intent.getBooleanExtra(IntentExtras.IS_DEMO, true)) {
             if (replyText != null) {
                 Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                val repliedNotification = NotificationCompat.Builder(context, NotificationHelper.ChannelID.DEMO)
+                val repliedNotification = NotificationCompat.Builder(context, ChannelID.DEMO)
                     .setSmallIcon(R.drawable.ic_action)
                     .setContentText("Risposta inviata: \"$replyText\"")
                 NotificationHelper.safeNotify(notificationId, repliedNotification)

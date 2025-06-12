@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import androidx.navigation.NavDeepLinkBuilder
 import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.NotificationActionReceiver
@@ -31,36 +32,35 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.chat.Message
 import kotlin.collections.forEach
 
+object ChannelID {
+    const val DEMO = "channel_demo"
+    const val DEFAULT = "channel_default"
+    const val MEDIA_PLAYER = "channel_media_player"
+    const val WEATHER = "channel_weather"
+    const val CALLS = "channel_call"
+}
+
+object NotificationID {
+    const val CHAT = 0
+    const val METEO = 1
+    const val PROGRESS = 2
+    const val LIVE_UPDATE = 3
+    const val CALL = 4
+
+    object Demo {
+        const val SIMPLE = 100
+        const val EXPANDABLE_TEXT = 101
+        const val EXPANDABLE_PICTURE = 102
+        const val ACTIONS = 103
+        const val REPLY = 104
+        const val INBOX_1 = 105
+        const val INBOX_2 = 106
+        const val INBOX_3 = 107
+        const val INBOX_SUMMARY = 108
+    }
+}
 
 object NotificationHelper {
-    object ChannelID {
-        const val DEMO = "channel_demo"
-        const val DEFAULT = "channel_default"
-        const val MEDIA_PLAYER = "channel_media_player"
-        const val WEATHER = "channel_weather"
-        const val CALLS = "channel_call"
-    }
-
-    object NotificationID {
-        object Demo {
-            const val SIMPLE = 50
-            const val EXPANDABLE_TEXT = 51
-            const val EXPANDABLE_PICTURE = 52
-            const val ACTIONS = 53
-            const val REPLY = 54
-            const val INBOX_1 = 55
-            const val INBOX_2 = 56
-            const val INBOX_3 = 57
-            const val INBOX_SUMMARY = 58
-        }
-
-        const val METEO = 1
-        const val PROGRESS = 2
-        const val LIVE_UPDATE = 3
-        const val CALL = 4
-        const val CHAT = 5
-    }
-
     private lateinit var appContext: Context
     val ctx: Context
         get() = appContext
@@ -120,7 +120,7 @@ object NotificationHelper {
     }
 
     /**
-     * Ottiene un ID univoco per una notifica.
+     * Ottiene un ID univoco per una notifica, a partire da 1000.
      *
      * @return un ID univoco per una notifica.
      */
@@ -159,7 +159,7 @@ object NotificationHelper {
      *
      * @see safeNotify
      */
-    private fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder): Boolean {
+    fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder): Boolean {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED)
         {
@@ -236,6 +236,16 @@ object NotificationHelper {
             .setDestination(destinationId)
             .createPendingIntent()
         )
+
+    fun NotificationCompat.Builder.setDestinationUrl(url: String): NotificationCompat.Builder {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        else PendingIntent.FLAG_UPDATE_CURRENT
+
+        return setContentIntent(PendingIntent.getActivity(ctx, 0, intent, flags))
+    }
 
     /**
      * Crea un PendingIntent per un'azione di notifica, con le impostazioni specificate.
