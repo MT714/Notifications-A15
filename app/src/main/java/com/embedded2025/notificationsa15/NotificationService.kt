@@ -133,6 +133,13 @@ class NotificationService : Service() {
                 val onTheWayNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_ON_THE_WAY)
                 notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, onTheWayNotification)
             }
+
+            delay(10000)
+
+            if (isActive) {
+                val completeNotification = buildLiveUpdateNotification(DemoNotificationsHelper.OrderStatus.ORDER_COMPLETE)
+                notificationManager.notify(LIVE_UPDATE_NOTIFICATION_ID, completeNotification)
+            }
         }
     }
 
