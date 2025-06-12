@@ -28,43 +28,13 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
 
             val article = response.articles.first()
 
-            showNotification(article)
+            NotificationHelper.showNotification(article)
 
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
             Result.retry()
         }
-    }
-
-    private suspend fun showNotification(article: GNewsArticle) {
-        NotificationHelper.initialize(applicationContext)
-
-        // Scarica immagine da URL (in background)
-        val bigPicture: Bitmap? = article.image?.let { imageUrl ->
-            withContext(Dispatchers.IO) {
-                try {
-                    BitmapFactory.decodeStream(URL(imageUrl).openStream())
-                } catch (_: Exception) {
-                    null
-                }
-            }
-        }
-
-        val notif = NotificationHelper.createBasicBuilder(
-            ChannelID.DEFAULT,
-            R.drawable.ic_expandable,
-            article.title
-        )
-            .setContentText(article.description ?: "")
-            .setDestinationUrl(article.url)
-            .setBigText(article.content ?: article.description ?: "")
-            .setAutoCancel(true)
-
-
-        if (bigPicture != null)  notif.setBigPicture(bigPicture)
-
-        NotificationHelper.safeNotify(NotificationHelper.getUniqueId(), notif)
     }
 
     companion object {

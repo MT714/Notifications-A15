@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -30,6 +31,10 @@ import com.embedded2025.notificationsa15.NotificationActionReceiver.Notification
 import com.embedded2025.notificationsa15.NotificationService
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.chat.Message
+import com.embedded2025.notificationsa15.news.GNewsArticle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URL
 import kotlin.collections.forEach
 
 object ChannelID {
@@ -81,34 +86,39 @@ object NotificationHelper {
 
         // Create channels
         val channels = listOf<NotificationChannel>(
-            NotificationChannel(ChannelID.DEMO,
+            NotificationChannel(
+                ChannelID.DEMO,
                 ctx.getString(R.string.channel_demo_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = ctx.getString(R.string.channel_demo_description)
                 setShowBadge(true)
             },
-            NotificationChannel(ChannelID.DEFAULT,
+            NotificationChannel(
+                ChannelID.DEFAULT,
                 ctx.getString(R.string.channel_default_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = ctx.getString(R.string.channel_default_description)
                 setShowBadge(true)
             },
-            NotificationChannel(ChannelID.MEDIA_PLAYER,
+            NotificationChannel(
+                ChannelID.MEDIA_PLAYER,
                 ctx.getString(R.string.channel_media_player_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = ctx.getString(R.string.channel_media_player_description)
             },
-            NotificationChannel(ChannelID.WEATHER,
+            NotificationChannel(
+                ChannelID.WEATHER,
                 ctx.getString(R.string.channel_weather_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = ctx.getString(R.string.channel_weather_description)
                 setShowBadge(true)
             },
-            NotificationChannel(ChannelID.CALLS,
+            NotificationChannel(
+                ChannelID.CALLS,
                 ctx.getString(R.string.channel_calls_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
@@ -161,8 +171,8 @@ object NotificationHelper {
      */
     fun safeNotifyDemo(id: Int, builder: NotificationCompat.Builder): Boolean {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED)
-        {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.i("NotificationHelper", "Permission not granted, opening settings.")
             ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
@@ -172,8 +182,8 @@ object NotificationHelper {
             return false
         }
         if (notifManager.getNotificationChannel(ChannelID.DEMO).importance
-            == NotificationManager.IMPORTANCE_NONE)
-        {
+            == NotificationManager.IMPORTANCE_NONE
+        ) {
             Log.i("NotificationHelper", "Notification channel is not visible, opening settings.")
 
             ctx.startActivity(Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
@@ -196,7 +206,11 @@ object NotificationHelper {
      *
      * @return un builder di notifica con le impostazioni di base.
      */
-    fun createBasicBuilder(channelId: String, iconId: Int, title: String): NotificationCompat.Builder =
+    fun createBasicBuilder(
+        channelId: String,
+        iconId: Int,
+        title: String
+    ): NotificationCompat.Builder =
         NotificationCompat.Builder(ctx, channelId)
             .setContentTitle(title)
             .setSmallIcon(iconId)
@@ -230,11 +244,12 @@ object NotificationHelper {
      * @return il builder della notifica con il fragment di destinazione impostato.
      */
     fun NotificationCompat.Builder.setDestinationFragment(destinationId: Int): NotificationCompat.Builder =
-        setContentIntent(NavDeepLinkBuilder(ctx)
-            .setComponentName(ComponentName(ctx, MainActivity::class.java))
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(destinationId)
-            .createPendingIntent()
+        setContentIntent(
+            NavDeepLinkBuilder(ctx)
+                .setComponentName(ComponentName(ctx, MainActivity::class.java))
+                .setGraph(R.navigation.nav_graph)
+                .setDestination(destinationId)
+                .createPendingIntent()
         )
 
     fun NotificationCompat.Builder.setDestinationUrl(url: String): NotificationCompat.Builder {
@@ -259,9 +274,9 @@ object NotificationHelper {
             if (extras != null) putExtras(extras)
             setPackage("com.embedded2025.notificationsa15")
         }
-        val flags =if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            else PendingIntent.FLAG_UPDATE_CURRENT
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        else PendingIntent.FLAG_UPDATE_CURRENT
 
         return PendingIntent.getBroadcast(ctx, 0, intent, flags)
     }
@@ -352,9 +367,11 @@ object NotificationHelper {
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
             .setContentText("Esame domani?")
-            .setStyle(NotificationCompat.InboxStyle()
-                .addLine("Certo che si.")
-                .addLine("Anch'io!"))
+            .setStyle(
+                NotificationCompat.InboxStyle()
+                    .addLine("Certo che si.")
+                    .addLine("Anch'io!")
+            )
             .setGroup(groupKey)
             .setGroupSummary(false)
             .setAutoCancel(true)
@@ -367,9 +384,11 @@ object NotificationHelper {
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
             .setContentText("Report settimanale")
-            .setStyle(NotificationCompat.InboxStyle()
-                .addLine("In allegato il report")
-                .setSummaryText("2 nuovi messaggi"))
+            .setStyle(
+                NotificationCompat.InboxStyle()
+                    .addLine("In allegato il report")
+                    .setSummaryText("2 nuovi messaggi")
+            )
             .setGroup(groupKey)
             .setGroupSummary(false)
             .setAutoCancel(true)
@@ -392,12 +411,14 @@ object NotificationHelper {
             "3 Nuove Email"
         )
             .setDestinationFragment(R.id.emailNotificationFragment)
-            .setStyle(NotificationCompat.InboxStyle()
-                .addLine("Marco: Esame domani?")
-                .addLine("Alberto: Report settimanale")
-                .addLine("Mattia: Saluti da Padova!")
-                .setBigContentTitle("3 Nuove Email")
-                .setSummaryText("posta in arrivo"))
+            .setStyle(
+                NotificationCompat.InboxStyle()
+                    .addLine("Marco: Esame domani?")
+                    .addLine("Alberto: Report settimanale")
+                    .addLine("Mattia: Saluti da Padova!")
+                    .setBigContentTitle("3 Nuove Email")
+                    .setSummaryText("posta in arrivo")
+            )
             .setGroup(groupKey)
             .setGroupSummary(true)
             .setAutoCancel(true)
@@ -448,7 +469,11 @@ object NotificationHelper {
         )
             .setDestinationFragment(R.id.actionsNotificationFragment)
             .setContentText(ctx.getString(R.string.notif_action_demo_text))
-            .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_archive), archiveIntent)
+            .addAction(
+                R.drawable.ic_archive,
+                ctx.getString(R.string.notif_action_archive),
+                archiveIntent
+            )
             .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterIntent)
             .setAutoCancel(true)
 
@@ -460,9 +485,20 @@ object NotificationHelper {
      */
     fun showProgressNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso.")
-            Toast.makeText(ctx, ctx.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w(
+                "NotificationHelper",
+                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di progresso."
+            )
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.notif_permission_required_service),
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
         val serviceIntent = NotificationService.getStartProgressIntent(ctx)
@@ -475,14 +511,28 @@ object NotificationHelper {
      */
     fun showLiveUpdateNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio.")
-            Toast.makeText(ctx, ctx.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w(
+                "NotificationHelper",
+                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio."
+            )
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.notif_permission_required_service),
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
         val serviceIntent = NotificationService.getStartLiveUpdateIntent(ctx)
         ctx.startForegroundService(serviceIntent)
-        Log.d("NotificationHelper", "Richiesta di avvio NotificationService per live update inviata.")
+        Log.d(
+            "NotificationHelper",
+            "Richiesta di avvio NotificationService per live update inviata."
+        )
     }
 
     /**
@@ -490,14 +540,28 @@ object NotificationHelper {
      */
     fun showCallNotification(delayInSeconds: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.w("NotificationHelper", "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di chiamata.")
-            Toast.makeText(ctx, ctx.getString(R.string.notif_permission_required_service), Toast.LENGTH_LONG).show()
+            ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w(
+                "NotificationHelper",
+                "Permesso POST_NOTIFICATIONS non concesso. Non avvio il servizio di chiamata."
+            )
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.notif_permission_required_service),
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
         val serviceIntent = NotificationService.getStartCallIntent(ctx, delayInSeconds)
         ctx.startForegroundService(serviceIntent)
-        Log.d("NotificationHelper", "Richiesta di avvio NotificationService per chiamata fittizia inviata.")
+        Log.d(
+            "NotificationHelper",
+            "Richiesta di avvio NotificationService per chiamata fittizia inviata."
+        )
     }
 
     /**
@@ -539,8 +603,37 @@ object NotificationHelper {
             "13d" -> R.drawable.ic_weather_13d
             "50d" -> R.drawable.ic_weather_50d
 
-            else -> {R.drawable.ic_weather_02d}
+            else -> {
+                R.drawable.ic_weather_02d
+            }
         }
+    }
+
+    suspend fun showNotification(article: GNewsArticle) {
+        // Scarica immagine da URL (in background)
+        val bigPicture: Bitmap? = article.image?.let { imageUrl ->
+            withContext(Dispatchers.IO) {
+                try { BitmapFactory.decodeStream(URL(imageUrl).openStream()) }
+                catch (_: Exception) { null }
+            }
+        }
+
+        val builder = createBasicBuilder(
+            ChannelID.DEFAULT,
+            R.drawable.ic_expandable,
+            article.title
+        )
+            .setContentText(article.description ?: "")
+            .setDestinationUrl(article.url)
+            .setBigText(article.content ?: article.description ?: "")
+            .setAutoCancel(true)
+
+
+        if (bigPicture != null)
+            builder.setBigPicture(bigPicture)
+                .setLargeIcon(bigPicture)
+
+        safeNotify(getUniqueId(), builder)
     }
 
     fun showMessageNotification(messages: List<Message>) {
@@ -565,11 +658,5 @@ object NotificationHelper {
             .setStyle(style)
 
         safeNotify(NotificationID.CHAT, builder)
-    }
-
-    object OrderStatus{
-        const val ORDER_PLACED = 0
-        const val ORDER_ON_THE_WAY = 1
-        const val ORDER_COMPLETE = 2
     }
 }
