@@ -423,7 +423,7 @@ object NotificationHelper {
             ctx.getString(R.string.notif_reply_demo_title)
         )
             .addReplyAction(extras)
-            .setDestinationFragment(R.id.replyNotificationFragment)
+            .setDestinationFragment(R.id.actionsNotificationFragment)
             .setContentText(ctx.getString(R.string.notif_reply_demo_text))
             .setAutoCancel(true)
 

@@ -37,7 +37,7 @@ class CallNotificationFragment : Fragment() {
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-            findNavController().navigate(R.id.liveUpdateNotificationFragment)
+            findNavController().navigate(R.id.progressNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){

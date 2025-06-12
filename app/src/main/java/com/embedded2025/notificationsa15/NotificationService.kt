@@ -161,7 +161,7 @@ class NotificationService : Service() {
     private fun buildLiveUpdateNotification(step: Int): Notification {
         val builder = NotificationCompat.Builder(this, ChannelID.DEMO)
             .setSmallIcon(R.drawable.ic_live)
-            .setDestinationFragment(R.id.liveUpdateNotificationFragment)
+            .setDestinationFragment(R.id.progressNotificationFragment)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -59,11 +59,11 @@ class  ChatNotificationFragment: Fragment() {
         }
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
-            findNavController().navigate(R.id.replyNotificationFragment)
+            findNavController().navigate(R.id.actionsNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
-            findNavController().navigate(R.id.actionsNotificationFragment)
+            findNavController().navigate(R.id.progressNotificationFragment)
         }
     }
 }
