@@ -177,6 +177,8 @@ object NotificationsHelper {
         safeNotify(NotificationID.METEO, notif)
     }
 
+
+
     /**
      * Ottiene la risorsa dell'icona meteo in base al codice dell'icona.
      * Non comprende le icone relative alle meteo di notte, ma solo di giorno

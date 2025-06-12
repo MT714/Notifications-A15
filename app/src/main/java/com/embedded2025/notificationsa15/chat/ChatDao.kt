@@ -10,25 +10,25 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 @Dao
-interface MessageDao {
+interface ChatDao {
 
     @Query("SELECT * FROM messages ORDER BY timestamp ASC")
-    fun getAllMessages(): Flow<List<RepositoryMessage>>
+    fun getAllMessages(): Flow<List<Message>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: RepositoryMessage)
+    suspend fun insertMessage(message: Message)
 
     @Query("SELECT * FROM messages ORDER BY timestamp DESC LIMIT :limit")
-    suspend fun getLastMessages(limit: Int): List<RepositoryMessage>
+    suspend fun getLastMessages(limit: Int): List<Message>
 
     @Query("DELETE FROM messages")
     suspend fun clearAllMessages()
 }
 
 @Entity(tableName = "messages")
-data class RepositoryMessage(
+data class Message(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val role: String,
     val content: String,
-    val timeStamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis()
 )

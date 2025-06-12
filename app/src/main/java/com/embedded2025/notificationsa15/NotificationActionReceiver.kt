@@ -7,8 +7,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
+import com.embedded2025.notificationsa15.utils.DemoNotificationsHelper
 import com.embedded2025.notificationsa15.utils.NotificationsHelper
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // Classe per gestire le azioni delle notifiche
 class NotificationActionReceiver : BroadcastReceiver() {
@@ -49,7 +52,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
     private fun handleReply(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
         val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(IntentExtras.KEY_TEXT_REPLY)
-        if (intent.getBooleanExtra(IntentExtras.IS_DEMO, false)) {
+        if (intent.getBooleanExtra(IntentExtras.IS_DEMO, true)) {
             if (replyText != null) {
                 Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
                 val repliedNotification = NotificationCompat.Builder(context, NotificationsHelper.ChannelID.DEMO)
@@ -60,9 +63,24 @@ class NotificationActionReceiver : BroadcastReceiver() {
 
         }
         else {
-            if (replyText != null) {
+            if (!replyText.isNullOrBlank()) {
+                Log.d("Notification Reply", "User: $replyText")
                 val chatRepo = NotificationsLabApplication.chatRepository
-                runBlocking { chatRepo.addUserMessage(replyText.toString(), true) }
+
+                val pendingResult = goAsync()
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val botMsg = chatRepo.processUserMessageAndGetResponse(replyText.toString(), true)
+                        if (botMsg != null) {
+                            Log.d("Notification Reply", "Bot: ${botMsg.content}")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Notification Reply", "Errore: ${e.message}")
+                    } finally {
+                        DemoNotificationsHelper.showMessageNotification(chatRepo.getLastMessages(4))
+                        pendingResult.finish()
+                    }
+                }
             }
             else Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
         }
