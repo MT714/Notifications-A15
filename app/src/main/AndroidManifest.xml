@@ -57,13 +57,16 @@
         </service>
         <service
             android:name=".services.CallService"
-            android:exported="false"/>
+            android:exported="false"
+            android:foregroundServiceType="dataSync|mediaPlayback"/>
         <service
             android:name=".services.LiveUpdateService"
-            android:exported="false"/>
+            android:exported="false"
+            android:foregroundServiceType="dataSync|mediaPlayback"/>
         <service
             android:name=".services.ProgressService"
-            android:exported="false"/>
+            android:exported="false"
+            android:foregroundServiceType="dataSync|mediaPlayback"/>
     </application>
 
 </manifest>
