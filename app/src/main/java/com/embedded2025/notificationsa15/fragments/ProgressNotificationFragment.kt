@@ -24,12 +24,16 @@ class ProgressNotificationFragment : Fragment() {
             NotificationHelper.showProgressNotification()
         }
 
+        view.findViewById<Button>(R.id.btnLiveUpdate_create).setOnClickListener(){
+            NotificationHelper.showLiveUpdateNotification()
+        }
+
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-            findNavController().navigate(R.id.actionsNotificationFragment)
+            findNavController().navigate(R.id.chatNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
-            findNavController().navigate(R.id.liveUpdateNotificationFragment)
+            findNavController().navigate(R.id.callNotificationFragment)
         }
     }
 }

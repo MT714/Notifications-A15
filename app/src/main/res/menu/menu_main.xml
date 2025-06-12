@@ -18,25 +18,17 @@
         android:icon="@drawable/ic_email"
         android:title="@string/email_notification_title" />
     <item
-        android:id="@id/replyNotificationFragment"
-        android:icon="@drawable/ic_reply"
-        android:title="@string/reply_notification_title"/>
+        android:id="@id/actionsNotificationFragment"
+        android:icon="@drawable/ic_action"
+        android:title="@string/actions_notification_title"/>
     <item
         android:id="@id/chatNotificationFragment"
         android:icon="@drawable/ic_chat"
         android:title="@string/chat_notification_title"/>
     <item
-        android:id="@id/actionsNotificationFragment"
-        android:icon="@drawable/ic_action"
-        android:title="@string/actions_notification_title"/>
-    <item
         android:id="@id/progressNotificationFragment"
         android:icon="@drawable/ic_progress"
         android:title="@string/progress_notification_title"/>
-    <item
-        android:id="@id/liveUpdateNotificationFragment"
-        android:icon="@drawable/ic_live"
-        android:title="@string/liveUpdate_notification_title"/>
     <item
         android:id="@+id/callNotificationFragment"
         android:icon="@drawable/ic_call"

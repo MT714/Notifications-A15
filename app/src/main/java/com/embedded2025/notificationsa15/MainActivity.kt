@@ -52,11 +52,9 @@ class MainActivity : AppCompatActivity() {
             R.id.simpleNotificationFragment,
             R.id.expandableNotificationFragment,
             R.id.actionsNotificationFragment,
-            R.id.replyNotificationFragment,
             R.id.chatNotificationFragment,
             R.id.progressNotificationFragment,
             R.id.mediaPlayerNotificationFragment,
-            R.id.liveUpdateNotificationFragment,
             R.id.callNotificationFragment,
             R.id.emailNotificationFragment,
             R.id.finalFragment
@@ -78,11 +76,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.simpleNotificationFragment -> R.drawable.ic_simple
                 R.id.expandableNotificationFragment -> R.drawable.ic_expandable
                 R.id.actionsNotificationFragment -> R.drawable.ic_action
-                R.id.replyNotificationFragment -> R.drawable.ic_reply
                 R.id.chatNotificationFragment -> R.drawable.ic_chat
                 R.id.progressNotificationFragment -> R.drawable.ic_progress
                 R.id.mediaPlayerNotificationFragment -> R.drawable.ic_media
-                R.id.liveUpdateNotificationFragment -> R.drawable.ic_live
                 R.id.callNotificationFragment -> R.drawable.ic_call
                 R.id.emailNotificationFragment -> R.drawable.ic_email
                 R.id.finalFragment -> R.drawable.ic_done

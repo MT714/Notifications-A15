@@ -25,12 +25,16 @@ class ActionsNotificationFragment : Fragment(){
             NotificationHelper.showActionNotification()
         }
 
+        view.findViewById<Button>(R.id.btnReplyNotification).setOnClickListener {
+            NotificationHelper.showReplyNotification()
+        }
+
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-            findNavController().navigate(R.id.chatNotificationFragment)
+            findNavController().navigate(R.id.emailNotificationFragment)
         }
 
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
-            findNavController().navigate(R.id.progressNotificationFragment)
+            findNavController().navigate(R.id.chatNotificationFragment)
         }
     }
 }
