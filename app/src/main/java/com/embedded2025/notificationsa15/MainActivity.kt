@@ -17,7 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.NavOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -66,7 +66,23 @@ class MainActivity : AppCompatActivity() {
 
         toolbar.setupWithNavController(navController, appBarConfiguration)
         val navView = findViewById<NavigationView>(R.id.nav_view)
-        NavigationUI.setupWithNavController(navView, navController)
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            val navOptions = NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setPopUpTo(navController.graph.startDestinationId, false)
+                .build()
+
+            try {
+                navController.navigate(menuItem.itemId, null, navOptions)
+            } catch (e: IllegalArgumentException) {
+                Log.e("DrawerClick", "Impossibile navigare a ${menuItem.title}", e)
+            }
+
+            drawer.closeDrawers()
+            return@setNavigationItemSelectedListener true
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             toolbarTitle.text = destination.label ?: getString(R.string.app_name)
             supportActionBar?.title = ""

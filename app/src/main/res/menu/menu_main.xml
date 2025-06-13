@@ -18,15 +18,15 @@
         android:icon="@drawable/ic_email"
         android:title="@string/email_notification_title" />
     <item
-        android:id="@id/actionsNotificationFragment"
+        android:id="@+id/actionsNotificationFragment"
         android:icon="@drawable/ic_action"
         android:title="@string/actions_notification_title"/>
     <item
-        android:id="@id/chatNotificationFragment"
+        android:id="@+id/chatNotificationFragment"
         android:icon="@drawable/ic_chat"
         android:title="@string/chat_notification_title"/>
     <item
-        android:id="@id/progressNotificationFragment"
+        android:id="@+id/progressNotificationFragment"
         android:icon="@drawable/ic_progress"
         android:title="@string/progress_notification_title"/>
     <item
@@ -34,11 +34,11 @@
         android:icon="@drawable/ic_call"
         android:title="@string/fragment_call_title" />
     <item
-        android:id="@id/mediaPlayerNotificationFragment"
+        android:id="@+id/mediaPlayerNotificationFragment"
         android:icon="@drawable/ic_media"
         android:title="@string/media_player_notif_title"/>
     <item
-        android:id="@id/finalFragment"
+        android:id="@+id/finalFragment"
         android:icon="@drawable/ic_done"
         android:title="@string/final_fragment_title"/>
 </menu>
