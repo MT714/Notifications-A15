@@ -24,12 +24,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:justificationMode="inter_word"
+                android:padding="16dp"
                 android:text="@string/call_notification_description"
                 android:textAppearance="@style/MyBody" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDelay"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:padding="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/call_notification_delay_hint">

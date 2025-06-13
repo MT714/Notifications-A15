@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/MyBody"
+                android:padding="16dp"
                 android:layout_marginBottom="24dp"
                 android:justificationMode="inter_word"
                 android:text="@string/simple_notif_descr" />
@@ -41,6 +42,7 @@
                 android:id="@+id/swtWeather"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="16dp"
                 android:layout_marginTop="24dp"
                 style="@style/MyBody"
                 android:text="@string/weather_switch_text" />
@@ -55,6 +57,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:padding="16dp"
                     android:layout_weight="1"
                     android:textAppearance="@style/MyBody"
                     android:text="@string/weather_update_interval" />
@@ -62,6 +65,7 @@
                 <Spinner
                     android:id="@+id/spinnerInterval"
                     android:layout_width="wrap_content"
+                    android:padding="16dp"
                     style="@style/MyBody"
                     android:layout_height="wrap_content" />
             </LinearLayout>

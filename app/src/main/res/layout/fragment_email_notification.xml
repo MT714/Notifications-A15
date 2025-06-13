@@ -22,9 +22,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="24dp"
+                android:padding="16dp"
                 android:justificationMode="inter_word"
-                android:lineSpacingMultiplier="1.2"
                 android:text="@string/email_notif_descr"
                 android:textAppearance="@style/MyBody" />
 

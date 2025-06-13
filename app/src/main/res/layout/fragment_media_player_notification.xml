@@ -24,8 +24,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:padding="16dp"
                 android:justificationMode="inter_word"
-                android:lineSpacingMultiplier="1.2"
                 android:text="@string/media_player_notif_descr"
                 android:textAppearance="@style/MyBody" />
 
@@ -33,6 +33,7 @@
                 android:id="@+id/player_view"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:padding="16dp"
                 android:layout_gravity="center"
                 android:focusable="true"
                 android:keepScreenOn="true"

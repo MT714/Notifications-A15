@@ -2,8 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/chat_description_text"
@@ -12,21 +11,22 @@
         android:text="@string/chat_notif_descr"
         android:textAppearance="@style/MyBody"
         android:justificationMode="inter_word"
-        android:padding="8dp"
+        android:paddingHorizontal="48dp"
         android:layout_alignParentTop="true"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingHorizontal="48dp"
         android:layout_below="@id/chat_description_text"
-        android:layout_above="@id/input_area"
-        />
+        android:layout_above="@id/input_area" />
 
     <LinearLayout
         android:id="@+id/input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="48dp"
         android:layout_above="@id/navigation_buttons_container"
         android:orientation="horizontal"
         android:gravity="center_vertical">
@@ -54,7 +54,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/nav_container_margin_bottom">
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="16dp">
 
         <ImageButton
             android:id="@+id/btn_previous"
