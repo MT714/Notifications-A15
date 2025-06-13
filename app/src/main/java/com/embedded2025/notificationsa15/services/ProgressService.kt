@@ -108,7 +108,7 @@ class ProgressService : Service() {
         }
         val pendingCancelIntent = PendingIntent.getService(this, 101, cancelIntent, getPendingIntentFlags())
         return NotificationHelper.createBasicBuilder(
-            ChannelID.DEMO,
+            ChannelID.SERVICES,
             R.drawable.ic_progress,
             getString(R.string.progress_notification_title)
         )
@@ -129,7 +129,7 @@ class ProgressService : Service() {
 
     private fun buildFinalProgressNotification(contentText: String): Notification {
         return NotificationHelper.createBasicBuilder(
-            ChannelID.DEMO,
+            ChannelID.SERVICES,
             R.drawable.ic_progress,
             getString(R.string.progress_notification_title)
         )

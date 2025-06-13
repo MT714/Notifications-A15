@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Channels -->
+    <string name="group_demo">Notifiche simulate in app</string>
+    <string name="group_updates">Aggiornamenti in tempo reale</string>
+    <string name="group_multimedia">Multimedia, chat e chiamate</string>
+
     <string name="channel_demo_name">Notifiche demo</string>
-    <string name="channel_demo_description">Canale dedicato alle notifiche demo</string>
-    <string name="channel_default_name">Notifiche Generali</string>
-    <string name="channel_default_description">Canale per notifiche standard</string>
-    <string name="channel_high_priority_name">Notifiche Urgenti</string>
-    <string name="channel_high_priority_description">Canale per notifiche ad alta priorità (Heads-Up)</string>
+    <string name="channel_demo_description">Canale dedicato alle notifiche demo.</string>
+    <string name="channel_actions_name">Notifiche con azioni</string>
+    <string name="channel_actions_description">Canale per notifiche con azioni.</string>
+    <string name="channel_weather_name">Notifiche meteo</string>
+    <string name="channel_weather_description">Canale degli aggiornamenti meteo.</string>
+    <string name="channel_news_name">Notifiche news</string>
+    <string name="channel_news_description">Canale delle notizie di articoli di cronaca.</string>
+    <string name="channel_services_name">Servizi in foreground</string>
+    <string name="channel_services_description">Canale per notifiche che usano servizi in foreground.</string>
+    <string name="channel_chat_name">Chat assistente</string>
+    <string name="channel_chat_description">Canale per notifiche di chat con l\'assistente.</string>
     <string name="channel_media_player_name">Media player</string>
-    <string name="channel_media_player_description">Canale per notifiche di riproduzione multimediale</string>
+    <string name="channel_media_player_description">Canale per notifiche di riproduzione multimediale.</string>
     <string name="channel_calls_name">Chiamate in Arrivo</string>
-    <string name="channel_calls_description">Notifiche per le chiamate in arrivo</string>
+    <string name="channel_calls_description">Notifiche per le chiamate in arrivo.</string>
 
     <!-- Notifications -->
     <string name="notif_simple_demo_title">Notifica semplice</string>

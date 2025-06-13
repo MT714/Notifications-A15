@@ -12,14 +12,13 @@ import androidx.media3.session.MediaSessionService
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.AutoPlayForwardingPlayer
 import com.embedded2025.notificationsa15.utils.ChannelID
+import com.embedded2025.notificationsa15.utils.NotificationID
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var player: ExoPlayer
     private lateinit var forwardingPlayer: AutoPlayForwardingPlayer
-
-    private val MEDIA_NOTIFICATION_ID = 1002
 
     override fun onCreate() {
         super.onCreate()
@@ -55,7 +54,7 @@ class PlaybackService : MediaSessionService() {
         )
 
         val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
-            .setNotificationId(MEDIA_NOTIFICATION_ID)
+            .setNotificationId(NotificationID.MEDIA_PLAYER)
             .setChannelId(ChannelID.MEDIA_PLAYER)
             .build()
         setMediaNotificationProvider(notificationProvider)

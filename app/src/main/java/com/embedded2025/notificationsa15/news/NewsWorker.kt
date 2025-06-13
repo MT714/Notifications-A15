@@ -18,7 +18,7 @@ class NewsWorker(appContext: Context, workerParams: WorkerParameters): Coroutine
 
             val article = response.articles.first()
 
-            NotificationHelper.showNotification(article)
+            NotificationHelper.showNewsNotification(article)
 
             Result.success()
         } catch (e: Exception) {

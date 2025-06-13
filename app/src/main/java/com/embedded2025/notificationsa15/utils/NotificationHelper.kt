@@ -2,6 +2,7 @@ package com.embedded2025.notificationsa15.utils
 
 import android.Manifest
 import android.app.NotificationChannel
+import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -41,9 +42,19 @@ import kotlin.collections.forEach
 
 object ChannelID {
     const val DEMO = "channel_demo"
-    const val DEFAULT = "channel_default"
+    const val ACTIONS = "channel_actions"
+    const val WEATHER = "channel_weather"
+    const val NEWS = "channel_news"
+    const val CHAT = "channel_chat"
+    const val SERVICES = "channel_services"
     const val MEDIA_PLAYER = "channel_media_player"
     const val CALLS = "channel_call"
+}
+
+object ChannelGroupID {
+    const val DEMO = "group_demo"
+    const val UPDATES = "group_updates"
+    const val MULTIMEDIA = "group_multimedia"
 }
 
 object NotificationID {
@@ -52,6 +63,7 @@ object NotificationID {
     const val PROGRESS = 2
     const val LIVE_UPDATE = 3
     const val CALL = 4
+    const val MEDIA_PLAYER = 5
 
     object Demo {
         const val SIMPLE = 100
@@ -68,8 +80,7 @@ object NotificationID {
 
 object NotificationHelper {
     private lateinit var appContext: Context
-    val ctx: Context
-        get() = appContext
+    val ctx get() = appContext
 
     val notifManager: NotificationManager by lazy {
         ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -85,22 +96,67 @@ object NotificationHelper {
     fun initialize(context: Context) {
         appContext = context.applicationContext
 
-        // Create channels
-        val channels = listOf<NotificationChannel>(
+        // Crea i gruppi di canali
+        notifManager.createNotificationChannelGroups(listOf(
+            NotificationChannelGroup(ChannelGroupID.DEMO, ctx.getString(R.string.group_demo)),
+            NotificationChannelGroup(ChannelGroupID.UPDATES, ctx.getString(R.string.group_updates)),
+            NotificationChannelGroup(ChannelGroupID.MULTIMEDIA, ctx.getString(R.string.group_multimedia))
+        ))
+
+        // Crea i canali
+        notifManager.createNotificationChannels(listOf(
             NotificationChannel(
                 ChannelID.DEMO,
                 ctx.getString(R.string.channel_demo_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = ctx.getString(R.string.channel_demo_description)
+                group = ChannelGroupID.DEMO
                 setShowBadge(true)
             },
             NotificationChannel(
-                ChannelID.DEFAULT,
-                ctx.getString(R.string.channel_default_name),
+                ChannelID.ACTIONS,
+                ctx.getString(R.string.channel_actions_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = ctx.getString(R.string.channel_default_description)
+                description = ctx.getString(R.string.channel_actions_description)
+                group = ChannelGroupID.DEMO
+                setShowBadge(true)
+            },
+            NotificationChannel(
+                ChannelID.WEATHER,
+                ctx.getString(R.string.channel_weather_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = ctx.getString(R.string.channel_weather_description)
+                group = ChannelGroupID.UPDATES
+                setShowBadge(true)
+            },
+            NotificationChannel(
+                ChannelID.NEWS,
+                ctx.getString(R.string.channel_news_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = ctx.getString(R.string.channel_news_description)
+                group = ChannelGroupID.UPDATES
+                setShowBadge(true)
+            },
+            NotificationChannel(
+                ChannelID.SERVICES,
+                ctx.getString(R.string.channel_services_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = ctx.getString(R.string.channel_services_description)
+                group = ChannelGroupID.DEMO
+                setShowBadge(true)
+            },
+            NotificationChannel(
+                ChannelID.CHAT,
+                ctx.getString(R.string.channel_chat_name),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = ctx.getString(R.string.channel_chat_description)
+                group = ChannelGroupID.MULTIMEDIA
                 setShowBadge(true)
             },
             NotificationChannel(
@@ -109,6 +165,7 @@ object NotificationHelper {
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = ctx.getString(R.string.channel_media_player_description)
+                group = ChannelGroupID.MULTIMEDIA
             },
             NotificationChannel(
                 ChannelID.CALLS,
@@ -116,10 +173,9 @@ object NotificationHelper {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = ctx.getString(R.string.channel_calls_description)
+                group = ChannelGroupID.MULTIMEDIA
             }
-        )
-
-        notifManager.createNotificationChannels(channels)
+        ))
     }
 
     /**
@@ -127,7 +183,7 @@ object NotificationHelper {
      *
      * @return un ID univoco per una notifica.
      */
-    fun getUniqueId(): Int = notificationIdCounter++
+    fun getUniqueId() = notificationIdCounter++
 
     /**
      * Pubblica una notifica.
@@ -199,11 +255,7 @@ object NotificationHelper {
      *
      * @return un builder di notifica con le impostazioni di base.
      */
-    fun createBasicBuilder(
-        channelId: String,
-        iconId: Int,
-        title: String
-    ): NotificationCompat.Builder =
+    fun createBasicBuilder(channelId: String, iconId: Int, title: String) =
         NotificationCompat.Builder(ctx, channelId)
             .setContentTitle(title)
             .setSmallIcon(iconId)
@@ -216,7 +268,7 @@ object NotificationHelper {
      *
      * @return il builder della notifica con il testo della notifica espansa.
      */
-    fun NotificationCompat.Builder.setBigText(text: String): NotificationCompat.Builder =
+    fun NotificationCompat.Builder.setBigText(text: String) =
         setStyle(NotificationCompat.BigTextStyle().bigText(text))
 
     /**
@@ -226,7 +278,7 @@ object NotificationHelper {
      *
      * @return il builder della notifica con l'immagine della notifica espansa.
      */
-    fun NotificationCompat.Builder.setBigPicture(bitmap: Bitmap?): NotificationCompat.Builder =
+    fun NotificationCompat.Builder.setBigPicture(bitmap: Bitmap?) =
         setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
 
     /**
@@ -236,7 +288,7 @@ object NotificationHelper {
      *
      * @return il builder della notifica con il fragment di destinazione impostato.
      */
-    fun NotificationCompat.Builder.setDestinationFragment(destinationId: Int): NotificationCompat.Builder =
+    fun NotificationCompat.Builder.setDestinationFragment(destinationId: Int) =
         setContentIntent(
             NavDeepLinkBuilder(ctx)
                 .setComponentName(ComponentName(ctx, MainActivity::class.java))
@@ -429,7 +481,7 @@ object NotificationHelper {
         }
 
         val builder = createBasicBuilder(
-            ChannelID.DEMO,
+            ChannelID.ACTIONS,
             R.drawable.ic_reply,
             ctx.getString(R.string.notif_reply_demo_title)
         )
@@ -453,7 +505,7 @@ object NotificationHelper {
         val yellowIntent = createBroadcastIntent(NotificationAction.SET_YELLOW, extras)
 
         val builder = createBasicBuilder(
-            ChannelID.DEMO,
+            ChannelID.ACTIONS,
             R.drawable.ic_action,
             ctx.getString(R.string.notif_action_demo_title)
         )
@@ -518,7 +570,7 @@ object NotificationHelper {
         }
         val serviceIntent = getStartCallIntent(ctx, delayInSeconds)
         ctx.startForegroundService(serviceIntent)
-        Log.d("NotificationHelper", "Richiesta di avvio NotificationService per chiamata fittizia inviata.")
+        Log.d("NotificationHelper", "Richiesta di avvio del service per chiamata fittizia inviata.")
     }
 
     /**
@@ -529,7 +581,7 @@ object NotificationHelper {
      * */
     fun showWeatherNotification(titolo: String, contenuto: String, iconCode: String = "01d") {
         val builder = createBasicBuilder(
-            ChannelID.DEFAULT,
+            ChannelID.WEATHER,
             getWeatherIconRes(iconCode),
             titolo
         )
@@ -566,7 +618,7 @@ object NotificationHelper {
         }
     }
 
-    suspend fun showNotification(article: GNewsArticle) {
+    suspend fun showNewsNotification(article: GNewsArticle) {
         // Scarica immagine da URL (in background)
         val bigPicture: Bitmap? = article.image?.let { imageUrl ->
             withContext(Dispatchers.IO) {
@@ -576,7 +628,7 @@ object NotificationHelper {
         }
 
         val builder = createBasicBuilder(
-            ChannelID.DEFAULT,
+            ChannelID.NEWS,
             R.drawable.ic_expandable,
             article.title
         )
@@ -605,7 +657,7 @@ object NotificationHelper {
         }
 
         val builder = createBasicBuilder(
-            ChannelID.DEFAULT,
+            ChannelID.CHAT,
             R.drawable.ic_chat,
             ctx.getString(R.string.notif_chat_title)
         )

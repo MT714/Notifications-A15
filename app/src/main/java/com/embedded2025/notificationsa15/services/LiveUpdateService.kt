@@ -114,7 +114,7 @@ class LiveUpdateService : Service() {
 
     private fun buildLiveUpdateNotification(step: Int): Notification {
         val builder = NotificationHelper.createBasicBuilder(
-            ChannelID.DEMO,
+            ChannelID.SERVICES,
             R.drawable.ic_live,
             getString(R.string.notif_live_update_demo_title)
         )
