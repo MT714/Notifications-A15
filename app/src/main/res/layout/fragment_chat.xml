@@ -12,6 +12,7 @@
         android:textAppearance="@style/MyBody"
         android:justificationMode="inter_word"
         android:paddingHorizontal="48dp"
+        android:paddingVertical="16dp"
         android:layout_alignParentTop="true"/>
 
     <androidx.recyclerview.widget.RecyclerView

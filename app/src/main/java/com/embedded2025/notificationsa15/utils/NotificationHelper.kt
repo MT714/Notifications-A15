@@ -511,8 +511,8 @@ object NotificationHelper {
         )
             .setDestinationFragment(R.id.actionsNotificationFragment)
             .setContentText(ctx.getString(R.string.notif_action_demo_text))
-            .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_set_red), redIntent)
-            .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_set_yellow), yellowIntent)
+            .addAction(R.drawable.ic_red, ctx.getString(R.string.notif_action_set_red), redIntent)
+            .addAction(R.drawable.ic_yellow, ctx.getString(R.string.notif_action_set_yellow), yellowIntent)
             .setAutoCancel(true)
 
         safeNotifyDemo(NotificationID.Demo.ACTIONS, builder)
