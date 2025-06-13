@@ -55,7 +55,7 @@
     <!-- Chat notification -->
     <string name="chat_notification_title">Chat notification</string>
     <string name="chat_notif_descr">Usa il chatbot integrato per scrivere le risposte direttamente nella notifica. Scrivi un messaggio e premi il pulsante per inviare.</string>
-    <string name="chat_clear_button">Cancella chat</string>
+    <string name="chat_clear_button">Cancella</string>
     <string name="chat_write_hint">Scrivi qualcosa…</string>
     <string name="chat_send_button">Invia</string>
 

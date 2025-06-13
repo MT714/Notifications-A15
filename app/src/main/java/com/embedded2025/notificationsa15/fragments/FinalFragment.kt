@@ -21,12 +21,10 @@ class FinalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<ImageButton>(R.id.btn_previous_final).setOnClickListener {
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
             findNavController().navigate(R.id.mediaPlayerNotificationFragment)
         }
-/*
-        view.findViewById<ImageButton>(R.id.btn_exit_app).setOnClickListener {
-            activity?.finishAffinity()
-        }*/
+
+        view.findViewById<ImageButton>(R.id.btn_next).visibility = View.GONE
     }
 }

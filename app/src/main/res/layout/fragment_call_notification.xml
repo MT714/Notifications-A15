@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:gravity="center"
+                android:justificationMode="inter_word"
                 android:text="@string/call_notification_description"
                 android:textAppearance="@style/MyBody" />
 
@@ -58,7 +58,7 @@
     <include
         android:id="@+id/navigation_buttons_container"
         layout="@layout/view_navigation_buttons"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="@dimen/nav_container_margin_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />

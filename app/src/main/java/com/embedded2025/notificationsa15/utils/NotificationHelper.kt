@@ -561,7 +561,7 @@ object NotificationHelper {
             "50d" -> R.drawable.ic_weather_50d
 
             else -> {
-                R.drawable.ic_weather_02d
+                R.drawable.ic_meteo
             }
         }
     }

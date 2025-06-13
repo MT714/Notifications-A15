@@ -60,7 +60,7 @@ class ActionsNotificationFragment : Fragment(){
         return when (color) {
             1 -> resources.getColor(R.color.red, theme)
             2 -> resources.getColor(R.color.yellow, theme)
-            else -> resources.getColor(R.color.grey, theme)
+            else -> resources.getColor(R.color.colorTertiary, theme)
         }
     }
 }

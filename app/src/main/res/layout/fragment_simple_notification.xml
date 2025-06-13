@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/MyBody"
                 android:layout_marginBottom="24dp"
-                android:gravity="center"
+                android:justificationMode="inter_word"
                 android:text="@string/simple_notif_descr" />
 
             <Button
@@ -73,7 +73,7 @@
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="@dimen/nav_container_margin_bottom"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

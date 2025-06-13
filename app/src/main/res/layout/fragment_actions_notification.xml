@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:gravity="center"
+                android:justificationMode="inter_word"
                 android:lineSpacingMultiplier="1.2"
                 android:text="@string/actions_notif_descr"
                 android:textAppearance="@style/MyBody" />
@@ -42,6 +42,8 @@
                     android:gravity="center_vertical"
                     android:text="@string/action_button"
                     android:textAppearance="@style/MyBody" />
+
+
 
                 <Button
                     android:id="@+id/btnActionNotification"
@@ -95,6 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="@dimen/nav_container_margin_bottom" />
 
 </RelativeLayout>

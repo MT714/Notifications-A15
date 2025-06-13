@@ -2,8 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/chat_description_text"
@@ -11,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="@string/chat_notif_descr"
         android:textAppearance="@style/MyBody"
-        android:gravity="center"
+        android:justificationMode="inter_word"
         android:padding="8dp"
         android:layout_alignParentTop="true"/>
 
@@ -47,45 +46,23 @@
             android:text="@string/chat_send_button"
             android:textAppearance="@style/MyButton"
             android:textColor="@color/colorSecondary" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/navigation_buttons_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:padding="16dp">
-
-        <ImageButton
-            android:id="@+id/btn_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Precedente"
-            android:src="@drawable/ic_arrow_left" />
 
         <Button
             android:id="@+id/btn_clear_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_marginStart="8dp"
             android:text="@string/chat_clear_button"
             android:textAppearance="@style/MyButton"
             android:textColor="@color/colorSecondary" />
+    </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btn_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Successivo"
-            android:src="@drawable/ic_arrow_right" />
-
-    </RelativeLayout>
+    <include
+        android:id="@+id/navigation_buttons_container"
+        layout="@layout/view_navigation_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/nav_container_margin_bottom" />
 
 </RelativeLayout>

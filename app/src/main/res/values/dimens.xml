@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <dimen name="nav_button_size">50dp</dimen>
+    <dimen name="nav_button_padding">16dp</dimen>
+    <dimen name="nav_button_margin">15dp</dimen>
+    <dimen name="nav_container_margin_bottom">30dp</dimen>
+</resources>
