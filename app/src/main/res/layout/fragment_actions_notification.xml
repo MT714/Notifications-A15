@@ -88,9 +88,12 @@
                 android:id="@+id/actionsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:textAppearance="@style/MyBody"
                 android:justificationMode="inter_word" />
 
         </LinearLayout>
+
     </ScrollView>
 
     <include
