@@ -70,7 +70,7 @@
 
         <Button
             android:id="@+id/btn_clear_chat"
-            android:layout_width="@dimen/nav_cancel_button_size"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/nav_button_size"
             android:layout_centerInParent="true"
             android:text="@string/chat_clear_button"
