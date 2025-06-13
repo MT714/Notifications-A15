@@ -18,6 +18,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavOptions
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -86,6 +87,12 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             toolbarTitle.text = destination.label ?: getString(R.string.app_name)
             supportActionBar?.title = ""
+
+            val menu = navView.menu
+            for (i in 0 until menu.size()) {
+                val item = menu.getItem(i)
+                item.isChecked = item.itemId == destination.id
+            }
 
             val iconRes = when (destination.id) {
                 R.id.homeFragment -> R.drawable.ic_home

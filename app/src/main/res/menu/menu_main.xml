@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_home"
-        android:title="@string/home_title"/>
-    <item
-        android:id="@+id/simpleNotificationFragment"
-        android:icon="@drawable/ic_simple"
-        android:title="@string/simple_notification_title"/>
-    <item
-        android:id="@+id/expandableNotificationFragment"
-        android:icon="@drawable/ic_expandable"
-        android:title="@string/expandable_notification_title"/>
-    <item
-        android:id="@+id/emailNotificationFragment"
-        android:icon="@drawable/ic_email"
-        android:title="@string/email_notification_title" />
-    <item
-        android:id="@+id/actionsNotificationFragment"
-        android:icon="@drawable/ic_action"
-        android:title="@string/actions_notification_title"/>
-    <item
-        android:id="@+id/chatNotificationFragment"
-        android:icon="@drawable/ic_chat"
-        android:title="@string/chat_notification_title"/>
-    <item
-        android:id="@+id/progressNotificationFragment"
-        android:icon="@drawable/ic_progress"
-        android:title="@string/progress_notification_title"/>
-    <item
-        android:id="@+id/callNotificationFragment"
-        android:icon="@drawable/ic_call"
-        android:title="@string/fragment_call_title" />
-    <item
-        android:id="@+id/mediaPlayerNotificationFragment"
-        android:icon="@drawable/ic_media"
-        android:title="@string/media_player_notif_title"/>
-    <item
-        android:id="@+id/finalFragment"
-        android:icon="@drawable/ic_done"
-        android:title="@string/final_fragment_title"/>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/homeFragment"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home_title"/>
+        <item
+            android:id="@+id/simpleNotificationFragment"
+            android:icon="@drawable/ic_simple"
+            android:title="@string/simple_notification_title"/>
+        <item
+            android:id="@+id/expandableNotificationFragment"
+            android:icon="@drawable/ic_expandable"
+            android:title="@string/expandable_notification_title"/>
+        <item
+            android:id="@+id/emailNotificationFragment"
+            android:icon="@drawable/ic_email"
+            android:title="@string/email_notification_title" />
+        <item
+            android:id="@+id/actionsNotificationFragment"
+            android:icon="@drawable/ic_action"
+            android:title="@string/actions_notification_title"/>
+        <item
+            android:id="@+id/chatNotificationFragment"
+            android:icon="@drawable/ic_chat"
+            android:title="@string/chat_notification_title"/>
+        <item
+            android:id="@+id/progressNotificationFragment"
+            android:icon="@drawable/ic_progress"
+            android:title="@string/progress_notification_title"/>
+        <item
+            android:id="@+id/callNotificationFragment"
+            android:icon="@drawable/ic_call"
+            android:title="@string/fragment_call_title" />
+        <item
+            android:id="@+id/mediaPlayerNotificationFragment"
+            android:icon="@drawable/ic_media"
+            android:title="@string/media_player_notif_title"/>
+        <item
+            android:id="@+id/finalFragment"
+            android:icon="@drawable/ic_done"
+            android:title="@string/final_fragment_title"/>
+    </group>
 </menu>

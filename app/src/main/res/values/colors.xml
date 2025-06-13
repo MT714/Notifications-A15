@@ -12,5 +12,6 @@
 
     <color name="drawerBackgroundColor">@color/colorPrimary</color>
     <color name="drawerItemColor">@color/colorSecondary</color>
+    <color name="colorItemHighlight">#33FFFFFF</color>
 
 </resources>
