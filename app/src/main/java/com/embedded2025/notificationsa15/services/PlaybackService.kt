@@ -21,39 +21,38 @@ class PlaybackService : MediaSessionService() {
 
     private val MEDIA_NOTIFICATION_ID = 1002
 
-    private val playlist = listOf(
-        MediaItem.Builder()
-            .setUri("android.resource://$packageName/${R.raw.bohemian_rhapsody}".toUri())
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setTitle("Bohemian Rhapsody")
-                    .setArtist("Queen")
-                    .build()
-            )
-            .build(),
-        MediaItem.Builder()
-            .setUri("android.resource://$packageName/${R.raw.roundabout}".toUri())
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setTitle("Roundabout")
-                    .setArtist("Yes")
-                    .build()
-            )
-            .build(),
-        MediaItem.Builder()
-            .setUri("android.resource://$packageName/${R.raw.stairway_to_heaven}".toUri())
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setTitle("Stairway to Heaven")
-                    .setArtist("Led Zeppelin")
-                    .build()
-            )
-            .build()
-    )
-
-
     override fun onCreate() {
         super.onCreate()
+
+        val playlist = listOf(
+            MediaItem.Builder()
+                .setUri("android.resource://$packageName/${R.raw.bohemian_rhapsody}".toUri())
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle("Bohemian Rhapsody")
+                        .setArtist("Queen")
+                        .build()
+                )
+                .build(),
+            MediaItem.Builder()
+                .setUri("android.resource://$packageName/${R.raw.roundabout}".toUri())
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle("Roundabout")
+                        .setArtist("Yes")
+                        .build()
+                )
+                .build(),
+            MediaItem.Builder()
+                .setUri("android.resource://$packageName/${R.raw.stairway_to_heaven}".toUri())
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle("Stairway to Heaven")
+                        .setArtist("Led Zeppelin")
+                        .build()
+                )
+                .build()
+        )
 
         val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
             .setNotificationId(MEDIA_NOTIFICATION_ID)
@@ -70,6 +69,7 @@ class PlaybackService : MediaSessionService() {
         forwardingPlayer = AutoPlayForwardingPlayer(player)
         mediaSession = MediaSession.Builder(this, forwardingPlayer)
             .build()
+
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
