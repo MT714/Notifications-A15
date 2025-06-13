@@ -21,7 +21,7 @@ class ActionsNotificationFragment: Fragment() {
         SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == SharedPrefsNames.ACTION_COLOR) {
                 val view = requireView()
-                val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
+                val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.colorTertiary)
                 view.findViewById<TextView>(R.id.colorView)
                     .setBackgroundColor(resources.getColor(color, requireContext().theme))
             }
@@ -66,7 +66,7 @@ class ActionsNotificationFragment: Fragment() {
         val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
         prefs.registerOnSharedPreferenceChangeListener(listener)
 
-        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
+        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.colorTertiary)
         view.findViewById<TextView>(R.id.colorView)
             .setBackgroundColor(resources.getColor(color, requireContext().theme))
         val text = prefs.getString(SharedPrefsNames.ACTION_TEXT, "")

@@ -135,7 +135,7 @@ class LiveUpdateService : Service() {
                 builder
                     .setContentTitle(getString(R.string.notif_live_update_demo_order_sent))
                     .setProgress(3, 2, false)
-                    .addAction(R.drawable.ic_later, getString(R.string.notif_live_update_demo_order_already_received), pendingAdvanceIntent)
+                    .addAction(R.drawable.ic_live, getString(R.string.notif_live_update_demo_order_already_received), pendingAdvanceIntent)
             }
             OrderStatus.ORDER_COMPLETE -> {
                 builder

@@ -181,7 +181,7 @@ class NotificationService : Service() {
                 builder
                     .setContentTitle(getString(R.string.notif_live_update_demo_order_sent))
                     .setProgress(3, 2, false)
-                    .addAction(R.drawable.ic_later, "Ho già ricevuto l'ordine", pendingAdvanceIntent)
+                    .addAction(R.drawable.ic_live, "Ho già ricevuto l'ordine", pendingAdvanceIntent)
             }
             OrderStatus.ORDER_COMPLETE -> {
                 builder
