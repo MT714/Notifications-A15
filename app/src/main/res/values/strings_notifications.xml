@@ -53,9 +53,9 @@
 
 
     <string name="notif_action_demo_title">Notifica con azioni</string>
-    <string name="notif_action_demo_text">Questa è una notifica con azioni, puoi premere i pulsanti per fare qualcosa</string>
-    <string name="notif_action_archive">Archivia</string>
-    <string name="notif_action_later">Più tardi</string>
+    <string name="notif_action_demo_text">Questa è una notifica con azioni, premi  i pulsanti per cambiare il valore mostrato nella pagina Actions</string>
+    <string name="notif_action_set_red">Rosso</string>
+    <string name="notif_action_set_yellow">Giallo</string>
 
     <string name="notif_reply_demo_title">Notifica di risposta diretta</string>
     <string name="notif_reply_demo_text">Premi il pulsante sotto per rispondere direttamente alla notifica</string>

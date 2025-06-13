@@ -10,4 +10,7 @@ object SharedPrefsNames {
     const val NEWS_ENABLED = "news_enabled"
     const val NEWS_NOTIFICATION_INTERVAL_INDEX = "news_notification_interval_index"
     const val NEWS_NOTIFICATION_INTERVAL_VALUE = "news_notification_interval_value"
+
+    const val ACTION_COLOR = "action_color"
+    const val ACTION_TEXT = "action_text"
 }

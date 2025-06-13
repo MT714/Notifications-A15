@@ -449,8 +449,8 @@ object NotificationHelper {
             putInt(IntentExtras.NOTIFICATION_ID, NotificationID.Demo.ACTIONS)
             putBoolean(IntentExtras.IS_DEMO, true)
         }
-        val archiveIntent = createBroadcastIntent(NotificationAction.ARCHIVE, extras)
-        val laterIntent = createBroadcastIntent(NotificationAction.LATER, extras)
+        val redIntent = createBroadcastIntent(NotificationAction.SET_RED, extras)
+        val yellowIntent = createBroadcastIntent(NotificationAction.SET_YELLOW, extras)
 
         val builder = createBasicBuilder(
             ChannelID.DEMO,
@@ -459,12 +459,8 @@ object NotificationHelper {
         )
             .setDestinationFragment(R.id.actionsNotificationFragment)
             .setContentText(ctx.getString(R.string.notif_action_demo_text))
-            .addAction(
-                R.drawable.ic_archive,
-                ctx.getString(R.string.notif_action_archive),
-                archiveIntent
-            )
-            .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_later), laterIntent)
+            .addAction(R.drawable.ic_archive, ctx.getString(R.string.notif_action_set_red), redIntent)
+            .addAction(R.drawable.ic_later, ctx.getString(R.string.notif_action_set_yellow), yellowIntent)
             .setAutoCancel(true)
 
         safeNotifyDemo(NotificationID.Demo.ACTIONS, builder)

@@ -1,14 +1,18 @@
 package com.embedded2025.notificationsa15
 
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
+import androidx.core.content.edit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.navigation.NavDeepLinkBuilder
 import com.embedded2025.notificationsa15.utils.NotificationHelper
-import com.embedded2025.notificationsa15.utils.ChannelID
+import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,8 +20,8 @@ import kotlinx.coroutines.launch
 // Classe per gestire le azioni delle notifiche
 class NotificationActionReceiver : BroadcastReceiver() {
     object NotificationAction {
-        const val ARCHIVE = "com.embedded2025.notificationsa15.ACTION_ARCHIVE"
-        const val LATER = "com.embedded2025.notificationsa15.ACTION_LATER"
+        const val SET_RED = "com.embedded2025.notificationsa15.SET_RED"
+        const val SET_YELLOW = "com.embedded2025.notificationsa15.SET_YELLOW"
         const val REPLY = "com.embedded2025.notificationsa15.ACTION_REPLY"
     }
 
@@ -30,60 +34,89 @@ class NotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // Dispatcher delle azioni
         when (intent.action) {
-            NotificationAction.ARCHIVE -> handleArchive(context, intent)
-            NotificationAction.LATER -> handleLater(context, intent)
-            NotificationAction.REPLY -> handleReply(context, intent)
+            NotificationAction.SET_RED -> handleRed(context, intent)
+            NotificationAction.SET_YELLOW -> handleYellow(context, intent)
+            NotificationAction.REPLY -> {
+                if (intent.getBooleanExtra(IntentExtras.IS_DEMO, false)) handleReply(context, intent)
+                else handleChatReply(intent)
+            }
             else -> Log.w("NotificationActionReceiver", "Azione sconosciuta: ${intent.action}")
         }
     }
 
-    private fun handleArchive(context: Context, intent: Intent) {
+    private fun handleRed(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
+        Log.d("NotificationActionReceiver", "Azione: Impostato rosso (ID: $notificationId)")
+
+        val prefs = context.getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, 1) }
         NotificationHelper.cancel(notificationId)
-        Toast.makeText(context, "Azione: Archiviato (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+
+        openActionFragment(context)
     }
 
-    private fun handleLater(context: Context, intent:Intent) {
+    private fun handleYellow(context: Context, intent:Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
+        Log.d("NotificationActionReceiver", "Azione: Impostato giallo (ID: $notificationId)")
+
+        val prefs = context.getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, 2) }
         NotificationHelper.cancel(notificationId)
-        Toast.makeText(context, "Azione: Più tardi (ID: $notificationId)", Toast.LENGTH_SHORT).show()
+
+        openActionFragment(context)
     }
 
     private fun handleReply(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
         val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(IntentExtras.KEY_TEXT_REPLY)
-        if (intent.getBooleanExtra(IntentExtras.IS_DEMO, true)) {
-            if (replyText != null) {
-                Toast.makeText(context, "Risposta ricevuta: $replyText (ID: $notificationId)", Toast.LENGTH_LONG).show()
-                val repliedNotification = NotificationCompat.Builder(context, ChannelID.DEMO)
-                    .setSmallIcon(R.drawable.ic_action)
-                    .setContentText("Risposta inviata: \"$replyText\"")
-                NotificationHelper.safeNotify(notificationId, repliedNotification)
-            } else Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
+        if (replyText != null) {
+            Log.d("Notification Reply", "User: $replyText (ID: $notificationId)")
 
-        }
-        else {
-            if (!replyText.isNullOrBlank()) {
-                Log.d("Notification Reply", "User: $replyText")
-                val chatRepo = NotificationsLabApplication.chatRepository
+            val prefs = context.getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit { putString(SharedPrefsNames.ACTION_TEXT, replyText.toString()) }
+            NotificationHelper.cancel(notificationId)
 
-                val pendingResult = goAsync()
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val botMsg = chatRepo.processUserMessageAndGetResponse(replyText.toString(), true)
-                        if (botMsg != null) {
-                            Log.d("Notification Reply", "Bot: ${botMsg.content}")
-                        }
-                    } catch (e: Exception) {
-                        Log.e("Notification Reply", "Errore: ${e.message}")
-                    } finally {
-                        NotificationHelper.showMessageNotification(chatRepo.getLastMessages(4))
-                        pendingResult.finish()
+            openActionFragment(context)
+        } else Log.w("Notification Reply", "Nessun testo nella risposta.")
+    }
+
+    private fun handleChatReply(intent: Intent) {
+        val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(IntentExtras.KEY_TEXT_REPLY)
+        if (!replyText.isNullOrBlank()) {
+            Log.d("Notification Reply", "User: $replyText")
+            val chatRepo = NotificationsLabApplication.chatRepository
+
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val botMsg = chatRepo.processUserMessageAndGetResponse(replyText.toString(), true)
+                    if (botMsg != null) {
+                        Log.d("Notification Reply", "Bot: ${botMsg.content}")
                     }
+                } catch (e: Exception) {
+                    Log.e("Notification Reply", "Errore: ${e.message}")
+                } finally {
+                    NotificationHelper.showMessageNotification(chatRepo.getLastMessages(4))
+                    pendingResult.finish()
                 }
             }
-            else Toast.makeText(context, "Nessun testo nella risposta.", Toast.LENGTH_SHORT).show()
+        }
+        else Log.w("Notification Reply", "Nessun testo nella risposta.")
+    }
+
+    private fun openActionFragment(context: Context) {
+        if (!ProcessLifecycleOwner.get().lifecycle
+                .currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            Toast.makeText(context, context.getString(R.string.toast_action_received), Toast.LENGTH_SHORT).show()
+            return
         }
 
+        val intent = NavDeepLinkBuilder(context)
+            .setComponentName(ComponentName(context, MainActivity::class.java))
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.actionsNotificationFragment)
+            .createTaskStackBuilder()
+            .editIntentAt(0)
+        context.startActivity(intent)
     }
 }

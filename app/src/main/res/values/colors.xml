@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="colorPrimary">#A5DE99</color>
     <color name="colorSecondary">#FFFFFFFF</color>
     <color name="yellow">#FFCD19</color>
-    <color name="colorPrimary">#A5DE99</color>
+    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green_dark">#002019</color>
+    <color name="red">#FFFF0000</color>
+    <color name="grey">#FF8F8F8F</color>
 </resources>
