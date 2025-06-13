@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:justificationMode="inter_word"
+        android:gravity="center"
         android:padding="16dp"
         android:text="@string/final_fragment_text"
         android:textAppearance="@style/MyHeadline" />
