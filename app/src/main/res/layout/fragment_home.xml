@@ -33,7 +33,8 @@
                 style="@style/MyBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="start"
+                android:justificationMode="inter_word"
                 android:text="@string/home_text" />
 
         </LinearLayout>
