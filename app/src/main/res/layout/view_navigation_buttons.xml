@@ -11,9 +11,9 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/nav_button_margin"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Precedente"
-        android:src="@drawable/ic_arrow_left"
-        android:scaleType="fitCenter"/>
+        android:contentDescription="@string/nav_button_previous"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_left" />
 
     <ImageButton
         android:id="@+id/btn_next"
@@ -22,8 +22,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/nav_button_margin"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Successivo"
-        android:src="@drawable/ic_arrow_right"
-        android:scaleType="fitCenter"/>
+        android:contentDescription="@string/nav_button_next"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_right" />
 
 </RelativeLayout>

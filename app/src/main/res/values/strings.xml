@@ -95,4 +95,7 @@
     <string name="final_fragment_title">End of Tutorial</string>
     <string name="final_fragment_text">Hai completato il tour delle notifiche! </string>
 
+    <string name="nav_button_previous">Precedente</string>
+    <string name="nav_button_next">Successivo</string>
+
 </resources>
