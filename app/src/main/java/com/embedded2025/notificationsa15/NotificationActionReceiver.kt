@@ -1,16 +1,12 @@
 package com.embedded2025.notificationsa15
 
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.RemoteInput
 import androidx.core.content.edit
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.navigation.NavDeepLinkBuilder
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import kotlinx.coroutines.CoroutineScope
@@ -49,10 +45,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
         Log.d("NotificationActionReceiver", "Azione: Impostato rosso (ID: $notificationId)")
 
         val prefs = context.getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, 1) }
+        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, R.color.red) }
         NotificationHelper.cancel(notificationId)
 
-        openActionFragment(context)
+        Toast.makeText(context, context.getString(R.string.toast_action_color_set_red), Toast.LENGTH_SHORT).show()
     }
 
     private fun handleYellow(context: Context, intent:Intent) {
@@ -60,10 +56,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
         Log.d("NotificationActionReceiver", "Azione: Impostato giallo (ID: $notificationId)")
 
         val prefs = context.getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, 2) }
+        prefs.edit { putInt(SharedPrefsNames.ACTION_COLOR, R.color.yellow) }
         NotificationHelper.cancel(notificationId)
 
-        openActionFragment(context)
+        Toast.makeText(context, context.getString(R.string.toast_action_color_set_yellow), Toast.LENGTH_SHORT).show()
     }
 
     private fun handleReply(context: Context, intent: Intent) {
@@ -76,7 +72,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
             prefs.edit { putString(SharedPrefsNames.ACTION_TEXT, replyText.toString()) }
             NotificationHelper.cancel(notificationId)
 
-            openActionFragment(context)
+            Toast.makeText(context, context.getString(R.string.toast_action_string, replyText), Toast.LENGTH_SHORT).show()
         } else Log.w("Notification Reply", "Nessun testo nella risposta.")
     }
 
@@ -102,21 +98,5 @@ class NotificationActionReceiver : BroadcastReceiver() {
             }
         }
         else Log.w("Notification Reply", "Nessun testo nella risposta.")
-    }
-
-    private fun openActionFragment(context: Context) {
-        if (!ProcessLifecycleOwner.get().lifecycle
-                .currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-            Toast.makeText(context, context.getString(R.string.toast_action_received), Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val intent = NavDeepLinkBuilder(context)
-            .setComponentName(ComponentName(context, MainActivity::class.java))
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.actionsNotificationFragment)
-            .createTaskStackBuilder()
-            .editIntentAt(0)
-        context.startActivity(intent)
     }
 }

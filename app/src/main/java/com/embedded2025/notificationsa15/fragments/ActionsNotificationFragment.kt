@@ -1,6 +1,7 @@
 package com.embedded2025.notificationsa15.fragments
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,23 @@ import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 
 
-class ActionsNotificationFragment : Fragment(){
+class ActionsNotificationFragment: Fragment() {
+    private val listener: SharedPreferences.OnSharedPreferenceChangeListener by lazy {
+        SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            if (key == SharedPrefsNames.ACTION_COLOR) {
+                val view = requireView()
+                val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
+                view.findViewById<TextView>(R.id.colorView)
+                    .setBackgroundColor(resources.getColor(color, requireContext().theme))
+            }
+            else if (key == SharedPrefsNames.ACTION_TEXT) {
+                val view = requireView()
+                val text = prefs.getString(SharedPrefsNames.ACTION_TEXT, "")
+                if (!text.isNullOrBlank())
+                    view.findViewById<TextView>(R.id.actionsText).text = getString(R.string.action_string, text)
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_actions_notification, container, false)
@@ -47,20 +64,20 @@ class ActionsNotificationFragment : Fragment(){
         val view = requireView()
 
         val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
-        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, 0)
-        view.findViewById<TextView>(R.id.colorView).setBackgroundColor(getColor(color))
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+
+        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
+        view.findViewById<TextView>(R.id.colorView)
+            .setBackgroundColor(resources.getColor(color, requireContext().theme))
         val text = prefs.getString(SharedPrefsNames.ACTION_TEXT, "")
         if (!text.isNullOrBlank())
             view.findViewById<TextView>(R.id.actionsText).text = getString(R.string.action_string, text)
     }
 
-    private fun getColor(color: Int): Int {
-        val theme = requireContext().theme
+    override fun onPause() {
+        super.onPause()
 
-        return when (color) {
-            1 -> resources.getColor(R.color.red, theme)
-            2 -> resources.getColor(R.color.yellow, theme)
-            else -> resources.getColor(R.color.colorTertiary, theme)
-        }
+        requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
+            .unregisterOnSharedPreferenceChangeListener(listener)
     }
 }

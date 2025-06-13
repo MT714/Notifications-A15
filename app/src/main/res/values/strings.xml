@@ -45,7 +45,9 @@
     <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione, vengono create notifiche che includono pulsanti di azione, permettendo all\'utente di compiere azioni rapide senza aprire l\'app. O se vuoi puoi rispondere direttamente ad un messaggio.</string>
     <string name="action_button">Notifica con azioni</string>
     <string name="action_string">Ultimo testo ricevuto: %1$s</string>
-    <string name="toast_action_received">Azione ricevuta</string>
+    <string name="toast_action_color_set_red">Impostato il colore Rosso</string>
+    <string name="toast_action_color_set_yellow">Impostato il colore Giallo</string>
+    <string name="toast_action_string">Stringa ricevuta: %1$s</string>
 
     <!-- Reply notification -->
     <string name="reply_notification_title">Reply notification</string>
