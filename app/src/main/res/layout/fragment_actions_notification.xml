@@ -9,21 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation_buttons_container"
-        android:padding="16dp"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:padding="16dp"
+                android:layout_marginBottom="25dp"
                 android:justificationMode="inter_word"
                 android:text="@string/actions_notif_descr"
                 android:textAppearance="@style/MyBody" />
@@ -32,8 +29,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
@@ -59,13 +55,13 @@
                 android:id="@+id/colorView"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:paddingHorizontal="16dp"/>
+                android:layout_marginVertical="15dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:layout_marginTop="20dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -88,9 +84,9 @@
                 android:id="@+id/actionsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
                 android:textAppearance="@style/MyBody"
-                android:justificationMode="inter_word" />
+                android:justificationMode="inter_word"
+                android:layout_marginVertical="15dp"/>
 
         </LinearLayout>
 
@@ -101,7 +97,6 @@
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/nav_container_margin_bottom" />
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

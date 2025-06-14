@@ -11,15 +11,12 @@
         android:text="@string/chat_notif_descr"
         android:textAppearance="@style/MyBody"
         android:justificationMode="inter_word"
-        android:paddingHorizontal="48dp"
-        android:paddingVertical="16dp"
         android:layout_alignParentTop="true"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="48dp"
         android:layout_below="@id/chat_description_text"
         android:layout_above="@id/input_area" />
 
@@ -27,10 +24,10 @@
         android:id="@+id/input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="48dp"
         android:layout_above="@id/navigation_buttons_container"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingBottom="30dp">
 
         <EditText
             android:id="@+id/message_input"
@@ -54,27 +51,25 @@
         android:id="@+id/navigation_buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:paddingHorizontal="@dimen/nav_chat_button_margin_horizontal"
-        android:paddingVertical="@dimen/nav_chat_button_margin_vertical">
+        android:paddingBottom="@dimen/nav_container_padding_bottom"
+        android:paddingHorizontal="@dimen/nav_container_padding_horizzontal"
+        android:layout_alignParentBottom="true">
 
         <ImageButton
             android:id="@+id/btn_previous"
             android:layout_width="@dimen/nav_button_size"
             android:layout_height="@dimen/nav_button_size"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/nav_button_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Precedente"
-            android:src="@drawable/ic_arrow_left"
-            android:scaleType="fitCenter"/>
+            android:contentDescription="@string/nav_button_previous"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_arrow_left" />
 
         <Button
             android:id="@+id/btn_clear_chat"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/nav_button_size"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:text="@string/chat_clear_button"
             android:textAppearance="@style/MyButton"
             android:textColor="@color/colorSecondary" />
@@ -84,12 +79,10 @@
             android:layout_width="@dimen/nav_button_size"
             android:layout_height="@dimen/nav_button_size"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/nav_button_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Successivo"
-            android:src="@drawable/ic_arrow_right"
-            android:scaleType="fitCenter"/>
+            android:contentDescription="@string/nav_button_next"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_arrow_right" />
 
     </RelativeLayout>
 

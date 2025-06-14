@@ -9,15 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation_buttons_container"
-        android:fillViewport="true"
-        android:padding="16dp">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/welcome_text_top"
@@ -34,7 +32,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:padding="16dp"
                 android:justificationMode="inter_word"
                 android:text="@string/home_text" />
 
@@ -43,7 +40,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:padding="16dp"
                 android:justificationMode="inter_word"
                 android:text="@string/home_text_bottom" />
 
@@ -55,7 +51,6 @@
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/nav_container_margin_bottom" />
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

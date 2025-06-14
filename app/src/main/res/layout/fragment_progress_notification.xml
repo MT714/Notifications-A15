@@ -9,22 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation_buttons_container"
-        android:fillViewport="true"
-        android:padding="16dp">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="15dp"
                 android:justificationMode="inter_word"
-                android:padding="16dp"
                 android:text="@string/progress_notif_descr"
                 android:textAppearance="@style/MyBody" />
 
@@ -32,15 +29,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="24dp"
-                android:padding="16dp">
+                android:layout_marginBottom="25dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:padding="16dp"
                     android:text="@string/progress_button"
                     android:textAppearance="@style/MyBody" />
 
@@ -58,21 +53,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:justificationMode="inter_word"
-                android:padding="16dp"
+                android:layout_marginBottom="15dp"
                 android:textAppearance="@style/MyBody"
                 android:text="@string/liveUpdate_notification_description"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                android:orientation="horizontal">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:padding="16dp"
                     android:text="@string/live_button"
                     android:textAppearance="@style/MyBody" />
 
@@ -94,7 +87,6 @@
         layout="@layout/view_navigation_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/nav_container_margin_bottom" />
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

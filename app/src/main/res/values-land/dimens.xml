@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <dimen name="nav_button_size">36dp</dimen>
-    <dimen name="nav_button_padding">8dp</dimen>
-    <dimen name="nav_button_margin">10dp</dimen>
-    <dimen name="nav_container_margin_bottom">8dp</dimen>
-    <dimen name="nav_chat_button_margin_horizontal">8dp</dimen>
-    <dimen name="nav_chat_button_margin_vertical">16dp</dimen>
-
+    <dimen name="nav_container_padding_horizzontal">8dp</dimen>
+    <dimen name="nav_container_padding_bottom">8dp</dimen>
 </resources>
