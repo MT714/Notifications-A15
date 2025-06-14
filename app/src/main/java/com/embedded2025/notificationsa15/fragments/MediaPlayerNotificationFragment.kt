@@ -24,7 +24,7 @@ class MediaPlayerNotificationFragment : Fragment() {
     private lateinit var playerView: PlayerView // Use lateinit for non-nullable views initialized in onCreateView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_media_player_notification, container, false)
+        val view = inflater.inflate(R.layout.fragment_media_player, container, false)
         playerView = view.findViewById(R.id.player_view)
         return view
     }

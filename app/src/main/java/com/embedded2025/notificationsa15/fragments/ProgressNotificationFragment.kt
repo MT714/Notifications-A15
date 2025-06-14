@@ -14,7 +14,7 @@ import com.embedded2025.notificationsa15.utils.NotificationHelper
 
 class ProgressNotificationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_progress_notification, container, false)
+        return inflater.inflate(R.layout.fragment_progress, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

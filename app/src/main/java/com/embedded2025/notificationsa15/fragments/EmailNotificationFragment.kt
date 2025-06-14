@@ -14,7 +14,7 @@ import com.embedded2025.notificationsa15.utils.NotificationHelper
 class EmailNotificationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_email_notification, container, false)
+        return inflater.inflate(R.layout.fragment_email, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -3,6 +3,7 @@ package com.embedded2025.notificationsa15.fragments
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,7 +36,7 @@ class SimpleNotificationFragment : Fragment() {
     private var onLocationPermissionGranted: (() -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_simple_notification, container, false)
+        return inflater.inflate(R.layout.fragment_simple, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -151,14 +152,19 @@ class SimpleNotificationFragment : Fragment() {
      * Verifica se il permesso di accesso alla posizione in sfondo è stato concesso. ALtrimenti lancia il dialogo di richiesta
      */
     private fun checkBackgroundLocationPermission(onGranted: () -> Unit) {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.i("Permission", "Permesso permesso di localizzazione in background già concesso")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.i("Permission", "Permesso permesso di localizzazione in background già concesso")
+                onGranted()
+            } else {
+                Log.i("Permission", "Richiesta permesso di localizzazione in background")
+                backgroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
+        } else {
+            Log.i("Permission", "Background location permission is implicitly granted on this Android version (below API 29)")
             onGranted()
-        } else{
-            Log.i("Permission", "Richiesta permesso di localizzazione in background")
-            backgroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
     }
 
