@@ -20,55 +20,42 @@ import com.google.common.util.concurrent.ListenableFuture
 
 @UnstableApi
 class MediaPlayerFragment : Fragment() {
-    private var controller: MediaController? = null
-    private lateinit var playerView: PlayerView
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private var playerView: PlayerView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_media_player, container, false)
-        playerView = view.findViewById(R.id.player_view)
-        return view
+        return inflater.inflate(R.layout.fragment_media_player, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        playerView = view.findViewById(R.id.player_view)
+
         val serviceIntent = Intent(requireContext(), PlaybackService::class.java)
         requireContext().startForegroundService(serviceIntent)
 
-        val sessionToken = SessionToken(
-            requireContext(),
-            ComponentName(requireContext(), PlaybackService::class.java)
-        )
-
-        val controllerFuture: ListenableFuture<MediaController> =
-            MediaController.Builder(requireContext(), sessionToken).buildAsync()
+        val sessionToken = SessionToken(requireContext(), ComponentName(requireContext(), PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(requireContext(), sessionToken).buildAsync()
 
         controllerFuture.addListener({
-                controller = controllerFuture.get()
-                playerView.player = controller
-            },
-            ContextCompat.getMainExecutor(requireContext())
-        )
+            playerView!!.player = controllerFuture.get()
+        },
+            ContextCompat.getMainExecutor(requireContext()))
 
-        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener(){
-           findNavController().navigate(R.id.callNotificationFragment)
+        view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
+            findNavController().navigate(R.id.callNotificationFragment)
         }
-        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener(){
+        view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
             findNavController().navigate(R.id.finalFragment)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        controller?.let {
-            it.release()
-            controller = null
-        }
-    }
-
-
     override fun onDestroyView() {
-        playerView.player = null
         super.onDestroyView()
+
+        playerView?.player = null
+        MediaController.releaseFuture(controllerFuture)
+        playerView = null
     }
 }

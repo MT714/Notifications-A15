@@ -9,7 +9,7 @@ import androidx.media3.exoplayer.ExoPlayer
  * ma intercetta i comandi 'seekToNext' e 'seekToPrevious' per forzare la riproduzione.
  */
 @UnstableApi
-class AutoPlayForwardingPlayer(player: ExoPlayer): ForwardingPlayer(player) {
+class AutoPlayPlayer(player: ExoPlayer): ForwardingPlayer(player) {
 
     override fun seekToNext() {
         super.seekToNext()
