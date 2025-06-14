@@ -5,7 +5,8 @@
 
     <string name="home_title">Home</string>
     <string name="Welcome">Benvenuto in Notifications Lab</string>
-    <string name="home_text">Questa applicazione è un laboratorio interattivo progettato per esplorare le diverse tipologie di notifiche disponibili su Android. Ogni sezione è un capitolo di questo tutorial: naviga con le frecce per scoprire e testare ogni funzionalità o utilizza il drawer in alto a sinistra per selezionare una specifica sezione.</string>
+    <string name="home_text">Questa applicazione è un laboratorio interattivo progettato per esplorare le diverse tipologie di notifiche disponibili su Android. Ogni sezione è un capitolo di questo tutorial: puoi navigare tra le funzionalità usando le frecce oppure accedere direttamente a una sezione specifica tramite il menu in alto a sinistra.</string>
+    <string name="home_text_bottom">Ciascun esempio è accompagnato da una breve spiegazione per aiutarti a comprenderne il comportamento della notifica e come interagire con essa.</string>
 
     <string name="demo_button">DEMO</string>
 
@@ -13,7 +14,8 @@
 
     <!-- Simple notification -->
     <string name="simple_notification_title">Simple notification</string>
-    <string name="simple_notif_descr">Questa è la notifica più comune: un semplice avviso con un titolo e un testo. Per rendere questa notifica piú interessante, prova ad abilitare le notifiche meteo, imposta pure un intervallo di tempo specifico. </string>
+    <string name="simple_notif_descr">Questa è la notifica più comune: un semplice avviso composto da un titolo e un testo.</string>
+    <string name="weather_text">Per rendere questa notifica piú interessante, prova ad abilitare le notifiche relative al meteo e personalizza l\'intervallo di tempo tra ciascun aggiornamento.</string>
     <string name="weather_switch_text">Notifiche meteo</string>
 
     <!-- Weather notification -->
@@ -28,9 +30,10 @@
 
     <!-- Expandable notification -->
     <string name="expandable_notification_title">Expandable notification</string>
-    <string name="expandable_notif_descr">Una notifica può mostrare più di un semplice testo. Qui puoi generare notifiche che, una volta espanse, rivelano un testo lungo o un\'immagine. Prova anche ad attivare le notifiche di news per vederle in azione.</string>
+    <string name="expandable_notif_descr">Una notifica può mostrare più di un semplice testo. Qui puoi generare notifiche che, una volta espanse, rivelano un testo più lungo o un\'immagine.</string>
     <string name="expandable_notif_text_descr">Notifica espandibile con testo </string>
     <string name="expandable_notif_picture_descr">Notifica espandibile con immagine </string>
+    <string name="news_text">Prova anche ad attivare le notifiche relative alle news, con relativo intervallo, per vederle all\'opera.</string>"
     <string name="news_switch_text">Notifiche news</string>
     <string name="news_update_interval">Ricevi la notifica ogni:</string>
     <string-array name="news_intervals_array">
@@ -42,7 +45,8 @@
 
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
-    <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione, vengono create notifiche che includono pulsanti di azione, permettendo all\'utente di compiere azioni rapide senza aprire l\'app. O se vuoi puoi rispondere direttamente ad un messaggio.</string>
+    <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione puoi creare notifiche con pulsanti di azione, che permettono all\'utente di eseguire operazioni rapide senza aprire l\'app. \nPuoi anche provare a rispondere direttamente a un messaggio, senza uscire dalla notifica.
+</string>
     <string name="action_button">Notifica con azioni</string>
     <string name="action_string">Ultimo testo ricevuto: %1$s</string>
     <string name="toast_action_color_set_red">Impostato il colore Rosso</string>
@@ -51,34 +55,33 @@
 
     <!-- Reply notification -->
     <string name="reply_notification_title">Reply notification</string>
-    <string name="reply_notif_descr">Questa notifica simula un messaggio in arrivo e include un campo di testo per rispondere direttamente dalla barra di stato. È una funzionalità fondamentale per le app di messaggistica.</string>
+    <string name="reply_notif_descr">Questa notifica simula un messaggio in arrivo e include un campo di testo per rispondere direttamente dalla barra di stato. Si tratta di una funzionalità fondamentale per le app di messaggistica, pensata per favorire risposte rapide e immediate</string>
     <string name="reply_button">Notifica con risposta</string>
 
     <!-- Chat notification -->
     <string name="chat_notification_title">Chat notification</string>
-    <string name="chat_notif_descr">Usa il chatbot integrato per scrivere le risposte direttamente nella notifica. Scrivi un messaggio e premi il pulsante per inviare.</string>
+    <string name="chat_notif_descr">Usa il chatbot integrato per scrivere e inviare risposte direttamente dalla notifica. Digita un messaggio e premi il pulsante per inviare.</string>
     <string name="chat_clear_button">Cancella chat</string>
     <string name="chat_write_hint">Scrivi qualcosa…</string>
     <string name="chat_send_button">Invia</string>
 
     <!-- Progress notification -->
     <string name="progress_notification_title">Progress notification</string>
-    <string name="progress_notif_descr">Per operazioni di lunga durata, come un download o un\'elaborazione, è utile mostrare l\'avanzamento. Premi il primo pulsante per visualizzare una notifica con una barra di progresso che si aggiorna in tempo reale. Premi il secondo pulsante per visualizzare un avanzamento periodico.</string>
+    <string name="progress_notif_descr">Per operazioni di lunga durata, come download o elaborazioni, è utile mostrare lo stato di avanzamento. \nPremi il primo pulsante per avviare una notifica una barra di progresso che si aggiorna in tempo reale.</string>
     <string name="action_cancel">Cancella</string>
     <string name="progress_button">Notifica con barra di progresso</string>
-
-    <!-- Media player notification -->
-    <string name="media_player_notif_title">Media player notification</string>
-    <string name="media_player_notif_descr">Questa è la classica notifica per il controllo multimediale. Viene gestita da un servizio apposito per rimanere attiva anche quando l\'app è in background e per rispondere ai comandi di dispositivi esterni, come gli auricolari.</string>
-
     <!-- Live Update notification -->
     <string name="liveUpdate_notification_title">Live Update Notification</string>
-    <string name="liveUpdate_notification_description">Questa è una notifica di aggiornamento in tempo reale. Premendo il bottone, verrà mostrata la demo di una notifica relativa allo stato di un ordine.</string>
+    <string name="liveUpdate_notification_description">Premendo il pulsante sottostante, invece, potrai visualizzare una notifica che simula il tracciamento in tempo reale di una spedizione, con aggiornamenti progressivi del suo stato.</string>
     <string name="demo_update_notification_button">Aggiorna notifica demo</string>
     <string name="live_button">Notifica con barra live</string>
 
+    <!-- Media player notification -->
+    <string name="media_player_notif_title">Media player notification</string>
+    <string name="media_player_notif_descr">Questa è la notifica standard per le app per il controllo multimediale. Viene gestita da un servizio dedicato che ne garantisce il funzionamento anche quando l\'app è in background e consente di eseguire i comandi provenienti da dispositivi esterni, come gli auricolari.</string>
+
     <!-- Call notification -->
-    <string name="call_notification_description">Questa notifica speciale, usa uno stile ad alta priorità per simulare una chiamata in arrivo. Inserisci un ritardo in secondi per pianificarla. Prova a chiudere l\' applicazione mentre aspetti al chiamata.</string>
+    <string name="call_notification_description">Questa speciale notifica usa uno stile ad alta priorità per simulare una chiamata in arrivo. Puoi inserire un ritardo in secondi  per programmarne la visualizzazione. Prova a chiudere l\' applicazione mentre aspetti al chiamata.</string>
     <string name="call_notification_delay_hint">Ritardo (secondi)</string>
     <string name="call_notification_schedule_button">Pianifica Chiamata</string>
 
@@ -91,7 +94,7 @@
 
     <!-- Email notification -->
     <string name="email_notification_title">Email Notification</string>
-    <string name="email_notif_descr">Questo esempio mostra come tre notifiche individuali vengano automaticamente raggruppate dal sistema sotto un\'unica intestazione, proprio come in un\'app di posta elettronica.</string>
+    <string name="email_notif_descr">Questo esempio mostra come tre notifiche distinte vengano automaticamente raggruppate dal sistema sotto un\'unica intestazione, in modo simile a quanto avviene in un\'app di posta elettronica.</string>
 
     <!-- Final fragment -->
     <string name="final_fragment_title">End of Tutorial</string>
