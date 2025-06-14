@@ -16,20 +16,20 @@ import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.embedded2025.notificationsa15.R
-import com.embedded2025.notificationsa15.weather.WeatherWorker
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
+import com.embedded2025.notificationsa15.weather.WeatherWorker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
-import androidx.core.content.edit
-import androidx.navigation.fragment.findNavController
 
 
 class SimpleFragment : Fragment() {

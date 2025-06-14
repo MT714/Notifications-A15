@@ -1,6 +1,5 @@
 package com.embedded2025.notificationsa15.fragments
 
-import androidx.core.content.edit
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R

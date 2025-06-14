@@ -35,10 +35,10 @@ import com.embedded2025.notificationsa15.news.GNewsArticle
 import com.embedded2025.notificationsa15.services.CallService.Companion.getStartCallIntent
 import com.embedded2025.notificationsa15.services.LiveUpdateService.Companion.getStartLiveUpdateIntent
 import com.embedded2025.notificationsa15.services.ProgressService.Companion.getStartProgressIntent
+import com.embedded2025.notificationsa15.utils.NotificationHelper.safeNotify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
-import kotlin.collections.forEach
 
 object ChannelID {
     const val DEMO = "channel_demo"
