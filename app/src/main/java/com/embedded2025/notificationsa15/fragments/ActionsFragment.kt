@@ -1,5 +1,6 @@
 package com.embedded2025.notificationsa15.fragments
 
+import androidx.core.content.edit
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -16,20 +17,21 @@ import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 
 
-class ActionsNotificationFragment: Fragment() {
+class ActionsFragment: Fragment() {
     private val listener: SharedPreferences.OnSharedPreferenceChangeListener by lazy {
         SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == SharedPrefsNames.ACTION_COLOR) {
                 val view = requireView()
-                val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.colorTertiary)
+                val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
                 view.findViewById<TextView>(R.id.colorView)
                     .setBackgroundColor(resources.getColor(color, requireContext().theme))
             }
             else if (key == SharedPrefsNames.ACTION_TEXT) {
                 val view = requireView()
                 val text = prefs.getString(SharedPrefsNames.ACTION_TEXT, "")
-                if (!text.isNullOrBlank())
-                    view.findViewById<TextView>(R.id.actionsText).text = getString(R.string.action_string, text)
+                view.findViewById<TextView>(R.id.actionsText).text =
+                    if (!text.isNullOrBlank()) getString(R.string.actions_string, text)
+                    else getString(R.string.actions_not_text_received)
             }
         }
     }
@@ -56,6 +58,13 @@ class ActionsNotificationFragment: Fragment() {
         view.findViewById<ImageButton>(R.id.btn_next).setOnClickListener {
             findNavController().navigate(R.id.chatNotificationFragment)
         }
+
+        view.findViewById<Button>(R.id.btn_clear_actions).setOnClickListener {
+            requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE).edit {
+                remove(SharedPrefsNames.ACTION_COLOR)
+                remove(SharedPrefsNames.ACTION_TEXT)
+            }
+        }
     }
 
     override fun onResume() {
@@ -66,12 +75,13 @@ class ActionsNotificationFragment: Fragment() {
         val prefs = requireContext().getSharedPreferences(SharedPrefsNames.PREFS_NAME, Context.MODE_PRIVATE)
         prefs.registerOnSharedPreferenceChangeListener(listener)
 
-        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.colorTertiary)
+        val color = prefs.getInt(SharedPrefsNames.ACTION_COLOR, R.color.grey)
         view.findViewById<TextView>(R.id.colorView)
             .setBackgroundColor(resources.getColor(color, requireContext().theme))
         val text = prefs.getString(SharedPrefsNames.ACTION_TEXT, "")
-        if (!text.isNullOrBlank())
-            view.findViewById<TextView>(R.id.actionsText).text = getString(R.string.action_string, text)
+        view.findViewById<TextView>(R.id.actionsText).text =
+            if (!text.isNullOrBlank()) getString(R.string.actions_string, text)
+            else getString(R.string.actions_not_text_received)
     }
 
     override fun onPause() {

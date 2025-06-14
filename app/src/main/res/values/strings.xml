@@ -45,13 +45,15 @@
 
     <!-- Actions notification -->
     <string name="actions_notification_title">Actions notification</string>
-    <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione puoi creare notifiche con pulsanti di azione, che permettono all\'utente di eseguire operazioni rapide senza aprire l\'app. \nPuoi anche provare a rispondere direttamente a un messaggio, senza uscire dalla notifica.
-</string>
-    <string name="action_button">Notifica con azioni</string>
-    <string name="action_string">Ultimo testo ricevuto: %1$s</string>
+    <string name="actions_notif_descr">Rendi le tue notifiche interattive. In questa sezione puoi creare notifiche con pulsanti di azione, che permettono all\'utente di eseguire operazioni rapide senza aprire l\'app. \nPuoi anche provare a rispondere direttamente a un messaggio dalla notifica.</string>
+    <string name="actions_button">Notifica con azioni</string>
+    <string name="actions_string">Ultimo testo ricevuto: %1$s</string>
+    <string name="actions_reset">Resetta</string>
+    <string name="actions_not_text_received">Nessun testo ricevuto.</string>
     <string name="toast_action_color_set_red">Impostato il colore Rosso</string>
     <string name="toast_action_color_set_yellow">Impostato il colore Giallo</string>
     <string name="toast_action_string">Stringa ricevuta: %1$s</string>
+
 
     <!-- Reply notification -->
     <string name="reply_notification_title">Reply notification</string>

@@ -19,7 +19,7 @@ import com.embedded2025.notificationsa15.R
 import com.google.common.util.concurrent.ListenableFuture
 
 @UnstableApi
-class MediaPlayerNotificationFragment : Fragment() {
+class MediaPlayerFragment : Fragment() {
     private var controller: MediaController? = null
     private lateinit var playerView: PlayerView // Use lateinit for non-nullable views initialized in onCreateView
 

@@ -32,7 +32,7 @@ import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 
 
-class SimpleNotificationFragment : Fragment() {
+class SimpleFragment : Fragment() {
     private var onLocationPermissionGranted: (() -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

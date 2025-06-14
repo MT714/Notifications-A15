@@ -26,7 +26,7 @@ import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
-class ExpandableNotificationFragment : Fragment() {
+class ExpandableFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_expandable, container, false)

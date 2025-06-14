@@ -12,37 +12,37 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/simpleNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.SimpleNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.SimpleFragment"
         android:label="@string/simple_notification_title"
         tools:layout="@layout/fragment_simple" />
     <fragment
         android:id="@+id/expandableNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.ExpandableNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ExpandableFragment"
         android:label="@string/expandable_notification_title"
         tools:layout="@layout/fragment_expandable" />
     <fragment
         android:id="@+id/actionsNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.ActionsNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ActionsFragment"
         android:label="@string/actions_notification_title"
         tools:layout="@layout/fragment_actions" />
     <fragment
         android:id="@+id/progressNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.ProgressNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ProgressFragment"
         android:label="@string/progress_notification_title"
         tools:layout="@layout/fragment_progress" />
     <fragment
         android:id="@+id/mediaPlayerNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.MediaPlayerNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.MediaPlayerFragment"
         android:label="@string/media_player_notif_title"
         android:layout="@layout/fragment_media_player"/>
     <fragment
         android:id="@+id/callNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.CallNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.CallFragment"
         android:label="@string/fragment_call_title"
         tools:layout="@layout/fragment_call" />
     <fragment
         android:id="@+id/emailNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.EmailNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.EmailFragment"
         android:label="@string/email_notification_title"
         tools:layout="@layout/fragment_email" />
     <fragment
@@ -51,7 +51,7 @@
         android:name="com.embedded2025.notificationsa15.fragments.FinalFragment" />
     <fragment
         android:id="@+id/chatNotificationFragment"
-        android:name="com.embedded2025.notificationsa15.fragments.ChatNotificationFragment"
+        android:name="com.embedded2025.notificationsa15.fragments.ChatFragment"
         android:label="@string/chat_notification_title" />
 
 </navigation>
