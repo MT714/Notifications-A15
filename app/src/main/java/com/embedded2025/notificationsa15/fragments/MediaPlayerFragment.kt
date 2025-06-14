@@ -21,7 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture
 @UnstableApi
 class MediaPlayerFragment : Fragment() {
     private var controller: MediaController? = null
-    private lateinit var playerView: PlayerView // Use lateinit for non-nullable views initialized in onCreateView
+    private lateinit var playerView: PlayerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_media_player, container, false)
