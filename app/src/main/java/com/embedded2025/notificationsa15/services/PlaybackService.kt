@@ -1,5 +1,6 @@
 package com.embedded2025.notificationsa15.services
 
+import android.content.ComponentName
 import android.content.Intent
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
@@ -10,6 +11,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.navigation.NavDeepLinkBuilder
+import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.AutoPlayPlayer
 import com.embedded2025.notificationsa15.utils.ChannelID
@@ -67,7 +70,13 @@ class PlaybackService : MediaSessionService(), Player.Listener {
         }
 
         player = AutoPlayPlayer(exoPlayer)
-        mediaSession = MediaSession.Builder(this, player).build()
+        mediaSession = MediaSession.Builder(this, player)
+            .setSessionActivity(NavDeepLinkBuilder(this)
+                .setComponentName(ComponentName(this, MainActivity::class.java))
+                .setGraph(R.navigation.nav_graph)
+                .setDestination(R.id.mediaPlayerNotificationFragment)
+                .createPendingIntent())
+            .build()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
