@@ -33,7 +33,7 @@ class MediaPlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val serviceIntent = Intent(requireContext(), PlaybackService::class.java)
-        requireContext().startService(serviceIntent)
+        requireContext().startForegroundService(serviceIntent)
 
         val sessionToken = SessionToken(
             requireContext(),
