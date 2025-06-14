@@ -1,5 +1,6 @@
 package com.embedded2025.notificationsa15.services
 
+import android.content.Intent
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -15,7 +16,7 @@ import com.embedded2025.notificationsa15.utils.ChannelID
 import com.embedded2025.notificationsa15.utils.NotificationID
 
 @UnstableApi
-class PlaybackService : MediaSessionService() {
+class PlaybackService : MediaSessionService(), Player.Listener {
     private var mediaSession: MediaSession? = null
     private lateinit var player: ExoPlayer
     private lateinit var forwardingPlayer: AutoPlayForwardingPlayer
@@ -63,12 +64,12 @@ class PlaybackService : MediaSessionService() {
             setMediaItems(playlist)
             repeatMode = Player.REPEAT_MODE_ALL
             prepare()
+            addListener(this@PlaybackService)
         }
 
         forwardingPlayer = AutoPlayForwardingPlayer(player)
         mediaSession = MediaSession.Builder(this, forwardingPlayer)
             .build()
-
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
@@ -76,10 +77,30 @@ class PlaybackService : MediaSessionService() {
 
     override fun onDestroy() {
         mediaSession?.run {
-            this.player.release()
-            this.release()
+            player.removeListener(this@PlaybackService)
+            player.release()
+            release()
             mediaSession = null
         }
         super.onDestroy()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        stopSelf()
+        super.onTaskRemoved(rootIntent)
+    }
+
+    override fun onIsPlayingChanged(isPlaying: Boolean) {
+        super.onIsPlayingChanged(isPlaying)
+        if (!isPlaying) {
+            stopForeground(STOP_FOREGROUND_DETACH)
+        }
+    }
+
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        super.onPlaybackStateChanged(playbackState)
+        if (playbackState == Player.STATE_IDLE) {
+            stopSelf()
+        }
     }
 }

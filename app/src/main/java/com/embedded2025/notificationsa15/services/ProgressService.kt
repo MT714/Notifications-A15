@@ -89,7 +89,7 @@ class ProgressService : Service() {
                 currentProgress += 5
             }
 
-            stopForeground(STOP_FOREGROUND_DETACH)
+            stopForeground(STOP_FOREGROUND_REMOVE)
             if (isCancellationRequested) {
                 val cancelledNotification = buildFinalProgressNotification(getString(R.string.notif_progress_demo_cancelled))
                 notificationManager.notify(NotificationID.PROGRESS, cancelledNotification)
@@ -98,6 +98,8 @@ class ProgressService : Service() {
                     buildFinalProgressNotification(getString(R.string.notif_progress_demo_complete))
                 notificationManager.notify(NotificationID.PROGRESS, finalNotification)
             }
+
+            delay(100)
             checkAndStopSelf()
         }
     }
