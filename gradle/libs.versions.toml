@@ -12,6 +12,7 @@ recyclerview = "1.4.0"
 room = "2.7.1"
 workRuntimeKtx = "2.10.1"
 ksp = "2.1.21-2.0.2"
+dokka = "2.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,3 +38,4 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
