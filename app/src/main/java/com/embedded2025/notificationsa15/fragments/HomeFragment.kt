@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
 
+/**
+ * Classe del fragment relativa alla schermata home dell'app.
+ */
 class HomeFragment : Fragment() {
 
     override fun onCreateView(

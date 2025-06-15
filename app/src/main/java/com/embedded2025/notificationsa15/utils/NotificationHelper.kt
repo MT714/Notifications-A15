@@ -40,6 +40,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
 
+/**
+ * ID dei canali di notifica utilizzati dall'app
+ */
 object ChannelID {
     const val DEMO = "channel_demo"
     const val ACTIONS = "channel_actions"
@@ -51,12 +54,18 @@ object ChannelID {
     const val CALLS = "channel_call"
 }
 
+/**
+ * ID dei gruppi di canali di notifica utilizzati dall'app
+ */
 object ChannelGroupID {
     const val DEMO = "group_demo"
     const val UPDATES = "group_updates"
     const val MULTIMEDIA = "group_multimedia"
 }
 
+/**
+ * ID delle notifiche utilizzate dall'app.
+ */
 object NotificationID {
     const val CHAT = 0
     const val WEATHER = 1
@@ -65,6 +74,9 @@ object NotificationID {
     const val CALL = 4
     const val MEDIA_PLAYER = 5
 
+    /**
+     * ID delle notifiche demo.
+     */
     object Demo {
         const val SIMPLE = 100
         const val EXPANDABLE_TEXT = 101
@@ -78,10 +90,24 @@ object NotificationID {
     }
 }
 
+/**
+ * Gestore delle notifiche.
+ * Deve essere inizializzato con [initialize] prima di poter essere utilizzato.
+ * Inizializza i canali di notifica e si occupa di pubblicare vari tipi di notifica utili all'app.
+ * Espone funzioni di creazione, modifica, pubblicazione e cancellazione delle notifiche,
+ * oltre che funzioni (showXyxNotification()) che gestiscono completamente un determinato
+ * tipo di notifica.
+ */
 object NotificationHelper {
+    /**
+     * Contesto dell'applicazione
+     */
     private lateinit var appContext: Context
     val ctx get() = appContext
 
+    /**
+     * Servizio di sistema NotificationManager
+     */
     val notifManager: NotificationManager by lazy {
         ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -215,7 +241,7 @@ object NotificationHelper {
      * @param id l'ID della notifica
      * @param builder il builder della notifica
      *
-     * @return true se la notifica è stata pubblicata con successo, false altrimenti
+     * @return true se la notifica è stata pubblicata con successo, false se nonè stata pubblicata o non è visibile
      *
      * @see safeNotify
      */
@@ -298,6 +324,13 @@ object NotificationHelper {
                 .createPendingIntent()
         )
 
+    /**
+     * Imposta l'url di destinazione della notifica quando cliccata.
+     *
+     * @param url l'url da aprire
+     *
+     * @return il builder della notifica con l'url di destinazione impostato.
+     */
     fun NotificationCompat.Builder.setDestinationUrl(url: String): NotificationCompat.Builder {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
 
@@ -327,7 +360,14 @@ object NotificationHelper {
         return PendingIntent.getBroadcast(ctx, 0, intent, flags)
     }
 
-    fun NotificationCompat.Builder.addReplyAction(extras: Bundle?): NotificationCompat.Builder {
+    /**
+     * Aggiunge una azione di risposta alla notifica.
+     *
+     * @param extras bundle da aggiungere all'azione
+     *
+     * @return il builder della notifica con l'azione di risposta impostata.
+     */
+    fun NotificationCompat.Builder.addReplyAction(extras: Bundle): NotificationCompat.Builder {
         val remoteInput = RemoteInput.Builder(IntentExtras.KEY_TEXT_REPLY)
             .setLabel(ctx.getString(R.string.notif_reply_label))
             .build()
@@ -619,6 +659,11 @@ object NotificationHelper {
         }
     }
 
+    /**
+     * Crea e pubblica una notifica di notizie di cronaca.
+     *
+     * @param article l'articolo di cronaca da visualizzare.
+     */
     suspend fun showNewsNotification(article: GNewsArticle) {
         // Scarica immagine da URL (in background)
         val bigPicture: Bitmap? = article.image?.let { imageUrl ->
@@ -646,6 +691,11 @@ object NotificationHelper {
         safeNotify(getUniqueId(), builder)
     }
 
+    /**
+     * Crea e mostra una notifica della chat con l'assistente.
+     *
+     * @param messages gli ultimi messaggi della chat
+     */
     fun showMessageNotification(messages: List<Message>) {
         val extras = Bundle().apply {
             putInt(IntentExtras.NOTIFICATION_ID, NotificationID.CHAT)

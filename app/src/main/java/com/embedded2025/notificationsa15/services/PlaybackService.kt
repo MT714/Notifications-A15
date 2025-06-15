@@ -18,11 +18,23 @@ import com.embedded2025.notificationsa15.utils.AutoPlayPlayer
 import com.embedded2025.notificationsa15.utils.ChannelID
 import com.embedded2025.notificationsa15.utils.NotificationID
 
+/**
+ * Servizio in foreground dedicato al media player.
+ */
 @UnstableApi
 class PlaybackService : MediaSessionService(), Player.Listener {
+    /**
+     * La sessione media
+     */
     private var mediaSession: MediaSession? = null
+    /**
+     * Il player utilizzato.
+     */
     private lateinit var player: AutoPlayPlayer
 
+    /**
+     * Crea la sessione ed il player, aggiungendoci la playlist.
+     */
     override fun onCreate() {
         super.onCreate()
 
@@ -81,6 +93,9 @@ class PlaybackService : MediaSessionService(), Player.Listener {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
+    /**
+     * Rilascia sessione e player.
+     */
     override fun onDestroy() {
         mediaSession?.run {
             player.removeListener(this@PlaybackService)
@@ -91,18 +106,31 @@ class PlaybackService : MediaSessionService(), Player.Listener {
         super.onDestroy()
     }
 
+    /**
+     * Interrompe il servizio se il player non sta riproducendo nulla.
+     */
     override fun onTaskRemoved(rootIntent: Intent?) {
         if (!player.isPlaying || player.playbackState == Player.STATE_ENDED) stopSelf()
 
         super.onTaskRemoved(rootIntent)
     }
 
+    /**
+     * Interrompe il servizio se il player viene messo in pausa.
+     *
+     * @param isPlaying nuovo stato del player
+     */
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         super.onIsPlayingChanged(isPlaying)
 
         if (!isPlaying) stopForeground(STOP_FOREGROUND_DETACH)
     }
 
+    /**
+     * Interrompe il servizio se lo stato del playback è [Player.STATE_IDLE] o [Player.STATE_ENDED].
+     *
+     * @param playbackState nuovo stato del playback.
+     */
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
 

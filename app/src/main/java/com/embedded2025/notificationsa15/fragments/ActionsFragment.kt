@@ -16,8 +16,14 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 
-
+/**
+ * Classe del fragment relativo alle notifiche con azioni.
+ */
 class ActionsFragment: Fragment() {
+    /**
+     * Listener sui cambiamenti delle shared preferences, utilizzato per aggiornare l'interfaccia
+     * utente in caso di modifica di uno dei parametri mentre l'app è ancora aperta.
+     */
     private val listener: SharedPreferences.OnSharedPreferenceChangeListener by lazy {
         SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == SharedPrefsNames.ACTION_COLOR) {
@@ -67,6 +73,10 @@ class ActionsFragment: Fragment() {
         }
     }
 
+    /**
+     * Aggiorna l'interfaccia utente in caso di cambiamenti delle shared preferences ed aggiunge
+     * un listener in caso di ulteriori modifiche.
+     */
     override fun onResume() {
         super.onResume()
 
@@ -84,6 +94,9 @@ class ActionsFragment: Fragment() {
             else getString(R.string.actions_not_text_received)
     }
 
+    /**
+     * Rimuove il listener delle shared preferences.
+     */
     override fun onPause() {
         super.onPause()
 

@@ -11,7 +11,10 @@ import androidx.navigation.fragment.findNavController
 import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 
-class EmailFragment : Fragment() {
+/**
+ * Classe del fragment relativo alle notifiche raggruppate
+ */
+class EmailFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_email, container, false)

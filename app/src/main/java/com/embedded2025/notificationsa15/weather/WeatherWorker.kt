@@ -28,6 +28,7 @@ class WeatherWorker(val context: Context, params: WorkerParameters) : CoroutineW
 
     /**
      * Prende la posizione corrente se disponibile, altrimenti usa una posizione di default.
+     * Pubblica poi una notifica relativa al meteo.
      */
     override suspend fun doWork(): Result {
         Log.i(TAG, "Worker partito")

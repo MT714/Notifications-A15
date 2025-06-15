@@ -18,15 +18,27 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.services.PlaybackService
 import com.google.common.util.concurrent.ListenableFuture
 
+/**
+ * Classe del fragment relativa al media player.
+ */
 @UnstableApi
-class MediaPlayerFragment : Fragment() {
+class MediaPlayerFragment: Fragment() {
+    /**
+     * Controller della sessione media.
+     */
     private lateinit var controllerFuture: ListenableFuture<MediaController>
+    /**
+     * View del player.
+     */
     private var playerView: PlayerView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_media_player, container, false)
     }
 
+    /**
+     * Connettela la view del player alla sessione media.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -38,10 +50,10 @@ class MediaPlayerFragment : Fragment() {
         val sessionToken = SessionToken(requireContext(), ComponentName(requireContext(), PlaybackService::class.java))
         controllerFuture = MediaController.Builder(requireContext(), sessionToken).buildAsync()
 
-        controllerFuture.addListener({
-            playerView!!.player = controllerFuture.get()
-        },
-            ContextCompat.getMainExecutor(requireContext()))
+        controllerFuture.addListener(
+            { playerView!!.player = controllerFuture.get() },
+            ContextCompat.getMainExecutor(requireContext())
+        )
 
         view.findViewById<ImageButton>(R.id.btn_previous).setOnClickListener {
             findNavController().navigate(R.id.callNotificationFragment)
@@ -51,6 +63,9 @@ class MediaPlayerFragment : Fragment() {
         }
     }
 
+    /**
+     * Disconnette la view del player alla sessione media.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
 

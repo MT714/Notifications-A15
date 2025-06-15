@@ -26,11 +26,20 @@ import com.embedded2025.notificationsa15.utils.SharedPrefsNames
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
+/**
+ * Classe del fragment relativo alle notifiche espandibli.
+ * Si occupa anche del worker relativo alle notizie di cronaca.
+ */
 class ExpandableFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_expandable, container, false)
     }
+
+    /**
+     * Gestisce l'interazione con gli elementi dell'interfaccia utente con le notifiche demo e
+     * con le notifiche delle notizie di cronaca.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

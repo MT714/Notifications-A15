@@ -13,11 +13,15 @@ import com.embedded2025.notificationsa15.R
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.google.android.material.textfield.TextInputEditText
 
+/**
+ * Classe del fragment relativo alla notifica di chiamata.
+ */
 class CallFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_call, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

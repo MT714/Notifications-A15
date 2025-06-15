@@ -6,8 +6,14 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 
+/**
+ * Classe worker per l'aggiornamento delle notizie di cronaca.
+ */
 class NewsWorker(appContext: Context, workerParams: WorkerParameters): CoroutineWorker(appContext, workerParams) {
 
+    /**
+     * Reperisce l'ultima notizia disponibile e pubblica la relativa notifica.
+     */
     override suspend fun doWork(): Result {
         Log.i("NewsWorker", "NewsWorker called")
 

@@ -19,6 +19,10 @@ object OWMClient {
             .create(OWMApi::class.java)
     }
 }
+
+/**
+ * Interfaccia API di OpenWeatherMap
+ */
 interface OWMApi {
     /**
      * Ottiene le informazioni meteo in base alle coordinate geografiche

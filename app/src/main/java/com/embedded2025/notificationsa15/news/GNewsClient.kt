@@ -5,6 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * Client di GNews.
+ */
 object GNewsClient {
     private const val BASE_URL = "https://gnews.io/api/"
 
@@ -17,6 +20,9 @@ object GNewsClient {
     }
 }
 
+/**
+ * Interfaccia API di GNews.
+ */
 interface GNewsApi {
     @GET("v4/top-headlines")
     suspend fun getTopHeadlines(

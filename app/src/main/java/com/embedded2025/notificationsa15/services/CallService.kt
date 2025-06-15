@@ -30,7 +30,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-
+/**
+ * Servizio dedicato alla notifica della chiamata in arrivo.
+ */
 class CallService : Service() {
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)

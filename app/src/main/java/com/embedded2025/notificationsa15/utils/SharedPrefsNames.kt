@@ -1,5 +1,8 @@
 package com.embedded2025.notificationsa15.utils
 
+/**
+ * Include i nomi utilizzati per identificare le shared preferences e le singole preferences.
+ */
 object SharedPrefsNames {
     const val PREFS_NAME = "settings"
     

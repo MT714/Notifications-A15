@@ -14,19 +14,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.embedded2025.notificationsa15.NotificationsLabApplication
 import com.embedded2025.notificationsa15.R
+import com.embedded2025.notificationsa15.chat.ChatRepository
 import com.embedded2025.notificationsa15.chat.MessageAdapter
 import com.embedded2025.notificationsa15.utils.NotificationHelper
 import com.embedded2025.notificationsa15.utils.NotificationID
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-
-class  ChatFragment: Fragment() {
+/**
+ * Classe del fragment relativa alla chat con l'assistente
+ */
+class ChatFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
 
+    /**
+     * Connette l'interfaccia utente al database dei messaggi della chat, attraverso [ChatRepository].
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
