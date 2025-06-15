@@ -83,7 +83,7 @@
     <string name="media_player_notif_descr">Questa è la notifica standard per le app per il controllo multimediale. Viene gestita da un servizio dedicato che ne garantisce il funzionamento anche quando l\'app è in background e consente di eseguire i comandi provenienti da dispositivi esterni, come gli auricolari.</string>
 
     <!-- Call notification -->
-    <string name="call_notification_description">Questa speciale notifica usa uno stile ad alta priorità per simulare una chiamata in arrivo. Puoi inserire un ritardo in secondi  per programmarne la visualizzazione. Prova a chiudere l\' applicazione mentre aspetti al chiamata.</string>
+    <string name="call_notification_description">Questa speciale notifica usa uno stile ad alta priorità per simulare una chiamata in arrivo. Puoi inserire un ritardo in secondi  per programmarne la visualizzazione. Prova a chiudere l\' applicazione mentre aspetti la chiamata.</string>
     <string name="call_notification_delay_hint">Ritardo (secondi)</string>
     <string name="call_notification_schedule_button">Pianifica Chiamata</string>
 
@@ -93,6 +93,7 @@
     <string name="toast_call_scheduled">Chiamata pianificata tra %1$d secondi.</string>
     <string name="toast_call_accepted">Chiamata accettata</string>
     <string name="toast_call_denied">Chiamata rifiutata</string>
+    <string name="toast_call_ended">Chiamata terminata</string>
 
     <!-- Email notification -->
     <string name="email_notification_title">Email Notification</string>

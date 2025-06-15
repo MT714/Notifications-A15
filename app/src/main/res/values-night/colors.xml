@@ -10,4 +10,7 @@
     <color name="drawerBackgroundColor">@color/colorPrimary</color>
     <color name="drawerItemColor">@color/white</color>
 
-    </resources>
+    <color name="my_app_background">#121212</color>
+
+
+</resources>

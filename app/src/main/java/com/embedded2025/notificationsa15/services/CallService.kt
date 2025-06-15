@@ -16,6 +16,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.embedded2025.notificationsa15.MainActivity
 import com.embedded2025.notificationsa15.R
@@ -50,6 +51,7 @@ class CallService : Service() {
         const val ACTION_START_CALL = "com.embedded2025.notificationsa15.ACTION_START_CALL"
         const val ACTION_ANSWER_CALL = "com.embedded2025.notificationsa15.ACTION_ANSWER_CALL"
         const val ACTION_DECLINE_CALL = "com.embedded2025.notificationsa15.ACTION_DECLINE_CALL"
+        const val ACTION_HANGUP_CALL = "com.embedded2025.notificationsa15.ACTION_HANGUP_CALL"
         const val EXTRA_CALL_DELAY_SECONDS = "extra_call_delay_seconds"
 
         /**
@@ -97,6 +99,7 @@ class CallService : Service() {
             }
             ACTION_ANSWER_CALL -> handleCallAnswer()
             ACTION_DECLINE_CALL -> handleCallDecline()
+            ACTION_HANGUP_CALL -> handleHangupCall()
         }
         return START_NOT_STICKY
     }
@@ -192,14 +195,38 @@ class CallService : Service() {
     }
 
     /**
+     * Mostra la notifica di chiamata in corso.
+     * Questa notifica è silenziosa, persistente e ha un'azione per riagganciare.
+     */
+    private fun showInProgressCallNotification() {
+        val hangupIntent = Intent(this, CallService::class.java).apply {
+            action = ACTION_HANGUP_CALL
+        }
+        val hangupPendingIntent = PendingIntent.getService(this, 3, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationHelper.createBasicBuilder(
+            ChannelID.CALLS,
+            R.drawable.ic_call,
+            getString(R.string.notif_call_in_progress_title)
+        )
+            .setContentText(getString(R.string.notif_call_caller))
+            .setOngoing(true)
+            .setSilent(true)
+            .setDestinationFragment(R.id.callNotificationFragment)
+            .addAction(R.drawable.ic_cancel, getString(R.string.notif_call_action_hangup), hangupPendingIntent)
+            .build()
+
+        startForeground(NotificationID.CALL, notification)
+    }
+
+    /**
      * Gestisce l'azione di risposta alla chiamata.
-     * Interrompe suoneria e vibrazione, mostra un Toast e termina il servizio.
+     * Interrompe suoneria e vibrazione, mostra un Toast e mostra la notifica di chiamata in corso.
      */
     private fun handleCallAnswer() {
         stopRingtoneAndVibration()
         Toast.makeText(this, getString(R.string.toast_call_accepted), Toast.LENGTH_SHORT).show()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        showInProgressCallNotification()
     }
 
     /**
@@ -209,6 +236,16 @@ class CallService : Service() {
     private fun handleCallDecline() {
         stopRingtoneAndVibration()
         Toast.makeText(this, getString(R.string.toast_call_denied), Toast.LENGTH_SHORT).show()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    /**
+     * Gestisce l'azione di terminare la chiamata.
+     * Mostra un Toast e termina il servizio.
+     */
+    private fun handleHangupCall() {
+        Toast.makeText(this, getString(R.string.toast_call_ended), Toast.LENGTH_SHORT).show()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

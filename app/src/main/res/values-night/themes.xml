@@ -5,6 +5,8 @@
         <item name="colorOnPrimary">@color/white</item>
 
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+
+        <item name="android:windowBackground">@color/my_app_background</item>
     </style>
     <style name="MyHeadline" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textColor">@color/white</item>

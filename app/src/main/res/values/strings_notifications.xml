@@ -93,6 +93,8 @@
 
     <string name="notif_call_title">Chiamata in arrivo</string>
     <string name="notif_call_caller">Mario Rossi</string>
+    <string name="notif_call_in_progress_title">Chiamata in corso</string>
+    <string name="notif_call_action_hangup">Riaggancia</string>
 
     <string name="notif_media_player_demo_play">Play</string>
     <string name="notif_media_player_demo_pause">Pause</string>
