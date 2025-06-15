@@ -2,7 +2,7 @@
 agp = "8.10.1"
 kotlin = "2.1.21"
 coreKtx = "1.16.0"
-kotlinxCoroutinesCore = "1.7.3"
+kotlinxCoroutinesCore = "1.8.0"
 lifecycleRuntimeKtx = "2.9.1"
 media = "1.7.0"
 media3Exoplayer = "1.7.1"
