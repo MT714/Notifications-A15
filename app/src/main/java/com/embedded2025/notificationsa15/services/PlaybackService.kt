@@ -1,7 +1,6 @@
 package com.embedded2025.notificationsa15.services
 
 import android.content.ComponentName
-import android.content.Intent
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -106,35 +105,4 @@ class PlaybackService : MediaSessionService(), Player.Listener {
         super.onDestroy()
     }
 
-    /**
-     * Interrompe il servizio se il player non sta riproducendo nulla.
-     */
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        if (!player.isPlaying || player.playbackState == Player.STATE_ENDED) stopSelf()
-
-        super.onTaskRemoved(rootIntent)
-    }
-
-    /**
-     * Interrompe il servizio se il player viene messo in pausa.
-     *
-     * @param isPlaying nuovo stato del player
-     */
-    override fun onIsPlayingChanged(isPlaying: Boolean) {
-        super.onIsPlayingChanged(isPlaying)
-
-        if (!isPlaying) stopForeground(STOP_FOREGROUND_DETACH)
-    }
-
-    /**
-     * Interrompe il servizio se lo stato del playback è [Player.STATE_IDLE] o [Player.STATE_ENDED].
-     *
-     * @param playbackState nuovo stato del playback.
-     */
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        super.onPlaybackStateChanged(playbackState)
-
-        if ((playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED)
-                && !player.playWhenReady) stopSelf()
-    }
 }
