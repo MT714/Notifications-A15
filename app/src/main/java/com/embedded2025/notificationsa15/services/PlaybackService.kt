@@ -21,7 +21,7 @@ import com.embedded2025.notificationsa15.utils.NotificationID
  * Servizio in foreground dedicato al media player.
  */
 @UnstableApi
-class PlaybackService : MediaSessionService(), Player.Listener {
+class PlaybackService : MediaSessionService() {
     /**
      * La sessione media
      */
@@ -77,11 +77,11 @@ class PlaybackService : MediaSessionService(), Player.Listener {
             setMediaItems(playlist)
             repeatMode = Player.REPEAT_MODE_ALL
             prepare()
-            addListener(this@PlaybackService)
         }
 
         player = AutoPlayPlayer(exoPlayer)
         mediaSession = MediaSession.Builder(this, player)
+
             .setSessionActivity(NavDeepLinkBuilder(this)
                 .setComponentName(ComponentName(this, MainActivity::class.java))
                 .setGraph(R.navigation.nav_graph)
@@ -97,7 +97,6 @@ class PlaybackService : MediaSessionService(), Player.Listener {
      */
     override fun onDestroy() {
         mediaSession?.run {
-            player.removeListener(this@PlaybackService)
             player.release()
             release()
             mediaSession = null
