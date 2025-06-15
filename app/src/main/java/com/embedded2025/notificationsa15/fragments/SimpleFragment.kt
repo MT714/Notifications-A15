@@ -31,14 +31,42 @@ import com.embedded2025.notificationsa15.weather.WeatherWorker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * Fragment che gestisce le notifiche semplici e le notifiche meteo.
+ */
 class SimpleFragment : Fragment() {
-    private var onLocationPermissionGranted: (() -> Unit)? = null
+    /**
+     * Launcher per il permesso di accesso alla posizione in foreground.
+     * Se ha successo richiede anche il permesso in background.
+     */
+    private val fgLocationLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val fineLocGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+            val coarseLocGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (fineLocGranted || coarseLocGranted) {
+                Log.d(TAG, "Foreground location permessa.")
+                checkAndRequestBackgroundLocation()
+            } else Log.d(TAG, "Foreground location negata.")
+        }
+
+    /**
+     * Launcher per il permesso di accesso alla posizione in background.
+     */
+    private val bgLocationLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isgranted ->
+            if (isgranted) Log.d(TAG, "Background location permessa.")
+            else Log.d(TAG, "Background location negata")
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_simple, container, false)
     }
 
+
+    /**
+     * Gestisce l'interazione con gli elementi dell'interfaccia utente.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,12 +88,9 @@ class SimpleFragment : Fragment() {
         weatherSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit { putBoolean(SharedPrefsNames.WEATHER_ENABLED, isChecked) }
             if (isChecked) {
-                checkLocationPermission {
-                    startWeatherWorker(prefs.getLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, 15L))
-                }
-            } else {
-                stopWeatherWorker()
-            }
+                startLocationPermissionRequest()
+                startWeatherWorker(prefs.getLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, 15L))
+            } else stopWeatherWorker()
         }
 
         val spinner = view.findViewById<Spinner>(R.id.spinnerInterval)
@@ -99,17 +124,18 @@ class SimpleFragment : Fragment() {
                     putLong(SharedPrefsNames.WEATHER_NOTIFICATION_INTERVAL_VALUE, intervalMinutes)
                 }
 
-                if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)) {
-                    stopWeatherWorker()
+                if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false))
                     startWeatherWorker(intervalMinutes)
-                }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>) { }
         }
 
     }
 
+    /**
+     * Avvia il worker di aggiornamento meteo.
+     */
     private fun startWeatherWorker(intervalMinutes : Long) {
         Log.i("WeatherWorker", "Worker attivato con intervallo di $intervalMinutes minuti")
 
@@ -128,6 +154,9 @@ class SimpleFragment : Fragment() {
         )
     }
 
+    /**
+     * Interrompe il worker di aggiornamento meteo.
+     */
     private fun stopWeatherWorker() {
         WorkManager.getInstance(requireContext()).cancelUniqueWork(WeatherWorker.WORKER_NAME)
 
@@ -135,63 +164,37 @@ class SimpleFragment : Fragment() {
     }
 
     /**
-     * Verifica se il permesso di accesso alla posizione è stato concesso. ALtrimenti lancia il dialogo di richiesta
+     * Richiede il permesso di accesso alla posizione in foreground ed in background.
      */
-    private fun checkLocationPermission(onGranted: () -> Unit) {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
+    fun startLocationPermissionRequest() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
         ) {
-            onGranted()
-        } else{
-            onLocationPermissionGranted = onGranted
-            foregroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    /**
-     * Verifica se il permesso di accesso alla posizione in sfondo è stato concesso. ALtrimenti lancia il dialogo di richiesta
-     */
-    private fun checkBackgroundLocationPermission(onGranted: () -> Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.i("Permission", "Permesso permesso di localizzazione in background già concesso")
-                onGranted()
-            } else {
-                Log.i("Permission", "Richiesta permesso di localizzazione in background")
-                backgroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            }
+            checkAndRequestBackgroundLocation()
         } else {
-            Log.i("Permission", "Background location permission is implicitly granted on this Android version (below API 29)")
-            onGranted()
+            fgLocationLauncher.launch(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            )
         }
     }
-
 
     /**
-     * Gestisce il permesso di accesso alla posizione e, se concesso, avvia l worker
+     * Richiede il permesso di accesso alla posizione in background se necessario.
      */
-    private val foregroundLocationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Log.d("LOCATION PERMISSION", "Permesso posizione concesso")
-            onLocationPermissionGranted?.invoke()
-            onLocationPermissionGranted = null
-
-            checkBackgroundLocationPermission {}
+    private fun checkAndRequestBackgroundLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            && ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            bgLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
-        else Log.d("LCOATION PERMISSION", "Permesso posizione negato")
     }
 
-    private val backgroundLocationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.i("BACKGROUND LOCATION PERMISSION", "Permesso di localizzazione in background concesso.")
-            } else {
-                Log.w("BACKGROUND LOCATION PERMISSION", "Permesso di localizzazione in background negato.")
-            }
-        }
+    companion object {
+        private const val TAG = "LocationAccess"
+    }
 }

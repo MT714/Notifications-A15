@@ -13,14 +13,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Classe per gestire le azioni delle notifiche
-class NotificationActionReceiver : BroadcastReceiver() {
+/**
+ * Classe che gestisce le azioni delle notifiche.
+ */
+class NotificationActionReceiver: BroadcastReceiver() {
+    /**
+     * ID delle azioni da utilizzare che il BroadcastReceiver riconosce.
+     */
     object NotificationAction {
         const val SET_RED = "com.embedded2025.notificationsa15.SET_RED"
         const val SET_YELLOW = "com.embedded2025.notificationsa15.SET_YELLOW"
         const val REPLY = "com.embedded2025.notificationsa15.ACTION_REPLY"
     }
 
+    /**
+     * ID degli extra da utilizzare nell'intent.
+     */
     object IntentExtras {
         const val NOTIFICATION_ID = "notification_id"
         const val KEY_TEXT_REPLY = "key_text_reply"
@@ -40,6 +48,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Gestisce l'azione [NotificationAction.SET_RED].
+     */
     private fun handleRed(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
         Log.d("NotificationActionReceiver", "Azione: Impostato rosso (ID: $notificationId)")
@@ -51,6 +62,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
         Toast.makeText(context, context.getString(R.string.toast_action_color_set_red), Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Gestisce l'azione [NotificationAction.SET_YELLOW].
+     */
     private fun handleYellow(context: Context, intent:Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
         Log.d("NotificationActionReceiver", "Azione: Impostato giallo (ID: $notificationId)")
@@ -62,6 +76,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
         Toast.makeText(context, context.getString(R.string.toast_action_color_set_yellow), Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Gestisce l'azione [NotificationAction.REPLY] per la notifica demo.
+     */
     private fun handleReply(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra(IntentExtras.NOTIFICATION_ID, -1)
         val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(IntentExtras.KEY_TEXT_REPLY)
@@ -76,6 +93,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
         } else Log.w("Notification Reply", "Nessun testo nella risposta.")
     }
 
+    /**
+     * Gestisce l'azione [NotificationAction.REPLY] per la chat con l'assistente.
+     */
     private fun handleChatReply(intent: Intent) {
         val replyText = RemoteInput.getResultsFromIntent(intent)?.getCharSequence(IntentExtras.KEY_TEXT_REPLY)
         if (!replyText.isNullOrBlank()) {

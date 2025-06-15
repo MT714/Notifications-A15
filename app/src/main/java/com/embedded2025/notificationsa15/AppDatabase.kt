@@ -7,6 +7,10 @@ import androidx.room.RoomDatabase
 import com.embedded2025.notificationsa15.chat.ChatDao
 import com.embedded2025.notificationsa15.chat.Message
 
+/**
+ * Room database dell'applicazione.
+ * In particolare contiene una tabella dei messaggi della chat.
+ */
 @Database(entities = [Message::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
 

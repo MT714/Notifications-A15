@@ -89,7 +89,8 @@ object NotificationHelper {
     private var notificationIdCounter = 1000
 
     /**
-     * Inizializza l'oggetto NotificationHelper.
+     * Inizializza l'oggetto NotificationHelper con il contesto dell'applicazione e crea i canali
+     * di notifica.
      *
      * @param context il contesto dell'applicazione.
      */

@@ -21,8 +21,13 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 
-
-class MainActivity : AppCompatActivity() {
+/**
+ * Activity principale dell'applicazione.
+ */
+class MainActivity: AppCompatActivity() {
+    /**
+     * Launcher per la richiesta di permesso di notifiche.
+     */
     private val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
@@ -38,6 +43,11 @@ class MainActivity : AppCompatActivity() {
         setupNotifications()
     }
 
+    /**
+     * Imposta la navigazione tra i fragment utilizzando Navigation Component.
+     * Si occupa di gestire la navigazione tra i fragment nel loro host, la visualizzazione
+     * del titolo della destinazione e la corretta visualizzazione del drawer.
+     */
     private fun setupNavigation() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
@@ -116,6 +126,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Richiede il permesso di notifiche all'utente se non è già stato concesso.
+     */
     private fun setupNotifications() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -123,11 +136,17 @@ class MainActivity : AppCompatActivity() {
         ) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
+    /**
+     * Crea il menu della toolbar.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
+    /**
+     * Gestisce le azioni dei menu della toolbar.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return item.onNavDestinationSelected(navController)
