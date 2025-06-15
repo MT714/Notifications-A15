@@ -44,12 +44,20 @@ class CallService : Service() {
     companion object {
         private const val TAG = "CallService"
 
-        // Azioni per Call Notification
+        /**
+         *  Azioni per la notifica di chiamata
+         */
         const val ACTION_START_CALL = "com.embedded2025.notificationsa15.ACTION_START_CALL"
         const val ACTION_ANSWER_CALL = "com.embedded2025.notificationsa15.ACTION_ANSWER_CALL"
         const val ACTION_DECLINE_CALL = "com.embedded2025.notificationsa15.ACTION_DECLINE_CALL"
         const val EXTRA_CALL_DELAY_SECONDS = "extra_call_delay_seconds"
 
+        /**
+         * Restituisce un Intent per notificare al servizio di far partire la chiamata dopo un certo ritardo.
+         *
+         * @param delayInSeconds ritardo in secondi prima di far partire la chiamata.
+         * @return Intent con `ACTION_START_CALL` e `EXTRA_CALL_DELAY_SECONDS` impostati.
+         */
         fun getStartCallIntent(context: Context, delayInSeconds: Int): Intent {
             return Intent(context, CallService::class.java).apply {
                 action = ACTION_START_CALL
@@ -58,6 +66,9 @@ class CallService : Service() {
         }
     }
 
+    /**
+    * Gestisce la creazione del servizio.
+    */
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -65,6 +76,17 @@ class CallService : Service() {
 
     }
 
+
+    /**
+     * Entry point del servizio. Viene chiamato quando il servizio viene avviato tramite `startService()`.
+     * Gestisce le azioni in base all'Intent ricevuto.
+     *
+     * @param intent L'Intent che ha avviato il servizio, contenente l'azione da eseguire.
+     * @param flags Flag aggiuntivi sull'avvio.
+     * @param startId Un ID univoco per questa richiesta di avvio.
+     * @return Il comportamento del servizio in caso di terminazione. `START_NOT_STICKY` indica che
+     * il servizio non verrà riavviato automaticamente se terminato dal sistema.
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
 
@@ -79,6 +101,12 @@ class CallService : Service() {
         return START_NOT_STICKY
     }
 
+    /**
+     * Pianifica la visualizzazione di una notifica di chiamata dopo un ritardo specificato.
+     * Utilizza una coroutine per attendere il ritardo prima di costruire e mostrare la notifica.
+     *
+     * @param delayInSeconds Il numero di secondi da attendere prima di mostrare la notifica.
+     */
     private fun scheduleCallNotification(delayInSeconds: Int) {
         serviceScope.launch {
             delay(delayInSeconds * 1000L)
@@ -88,6 +116,11 @@ class CallService : Service() {
         }
     }
 
+    /**
+     * Costruisce e mostra la notifica di chiamata in arrivo.
+     * Configura lo stile `CallStyle`, i PendingIntent per le azioni e avvia il servizio in foreground.
+     * Gestisce anche la riproduzione della suoneria e della vibrazione in base alla modalità suoneria del dispositivo.
+     */
     private fun buildCallNotification() {
         val callerName = getString(R.string.notif_call_caller)
 
@@ -158,6 +191,10 @@ class CallService : Service() {
         startForeground(NotificationID.CALL, notification)
     }
 
+    /**
+     * Gestisce l'azione di risposta alla chiamata.
+     * Interrompe suoneria e vibrazione, mostra un Toast e termina il servizio.
+     */
     private fun handleCallAnswer() {
         stopRingtoneAndVibration()
         Toast.makeText(this, getString(R.string.toast_call_accepted), Toast.LENGTH_SHORT).show()
@@ -165,6 +202,10 @@ class CallService : Service() {
         stopSelf()
     }
 
+    /**
+     * Gestisce l'azione di rifiuto della chiamata.
+     * Interrompe suoneria e vibrazione, mostra un Toast e termina il servizio.
+     */
     private fun handleCallDecline() {
         stopRingtoneAndVibration()
         Toast.makeText(this, getString(R.string.toast_call_denied), Toast.LENGTH_SHORT).show()
@@ -172,8 +213,9 @@ class CallService : Service() {
         stopSelf()
     }
 
-
-
+    /**
+     * Interrompe la riproduzione della suoneria e cancella la vibrazione.
+     */
     private fun stopRingtoneAndVibration() {
         ringtone?.stop()
         ringtone = null
@@ -183,9 +225,17 @@ class CallService : Service() {
         vibrator.cancel()
     }
 
-
+    /**
+     * Questo metodo non è utilizzato per i servizi avviati (Started Services),
+     * quindi restituisce null.
+     */
     override fun onBind(intent: Intent?): IBinder? = null
 
+    /**
+     * Metodo di cleanup del servizio.
+     * Viene chiamato quando il servizio sta per essere distrutto.
+     * Interrompe suoneria/vibrazione e cancella la coroutine scope per evitare memory leak.
+     */
     override fun onDestroy() {
         super.onDestroy()
         stopRingtoneAndVibration()

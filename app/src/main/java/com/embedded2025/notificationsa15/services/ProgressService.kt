@@ -38,22 +38,39 @@ class ProgressService : Service() {
     companion object {
         private const val TAG = "ProgressService"
 
-        // Azioni per Progress
+        /**
+         * Azioni per il servizio di progresso
+         */
         const val ACTION_START_PROGRESS = "com.embedded2025.notificationsa15.ACTION_START_PROGRESS"
         const val ACTION_CANCEL_PROGRESS = "com.embedded2025.notificationsa15.ACTION_CANCEL_PROGRESS"
 
+        /**
+         * Crea un Intent per avviare il servizio di progresso.
+         * @param context Il contesto dell'applicazione.
+         * @return Un Intent configurato per avviare il progresso.
+         */
         fun getStartProgressIntent(context: Context): Intent {
             return Intent(context, ProgressService::class.java).apply { action = ACTION_START_PROGRESS }
         }
 
     }
 
+    /**
+     * Gestisce la creazione del servizio.
+     */
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         Log.d(TAG, "Servizio creato.")
     }
 
+    /**
+     * Entry point del servizio. Gestisce gli Intent in arrivo per avviare o annullare il progresso.
+     * @param intent L'Intent che ha avviato il servizio.
+     * @param flags Flag aggiuntivi.
+     * @param startId ID univoco per la richiesta.
+     * @return START_NOT_STICKY per indicare che il servizio non deve essere riavviato automaticamente.
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand ricevuto con azione: ${intent?.action}")
 
@@ -64,6 +81,10 @@ class ProgressService : Service() {
         return START_NOT_STICKY
     }
 
+    /**
+     * Avvia il servizio in foreground e inizia la simulazione del progresso.
+     * Lancia una coroutine che aggiorna la notifica a intervalli regolari.
+     */
     private fun startForegroundWithProgress() {
         progressJob?.cancel()
         isCancellationRequested = false
@@ -107,6 +128,12 @@ class ProgressService : Service() {
         }
     }
 
+    /**
+     * Costruisce la notifica di progresso.
+     * @param progress Il valore di progresso corrente (da 0 a 100).
+     * @param contentText Il testo da mostrare nel corpo della notifica.
+     * @return Un oggetto [Notification] configurato.
+     */
     private fun buildProgressNotification(progress: Int, contentText: String): Notification {
         val cancelIntent = Intent(this, ProgressService::class.java).apply { action =
             ACTION_CANCEL_PROGRESS
@@ -126,12 +153,21 @@ class ProgressService : Service() {
             .build()
     }
 
+    /**
+     * Costruisce la notifica finale (completato o annullato).
+     * @param contentText Il testo che descrive lo stato finale.
+     * @return Un oggetto [Notification] configurato.
+     */
     private fun getPendingIntentFlags(mutable: Boolean = false): Int {
         var flags = PendingIntent.FLAG_UPDATE_CURRENT
         flags = if (mutable) flags or PendingIntent.FLAG_MUTABLE else flags or PendingIntent.FLAG_IMMUTABLE
         return flags
     }
 
+    /**
+     * Imposta il flag per richiedere la cancellazione del progresso.
+     * La coroutine controllerà questo flag per interrompere il ciclo.
+     */
     private fun buildFinalProgressNotification(contentText: String): Notification {
         return NotificationHelper.createBasicBuilder(
             ChannelID.SERVICES,
@@ -146,11 +182,17 @@ class ProgressService : Service() {
             .build()
     }
 
+    /**
+     * Controlla se ci sono job attivi. Se non ce ne sono, ferma il servizio.
+     */
     private fun handleProgressCancellation() {
         Log.i(TAG, "Gestione cancellazione utente")
         isCancellationRequested = true
     }
 
+    /**
+     * Restituisce i flag corretti per un PendingIntent, gestendo l'immutabilità.
+     */
     private fun checkAndStopSelf() {
         if (progressJob?.isActive != true) {
             Log.d(TAG, "Nessun task attivo. Fermo il servizio.")
@@ -158,8 +200,16 @@ class ProgressService : Service() {
         }
     }
 
+    /**
+     * Questo metodo non è utilizzato per i servizi avviati (Started Services),
+     * quindi restituisce null.
+     */
     override fun onBind(intent: Intent?): IBinder? = null
 
+    /**
+     * Metodo di cleanup del servizio. Cancella lo scope delle coroutine per
+     * fermare ogni operazione in background e prevenire memory leak.
+     */
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
