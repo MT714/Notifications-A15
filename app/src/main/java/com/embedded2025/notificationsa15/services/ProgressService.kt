@@ -154,9 +154,7 @@ class ProgressService : Service() {
     }
 
     /**
-     * Costruisce la notifica finale (completato o annullato).
-     * @param contentText Il testo che descrive lo stato finale.
-     * @return Un oggetto [Notification] configurato.
+     * Restituisce i flag corretti per un PendingIntent, gestendo l'immutabilità.
      */
     private fun getPendingIntentFlags(mutable: Boolean = false): Int {
         var flags = PendingIntent.FLAG_UPDATE_CURRENT
@@ -165,8 +163,9 @@ class ProgressService : Service() {
     }
 
     /**
-     * Imposta il flag per richiedere la cancellazione del progresso.
-     * La coroutine controllerà questo flag per interrompere il ciclo.
+     * Costruisce la notifica finale (completato o annullato).
+     * @param contentText Il testo che descrive lo stato finale.
+     * @return Un oggetto [Notification] configurato.
      */
     private fun buildFinalProgressNotification(contentText: String): Notification {
         return NotificationHelper.createBasicBuilder(
@@ -183,7 +182,8 @@ class ProgressService : Service() {
     }
 
     /**
-     * Controlla se ci sono job attivi. Se non ce ne sono, ferma il servizio.
+     * Imposta il flag per richiedere la cancellazione del progresso.
+     * La coroutine controllerà questo flag per interrompere il ciclo.
      */
     private fun handleProgressCancellation() {
         Log.i(TAG, "Gestione cancellazione utente")
@@ -191,7 +191,7 @@ class ProgressService : Service() {
     }
 
     /**
-     * Restituisce i flag corretti per un PendingIntent, gestendo l'immutabilità.
+     * Controlla se ci sono job attivi. Se non ce ne sono, ferma il servizio.
      */
     private fun checkAndStopSelf() {
         if (progressJob?.isActive != true) {
