@@ -21,4 +21,5 @@ un periodo di tempo prolungato.
 
 È stata inoltre implementata una semplice chat con un assistente virtuale, offerta da
 [Together](https://www.together.ai/) usando il modello generativo
-'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free'
+'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free', al quale è possibile rispondere direttamente da
+notifica.
