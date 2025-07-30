@@ -109,7 +109,7 @@ class ExpandableFragment : Fragment() {
                 /**
                  * Quando modifico l'intrevallo, se c'è già un worker lo cancello e ne creo uno con il nuovo intervallo
                  */
-                if (prefs.getBoolean(SharedPrefsNames.WEATHER_ENABLED, false)) {
+                if (prefs.getBoolean(SharedPrefsNames.NEWS_ENABLED, false)) {
                     Log.i("WeatherWorker", "Worker già attivo, modifico l'intervallo")
                     stopNewsWorker()
                     startNewsWorker(intervalMinutes)
